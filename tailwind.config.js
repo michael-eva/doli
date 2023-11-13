@@ -13,7 +13,6 @@ export default {
     require('tailwindcss'),
     require('autoprefixer'),
     require("flowbite/plugin"),
-    // require('daisyui')
   ]
 }
 

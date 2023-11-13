@@ -7,10 +7,10 @@ export default function NavBar() {
                 <p className=" p-5 normal-case text-xl">doli</p>
             </div>
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1">
-                    <li><Link to='/'>Listings</Link></li>
-                    <li><Link to='/register'>Post a Listing</Link></li>
-                    <li><Link to='/about'>About</Link></li>
+                <ul className="menu menu-horizontal px-1 ">
+                    <li className="text-xl"><Link to='/'>Listings</Link></li>
+                    <li className="text-xl"><Link to='/register'>Post a Listing</Link></li>
+                    <li className="text-xl"><Link to='/about'>About</Link></li>
                 </ul>
             </div>
             <div className="navbar-end">
