@@ -2,7 +2,13 @@ export default function MemberRegister() {
 
     return (
         <>
-            <div className="container flex flex-col max-w-md">
+            <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
+                <div className="mb-6">
+                    <h3 className=" text-xl font-semibold mb-3">
+                        Please enter your details:
+                    </h3>
+                    <p className=" text-red-600 italic">Enter description on what it means to be a member</p>
+                </div>
                 <div className="container flex gap-3">
                     <div className="flex flex-col w-1/2">
                         <label>First Name</label>

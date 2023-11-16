@@ -9,7 +9,8 @@ export default function NavBar() {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 ">
                     <li className="text-xl"><Link to='/'>Listings</Link></li>
-                    <li className="text-xl"><Link to='/register'>Post a Listing</Link></li>
+                    <li className="text-xl"><Link to='/business-register'>Post a Listing</Link></li>
+                    <li className="text-xl"><Link to='/member-register'>Become a Member</Link></li>
                     <li className="text-xl"><Link to='/about'>About</Link></li>
                 </ul>
             </div>

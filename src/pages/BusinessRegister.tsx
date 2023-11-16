@@ -105,9 +105,9 @@ export default function BusinessRegister() {
         <>
             <form onSubmit={handleSubmit}>
 
-                <div className="max-w-3xl m-auto shadow-lg px-24">
+                <div className="max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
                     <header className="mb-7">
-                        <h1 className=" text-lg font-bold ">Profile</h1>
+                        <h1 className=" text-xl font-bold ">Profile</h1>
                         <p>This information will be displayed publicly.</p>
                     </header>
                     <div className="flex flex-col mb-5">
