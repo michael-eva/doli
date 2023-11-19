@@ -4,7 +4,6 @@ import { Card } from "../components/Card";
 import { ChangeEvent, useState } from "react";
 import locationData from "../data/locationData.json";
 import { nanoid } from "nanoid";
-import data from "../data/australian_postcodes.json"
 
 type Location = {
     id: number,
