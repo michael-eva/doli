@@ -27,7 +27,6 @@ export function Card({ imgUrl, name, suburb, state, postcode, address, type, pro
         setShowFullDescription(!showFullDescription);
     };
 
-    console.log(website);
 
     return (
 
