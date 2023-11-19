@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import { ChangeEvent, useState } from "react";
 import locationData from "../data/locationData.json";
 import { nanoid } from "nanoid";
+import businessType from "../data/businessTypes.json"
 
 type Location = {
     id: number,
@@ -46,48 +47,77 @@ export default function Home() {
 
     return (
         <>
-            <div className=" max-w-sm">
-                <label htmlFor="locationInput" className="label">
-                    Start typing in a suburb:
-                </label>
-                <div className="relative">
-                    <input
-                        type="text"
-                        id="locationInput"
-                        value={searchTerm}
-                        onChange={handleInputChange}
-                        onFocus={() => setDropdownVisible(true)}
-                        className="input input-bordered w-96"
-                        onBlur={() => closeDropdown()}
-                    />
-                    <div
-                        className={`absolute left-0 right-0 mt-1 bg-base-100 border border-base-200 shadow-md z-10 ${dropdownVisible ? "block" : "hidden"
-                            }`}
-                    >
-                        {searchTerm.length > 0 && filteredLocations.map((location) => (
+            <div className=" max-w-7xl m-auto">
+                <div className="flex justify-between">
+                    <div className="flex flex-col">
+                        <label htmlFor="locationInput" className="label">
+                            Start typing in a suburb:
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                id="locationInput"
+                                value={searchTerm}
+                                onChange={handleInputChange}
+                                onFocus={() => setDropdownVisible(true)}
+                                className="input input-bordered w-96"
+                                onBlur={() => closeDropdown()}
+                            />
                             <div
-                                key={nanoid()}
-                                className="p-2 hover:bg-base-200 cursor-pointer"
-                                onClick={() =>
-                                    handleOptionClick(
-                                        `${location.locality}, ${location.postcode}, ${location.state}`
-                                    )
-                                }
+                                className={`absolute left-0 right-0 mt-1 bg-base-100 border border-base-200 shadow-md z-10 ${dropdownVisible ? "block" : "hidden"
+                                    }`}
                             >
-                                {location.locality}, {location.postcode}, {location.state}
+                                {searchTerm.length > 0 && filteredLocations.map((location) => (
+
+                                    <div
+                                        key={nanoid()}
+                                        className="p-2 hover:bg-base-200 cursor-pointer"
+                                        onClick={() =>
+                                            handleOptionClick(
+                                                `${location.locality}, ${location.postcode}, ${location.state}`
+                                            )
+                                        }
+                                    >
+                                        {location.locality}, {location.postcode}, {location.state}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-wrap justify-center h-full">
-                {listings.map((item) => {
-                    return (
-                        <div key={item.id} className="mt-10 ">
-                            <Card {...item} />
                         </div>
-                    );
-                })}
+                    </div>
+                    <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                        <label> Select Type:</label>
+                        <select name="type" className="select select-bordered">
+                            <option value="" selected>All Types</option>
+                            {businessType.map(item => (
+                                <option>{item}</option>
+                            ))}
+
+                        </select>
+                    </div>
+                    <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                        <label htmlFor="">Select Delivery Method:</label>
+                        <select name="deliveryMethod" className="select select-bordered">
+                            <option value="" selected>All Methods</option>
+                            <option value="delivery" >Delivery</option>
+                            <option value="dineIn" >Dine-In</option>
+                            <option value="pickUp" >Pick-Up</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col mt-4">
+                        <label htmlFor="">Enter Search Term:</label>
+                        <input type="text"
+                            className="input input-bordered w-72" />
+                    </div>
+                </div >
+                <div className="flex flex-wrap justify-center h-full">
+                    {listings.map((item) => {
+                        return (
+                            <div key={item.id} className="mt-10 ">
+                                <Card {...item} />
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </>
     );
