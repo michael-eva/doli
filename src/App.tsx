@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import supabase from "./config/supabaseClient"
 import { useState, useEffect } from "react"
+import ManageListings from "./pages/ManageListings"
 
 
 
@@ -28,8 +29,6 @@ function App() {
 
   }, [])
 
-  console.log("session", session);
-
   return (
     <>
 
@@ -39,6 +38,7 @@ function App() {
         <Route path="business-register" element={<BusinessRegister />} />
         <Route path="member-register" element={<MemberRegister />} />
         <Route path="login" element={<Login />} />
+        <Route path="manage-listings" element={<ManageListings />} />
       </Routes>
     </>
   )
