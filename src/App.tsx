@@ -8,6 +8,7 @@ import Login from "./pages/Login"
 import supabase from "./config/supabaseClient"
 import { useState, useEffect } from "react"
 import ManageListings from "./pages/ManageListings"
+import About from "./pages/About"
 
 
 
@@ -39,6 +40,7 @@ function App() {
         <Route path="member-register" element={<MemberRegister />} />
         <Route path="login" element={<Login />} />
         <Route path="manage-listings" element={<ManageListings />} />
+        <Route path="about" element={<About />} />
       </Routes>
     </>
   )

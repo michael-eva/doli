@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import supabase from "../config/supabaseClient";
 import { Toaster, toast } from "react-hot-toast"
 
@@ -23,7 +23,7 @@ export default function NavBar({ session }: any) {
 
     function postListingEl() {
         if (session) {
-            return <Link to='/business-register'>Post a Listing</Link>;
+            return <NavLink to='/business-register'>Post a Listing</NavLink>;
         } else {
             return <>
                 <button onClick={() => document.getElementById('my_modal_1').showModal()}>Post a Listing</button>
@@ -48,16 +48,16 @@ export default function NavBar({ session }: any) {
     return (
         <div className="navbar bg-base-100 shadow-md mb-10">
             <div className="navbar-start">
-                <p className=" p-5 normal-case text-xl">doli</p>
+                <p className=" p-5 normal-case text-xl"><a href="/">doli</a> </p>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 ">
-                    <li className="text-xl"><Link to='/'>Listings</Link></li>
+                    <li className="text-xl"><NavLink to='/'>Listings</NavLink></li>
                     <li className="text-xl">{postListingEl()}</li>
-                    {!session ? <li className="text-xl"><Link to='/member-register'>Become a Member</Link></li>
-                        : <li className="text-xl"><Link to='/manage-listings'>Manage Listings</Link></li>
+                    {!session ? <li className="text-xl"><NavLink to='/member-register'>Become a Member</NavLink></li>
+                        : <li className="text-xl"><NavLink to='/manage-listings'>Manage Listings</NavLink></li>
                     }
-                    <li className="text-xl"><Link to='/about'>About</Link></li>
+                    <li className="text-xl"><NavLink to='/about'>About</NavLink></li>
                 </ul>
             </div>
             <div className="navbar-end">
@@ -65,7 +65,7 @@ export default function NavBar({ session }: any) {
                     {session ?
                         <li className="text-xl"><button onClick={handleLogout}>Logout</button></li>
                         :
-                        <li className="text-xl"><Link to='/login'>Login</Link></li>
+                        <li className="text-xl"><NavLink to='/login'>Login</NavLink></li>
                     }
                 </ul>
 
