@@ -9,10 +9,7 @@ import supabase from "./config/supabaseClient"
 import { useState, useEffect } from "react"
 import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"
-
-
-
-
+import Specials from "./pages/Specials"
 
 function App() {
   const [session, setSession] = useState<any>("")
@@ -22,17 +19,13 @@ function App() {
       setSession(session);
     });
 
-    // // Listen for changes in authentication state
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-
-
   }, [])
 
   return (
     <>
-
       <NavBar session={session} />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -41,6 +34,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="manage-listings" element={<ManageListings />} />
         <Route path="about" element={<About />} />
+        <Route path="specials" element={<Specials />} />
       </Routes>
     </>
   )

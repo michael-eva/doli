@@ -6,6 +6,7 @@ import { Toaster, toast } from "react-hot-toast"
 export default function NavBar({ session }: any) {
     const navigate = useNavigate()
 
+
     const handleLogout = async () => {
         try {
             const { error } = await supabase.auth.signOut();
@@ -22,26 +23,22 @@ export default function NavBar({ session }: any) {
     };
 
     function postListingEl() {
+
         if (session) {
             return <NavLink to='/business-register'>Post a Listing</NavLink>;
         } else {
-            return <>
-                <button onClick={() => document.getElementById('my_modal_1').showModal()}>Post a Listing</button>
-                <dialog id="my_modal_1" className="modal">
-                    <div className="modal-box w-11/12 max-w-5xl">
-                        <h3 className="font-bold text-lg">Hello!</h3>
-                        <p className="py-4">Become a member to post a listing:</p>
-                        <div className="modal-action">
-                            <form method="dialog" className="flex gap-8">
-                                <button onClick={() => navigate("/member-register")} className="btn btn-primary">Become a Member</button>
-                                <button className="btn">Close</button>
-                            </form>
-                        </div>
-                    </div>
-                </dialog>
-            </>
+            return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
         }
     }
+
+    function specialsEl() {
+        if (session) {
+            return <NavLink to='/specials'>Specials</NavLink>;
+        } else {
+            return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view specials' } })}>Specials</button>;
+        }
+    }
+
 
 
 
@@ -52,12 +49,12 @@ export default function NavBar({ session }: any) {
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 ">
-                    <li className="text-xl"><NavLink to='/'>Listings</NavLink></li>
+                    <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
                     <li className="text-xl">{postListingEl()}</li>
-                    {!session ? <li className="text-xl"><NavLink to='/member-register'>Become a Member</NavLink></li>
+                    {/* {!session ? <li className="text-xl"><NavLink to='/member-register'>Become a Member</NavLink></li>
                         : <li className="text-xl"><NavLink to='/manage-listings'>Manage Listings</NavLink></li>
-                    }
-                    <li className="text-xl"><NavLink to='/about'>About</NavLink></li>
+                    } */}
+                    <li className="text-xl">{specialsEl()}</li>
                 </ul>
             </div>
             <div className="navbar-end">
@@ -65,7 +62,7 @@ export default function NavBar({ session }: any) {
                     {session ?
                         <li className="text-xl"><button onClick={handleLogout}>Logout</button></li>
                         :
-                        <li className="text-xl"><NavLink to='/login'>Login</NavLink></li>
+                        <li className="text-xl"><NavLink to='/login'>Login / Signup</NavLink></li>
                     }
                 </ul>
 
