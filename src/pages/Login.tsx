@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { useNavigate, useLocation } from "react-router"
 import toast, { Toaster } from "react-hot-toast"
@@ -12,38 +12,78 @@ type LoginData = {
 
 export default function Login() {
     let navigate = useNavigate()
+    const [isUser, setIsUser] = useState<string>("")
     const location = useLocation()
+    const [members, setMembers] = useState<string[]>([])
+    const [loginError, setLoginError] = useState<string>('')
     const [formData, setFormData] = useState<LoginData>({
         email: "",
         password: ""
     })
+    console.log(members);
+
+    useEffect(() => {
+        const getUsers = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("members")
+                    .select("*")
+                if (error) {
+                    throw error
+                }
+                if (data) {
+                    setMembers(data)
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                throw error
+            }
+        }
+        getUsers()
+    }, [])
 
     function handleChange(e: { target: { name: string; value: string } }) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
     async function handleSubmit(e: { preventDefault: () => void }) {
-        e.preventDefault()
+        e.preventDefault();
+        setLoginError("");
+        setIsUser("");
+        const existingUser = members.find(member => member.email === formData.email);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        if (!existingUser) {
+            setLoginError("An account with that email address doesn't exist");
+            return;
+        }
+
+        const { user, error } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password,
-        })
+        });
+
         if (error) {
             console.log(error);
+            setIsUser("Password is incorrect");
+            setLoginError("");
+            return;
         }
-        setFormData({
-            email: "",
-            password: ""
-        })
-        toast.success("Logged in successfully")
 
-        setTimeout(() => {
-            // location ? navigate(location.state.location) :
-            //     navigate("/")
-            navigate("/")
-        }, 1000)
+        if (user) {
+            toast.success("Logged in successfully");
+            setTimeout(() => {
+                navigate("/");
+            }, 1000);
+            setFormData({
+                email: "",
+                password: ""
+            });
+            setLoginError("");
+            setIsUser("");
+        }
+
     }
+
 
     return (
         <>
@@ -54,6 +94,7 @@ export default function Login() {
                 <form onSubmit={handleSubmit}>
                     <div className="  gap-9 flex flex-col ">
                         <p className=" text-lg font-semibold pb-5">Please enter your login details:</p>
+                        {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
                         <div className="flex">
                             <label className="label">
                                 <span className="label-text w-24">Email</span>
@@ -65,8 +106,11 @@ export default function Login() {
                                 value={formData.email}
                                 name="email"
                                 onChange={handleChange}
+                                required
                             />
                         </div>
+
+                        {isUser.length > 0 && <p className=" text-red-600 italic">Password is incorrect</p>}
                         <div className="flex">
                             <label className="label">
                                 <span className="label-text w-24">Password</span>
@@ -78,8 +122,10 @@ export default function Login() {
                                 value={formData.password}
                                 name="password"
                                 onChange={handleChange}
+                                required
                             />
                         </div>
+
                         <button className="btn btn-primary">Login</button>
                     </div>
                 </form>
