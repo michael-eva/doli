@@ -4,6 +4,14 @@ import { useNavigate, useLocation } from "react-router"
 import toast, { Toaster } from "react-hot-toast"
 import { Link } from "react-router-dom"
 
+type Members = {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    postcode: string,
+    suburb: string
+}
 
 type LoginData = {
     email: string,
@@ -14,13 +22,12 @@ export default function Login() {
     let navigate = useNavigate()
     const [isUser, setIsUser] = useState<string>("")
     const location = useLocation()
-    const [members, setMembers] = useState<string[]>([])
+    const [members, setMembers] = useState<Members[]>([])
     const [loginError, setLoginError] = useState<string>('')
     const [formData, setFormData] = useState<LoginData>({
         email: "",
         password: ""
     })
-    console.log(members);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -57,7 +64,7 @@ export default function Login() {
             return;
         }
 
-        const { user, error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password,
         });
@@ -69,18 +76,20 @@ export default function Login() {
             return;
         }
 
-        if (user) {
-            toast.success("Logged in successfully");
-            setTimeout(() => {
-                navigate("/");
-            }, 1000);
-            setFormData({
-                email: "",
-                password: ""
-            });
-            setLoginError("");
-            setIsUser("");
-        }
+
+        toast.success("Logged in successfully");
+
+        setTimeout(() => {
+            navigate("/");
+        }, 1000);
+
+        setFormData({
+            email: "",
+            password: ""
+        });
+        setLoginError("");
+        setIsUser("");
+
 
     }
 

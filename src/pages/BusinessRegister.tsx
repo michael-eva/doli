@@ -1,8 +1,13 @@
 import { useState } from "react"
 import tags from '../data/tags.ts'
-
+import supabase from "../config/supabaseClient.ts";
+import { useUser } from "@supabase/auth-helpers-react";
+import { nanoid } from "nanoid";
+import businessType from "../data/businessTypes.json"
 
 type FormData = {
+    postId: string,
+    id: string | undefined
     imgUrl: string
     name: string;
     suburb: string;
@@ -17,9 +22,19 @@ type FormData = {
     website: string;
     contact: string;
 }
+type imgPath = {
+    path: string
+}
 export default function BusinessRegister() {
-
+    const user = useUser()
+    const [selectedFile, setSelectedFile] = useState(null)
+    const postId = nanoid()
+    const CDNUrl = (imgPath: imgPath) => {
+        return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
+    }
     const [formData, setFormData] = useState<FormData>({
+        postId: postId,
+        id: user?.id,
         imgUrl: "",
         name: "",
         suburb: "",
@@ -40,33 +55,71 @@ export default function BusinessRegister() {
         dineIn: false
     });
 
+    console.log(formData);
 
-    function handleSubmit(e: { preventDefault: () => void; }) {
-        e.preventDefault()
-        console.log(formData);
-        setFormData({
-            imgUrl: "",
-            name: "",
-            suburb: "",
-            state: "",
-            postcode: "",
-            address: "",
-            type: "",
-            selectedTags: [],
-            description: "",
-            openingHours: "",
-            deliveryMethod: [],
-            website: "",
-            contact: ""
-        })
 
+
+    async function handleSubmit(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+
+        try {
+            const { error: insertError } = await supabase.from('posts').insert(formData);
+
+            if (insertError) {
+                console.error('Error inserting post:', insertError);
+                return;
+            }
+            if (selectedFile) {
+                const { data: imageData, error: imageError } = await supabase.storage
+                    .from('cover_images')
+                    .upload(user?.id + '/' + nanoid(), selectedFile);
+
+                if (imageError) {
+                    console.error('Error uploading image:', imageError);
+                    return;
+                }
+
+                const imageUrl = CDNUrl(imageData);
+
+                const { error: updateError } = await supabase
+                    .from('posts')
+                    .update({ imgUrl: imageUrl })
+                    .eq('id', user?.id);
+
+                if (updateError) {
+                    console.error('Error updating imgUrl:', updateError);
+                    return;
+                }
+
+                console.log('Image uploaded and imgUrl updated successfully:', imageUrl);
+            }
+
+            setFormData({
+                postId: "",
+                id: user?.id,
+                imgUrl: "",
+                name: "",
+                suburb: "",
+                state: "",
+                postcode: "",
+                address: "",
+                type: "",
+                selectedTags: [],
+                description: "",
+                openingHours: "",
+                deliveryMethod: [],
+                website: "",
+                contact: ""
+            });
+
+        } catch (error) {
+            console.error('Error handling submit:', error);
+        }
     }
 
     function handleChange(e: { target: { name: string; value: string | string[]; }; }) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
-
-
 
     const handleCheckboxChange = (e: any) => {
         const { name, checked } = e.target;
@@ -101,6 +154,12 @@ export default function BusinessRegister() {
         });
     };
 
+    const handleFileChange = (e: any) => {
+        const file = e.target.files[0];
+        setSelectedFile(file);
+    };
+
+
     return (
         <>
             <form onSubmit={handleSubmit}>
@@ -116,27 +175,34 @@ export default function BusinessRegister() {
                             type="text"
                             name='name'
                             className="input input-bordered w-full max-w-xs"
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            required />
                     </div>
 
                     <div className="flex flex-col mb-5">
-                        <label >Business Type</label>
-                        <input
+                        <label> Select Type:</label>
+                        <select
                             name="type"
-                            placeholder="Distillery, Restaurant, etc"
-                            type="text"
-                            className="input input-bordered w-full max-w-xs "
-                            onChange={handleChange} />
+                            className="select select-bordered w-full max-w-xs"
+                            onChange={handleChange}
+                            required
+                        >
+                            <option selected disabled>Select Type</option>
+                            {businessType.map(item => (
+                                <option>{item}</option>
+                            ))}
+
+                        </select>
                     </div>
                     <h2>About</h2>
                     <textarea
                         className="textarea textarea-bordered w-full "
                         placeholder="Write a few detailed sentences about your business."
                         onChange={handleChange}
-                        name="description">
+                        name="description"
+                        required
+                    >
                     </textarea>
-
-
 
                     <div className="flex flex-col mb-5 mt-5">
                         <p >Delivery Method</p>
@@ -171,7 +237,6 @@ export default function BusinessRegister() {
                         </div>
                     </div>
 
-
                     <div className="flex flex-col mb-5 mt-5">
                         <label >Opening Hours</label>
                         <input
@@ -179,12 +244,14 @@ export default function BusinessRegister() {
                             type="text"
                             className="input input-bordered w-full max-w-xs "
                             onChange={handleChange}
-                            name="openingHours" />
+                            name="openingHours"
+                            required />
                     </div>
 
                     <div className="flex flex-col mb-5 mt-5">
                         <label>Choose up to 5 options:</label>
-                        <select multiple value={formData.selectedTags} onChange={handleTagChange} className="select select-bordered">
+                        <select multiple value={formData.selectedTags} onChange={handleTagChange} className="select select-bordered"
+                            required>
                             {tags.map((tag, index) => (
                                 <option key={index} value={tag}>
                                     {tag}
@@ -216,20 +283,12 @@ export default function BusinessRegister() {
                                 name="contact" />
                         </div>
                     </div>
-
-                    <h2 className="mt-7">Add Cover Photo</h2>
-                    <div className="flex items-center justify-center w-full mb-7">
-                        <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-white border-solid rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                </svg>
-                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                            </div>
-                            <input id="dropzone-file" type="file" className="hidden" name="imgUrl" />
-                        </label>
+                    <div className="cover-photo">
+                        <h2 className="mt-7">Add Cover Photo</h2>
+                        <input type="file" className="file-input file-input-bordered w-full max-w-xs" onChange={handleFileChange}
+                            required />
                     </div>
+                    {/* <ImageUpload postId={postId} /> */}
 
                     <div className="divider"></div>
                     <h2>Street Address</h2>
@@ -237,7 +296,8 @@ export default function BusinessRegister() {
                         type="text"
                         className="input input-bordered w-full"
                         onChange={handleChange}
-                        name="address" />
+                        name="address"
+                        required />
 
                     <div className="container flex gap-2 mt-7">
                         <div className="flex flex-col">
@@ -246,7 +306,8 @@ export default function BusinessRegister() {
                                 type="text"
                                 className="input input-bordered w-full"
                                 onChange={handleChange}
-                                name="suburb" />
+                                name="suburb"
+                                required />
                         </div>
                         <div className="flex flex-col">
                             <label>State</label>
@@ -254,7 +315,8 @@ export default function BusinessRegister() {
                                 type="text"
                                 className="input input-bordered w-full"
                                 onChange={handleChange}
-                                name="state" />
+                                name="state"
+                                required />
                         </div>
                         <div className="flex flex-col">
                             <label>Postcode</label>
@@ -262,7 +324,8 @@ export default function BusinessRegister() {
                                 type="text"
                                 className="input input-bordered w-full"
                                 onChange={handleChange}
-                                name="postcode" />
+                                name="postcode"
+                                required />
                         </div>
                     </div>
                     <div className=" flex gap-2 mt-7">
@@ -270,7 +333,7 @@ export default function BusinessRegister() {
                         {/* <button className=" rounded-md bg-red-600 w-1/3 hover:bg-red-800 text-white">Cancel</button> */}
                     </div>
                 </div >
-            </form>
+            </form >
         </>
 
     )

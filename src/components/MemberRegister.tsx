@@ -3,6 +3,7 @@ import months from "../data/months.json"
 import { nanoid } from "nanoid"
 import supabase from "../config/supabaseClient"
 import { Link } from "react-router-dom"
+import LocationSearch from "./LocationSearch"
 
 type FormData = {
     firstName: string,
@@ -228,7 +229,7 @@ export default function MemberRegister() {
                         </div>
                     </div>
                     <div className="container flex gap-3 mt-7">
-                        <div className="flex flex-col w-1/2">
+                        {/* <div className="flex flex-col w-1/2">
                             <label>Suburb</label>
                             <input
                                 type="text"
@@ -238,7 +239,8 @@ export default function MemberRegister() {
                                 required
                                 value={formData.suburb}
                             />
-                        </div>
+                        </div> */}
+                        <LocationSearch />
                         <div className="flex flex-col w-1/2">
                             <label>Post Code</label>
                             <input

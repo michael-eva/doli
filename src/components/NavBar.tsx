@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom"
 import supabase from "../config/supabaseClient";
 import { Toaster, toast } from "react-hot-toast"
+import { useUser } from "@supabase/auth-helpers-react";
 
 
-export default function NavBar({ session }: any) {
+export default function NavBar() {
     const navigate = useNavigate()
-
+    const user = useUser()
 
     const handleLogout = async () => {
         try {
@@ -24,7 +25,7 @@ export default function NavBar({ session }: any) {
 
     function postListingEl() {
 
-        if (session) {
+        if (user) {
             return <NavLink to='/business-register'>Post a Listing</NavLink>;
         } else {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
@@ -32,7 +33,7 @@ export default function NavBar({ session }: any) {
     }
 
     function specialsEl() {
-        if (session) {
+        if (user) {
             return <NavLink to='/specials'>Specials</NavLink>;
         } else {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view specials' } })}>Specials</button>;
@@ -59,7 +60,7 @@ export default function NavBar({ session }: any) {
             </div>
             <div className="navbar-end">
                 <ul className="menu menu-horizontal ">
-                    {session ?
+                    {user ?
                         <li className="text-xl"><button onClick={handleLogout}>Logout</button></li>
                         :
                         <li className="text-xl"><NavLink to='/login'>Login / Signup</NavLink></li>

@@ -59,18 +59,20 @@ export default function LocationSearch(): ReactNode {
                         }`}
                 >
                     {searchTerm.length > 0 && filteredLocations.map((location) => (
+                        <>
+                            <div
+                                key={nanoid()}
+                                className="p-2 hover:bg-base-200 cursor-pointer"
+                                onClick={() =>
+                                    handleOptionClick(
+                                        `${location.locality}, ${location.postcode}, ${location.state}`
+                                    )
+                                }
+                            >
+                                {location.locality}, {location.postcode}, {location.state}
+                            </div>
 
-                        <div
-                            key={nanoid()}
-                            className="p-2 hover:bg-base-200 cursor-pointer"
-                            onClick={() =>
-                                handleOptionClick(
-                                    `${location.locality}, ${location.postcode}, ${location.state}`
-                                )
-                            }
-                        >
-                            {location.locality}, {location.postcode}, {location.state}
-                        </div>
+                        </>
                     ))}
                 </div>
             </div>

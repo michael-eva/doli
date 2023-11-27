@@ -5,28 +5,21 @@ import NavBar from "./components/NavBar"
 import { Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
-import supabase from "./config/supabaseClient"
-import { useState, useEffect } from "react"
 import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
+import { useUser } from "@supabase/auth-helpers-react"
+
 
 function App() {
-  const [session, setSession] = useState<any>("")
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+  const user = useUser()
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, [])
+  // console.log(user);
 
   return (
     <>
-      <NavBar session={session} />
+      <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="business-register" element={<BusinessRegister />} />

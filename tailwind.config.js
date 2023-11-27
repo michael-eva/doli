@@ -10,6 +10,7 @@ export default {
     extend: {},
   },
   plugins: [
+    require('@tailwindcss/forms'),
     require('tailwindcss'),
     require('autoprefixer'),
     require("flowbite/plugin"),
