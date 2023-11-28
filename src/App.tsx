@@ -8,21 +8,17 @@ import Login from "./pages/Login"
 import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
-import { useUser } from "@supabase/auth-helpers-react"
+import AddPost from "./pages/AddPost"
 
 
 function App() {
-
-  const user = useUser()
-
-  // console.log(user);
 
   return (
     <>
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="business-register" element={<BusinessRegister />} />
+        <Route path="business-register" element={<AddPost />} />
         <Route path="member-register" element={<MemberRegister />} />
         <Route path="login" element={<Login />} />
         <Route path="manage-listings" element={<ManageListings />} />

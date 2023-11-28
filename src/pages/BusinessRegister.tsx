@@ -55,10 +55,6 @@ export default function BusinessRegister() {
         dineIn: false
     });
 
-    console.log(formData);
-
-
-
     async function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
 
@@ -137,7 +133,6 @@ export default function BusinessRegister() {
         }));
     };
 
-
     const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedOption = e.target.value;
 
@@ -158,7 +153,6 @@ export default function BusinessRegister() {
         const file = e.target.files[0];
         setSelectedFile(file);
     };
-
 
     return (
         <>
@@ -330,7 +324,6 @@ export default function BusinessRegister() {
                     </div>
                     <div className=" flex gap-2 mt-7">
                         <button className="btn btn-primary w-full">Submit</button>
-                        {/* <button className=" rounded-md bg-red-600 w-1/3 hover:bg-red-800 text-white">Cancel</button> */}
                     </div>
                 </div >
             </form >
