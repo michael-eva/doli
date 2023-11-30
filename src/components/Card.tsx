@@ -5,7 +5,7 @@ type CardProps = {
     name: string,
     suburb: string,
     state: string,
-    postcode: number,
+    postcode: string,
     address: string,
     type: string,
     products: string,
@@ -30,9 +30,9 @@ export function Card({ imgUrl, name, suburb, state, postcode, address, type, pro
 
     return (
 
-        <div className="card card-compact w-80 bg-base-100 shadow-xl p-4">
-            <figure><img src={imgUrl} alt="Shoes" /></figure>
-            <div className="card-body">
+        <div className="card card-compact w-72 bg-base-100 shadow-xl">
+            <img src={imgUrl} alt="Shoes" />
+            <div className="card-body p-4">
                 <h2 className="card-title">{name}</h2>
                 <h2 className=" text-blue-600 font-semibold">{suburb}, {state} {postcode}</h2>
                 <h3 className=" font-light font">{address}</h3>

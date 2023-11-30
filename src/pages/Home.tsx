@@ -1,4 +1,3 @@
-// App.tsx
 import listings from "../data/listings.json";
 import { Card } from "../components/Card";
 import businessType from "../data/businessTypes.json"
@@ -66,10 +65,10 @@ export default function Home() {
                             className="input input-bordered w-72" />
                     </div>
                 </div >
-                <div className="flex flex-wrap justify-center h-full">
+                <div className="flex flex-wrap justify-between h-full">
                     {listings.map((item) => {
                         return (
-                            <div key={item.id} className="mt-10 ">
+                            <div key={item.id} className="mt-10">
                                 <Card {...item} />
                             </div>
                         );
