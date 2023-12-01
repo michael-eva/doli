@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useRef, useEffect } from "react"
+import { useState, ChangeEvent } from "react"
 import tags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import { nanoid } from "nanoid";
@@ -34,11 +34,11 @@ type FormData = {
 export default function AddPost() {
     const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm();
     const user = useUser();
-    const [selectedFile, setSelectedFile] = useState("");
+    const [selectedFile, setSelectedFile] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
-    const [previewUrl, setPreviewUrl] = useState(null);
-    const [isChecked, setIsChecked] = useState(true)
+    const [previewUrl, setPreviewUrl] = useState<string>("");
+    const [isChecked, setIsChecked] = useState<boolean>(true)
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -74,8 +74,8 @@ export default function AddPost() {
         setSelectedFile(file);
         if (file) {
             const fileReader = new FileReader();
-            fileReader.onload = () => {
-                setPreviewUrl(fileReader.result);
+            fileReader.onload = (event) => {
+                setPreviewUrl(event.target?.result as string);
             };
             fileReader.readAsDataURL(file);
         }
@@ -124,25 +124,6 @@ export default function AddPost() {
         setDeliveryMethodError(false)
 
     }
-    const previewCardRef = useRef(null);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const previewCard = previewCardRef.current;
-
-            if (previewCard) {
-                const scrollTop = window.scrollY;
-
-                previewCard.style.transform = `translateY(${scrollTop}px)`;
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
     return (
         <div className="flex justify-center">
@@ -168,7 +149,6 @@ export default function AddPost() {
                             <select
                                 className="select select-bordered w-full max-w-xs"
                                 {...register("type", { required: "Type of business is required" })}
-                            // defaultValue="Select Type"
                             >
                                 <option value="" selected disabled>Select Type</option>
                                 {businessType.map(item => (
@@ -183,6 +163,7 @@ export default function AddPost() {
                                 className="textarea textarea-bordered w-full "
                                 placeholder="Write a few detailed sentences about your business."
                                 {...register("description", { required: "A description is required" })}
+                                style={{ whiteSpace: 'pre-wrap' }}
                             >
                             </textarea>
                         </div>
@@ -356,7 +337,7 @@ export default function AddPost() {
                     </span>
                 </label>
                 {isChecked && (
-                    <div ref={previewCardRef} style={{ width: '50%' }}>
+                    <div style={{ width: '50%' }}>
 
                         <PreviewCard
                             imgUrl={previewUrl}

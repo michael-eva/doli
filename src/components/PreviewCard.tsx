@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import {preview} from "/images/preview.png"
 
 type CardProps = {
@@ -21,6 +21,7 @@ type CardProps = {
 export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, type, products, description, openingHours, contact, pickUp, delivery, dineIn }: CardProps) {
     const maxDescriptionHeight = 80; // Set your desired max height in pixels
     const [showFullDescription, setShowFullDescription] = useState(false);
+    const [deliveryMethod, setDeliveryMethod] = useState<boolean>(false)
 
     const truncatedDescription = description?.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description?.length > maxDescriptionHeight;
@@ -28,7 +29,16 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
     };
-    console.log(products);
+
+    useEffect(() => {
+        if (delivery || pickUp || dineIn) {
+            setDeliveryMethod(true)
+        } else {
+            setDeliveryMethod(false)
+        }
+    }, [dineIn, delivery, pickUp])
+
+
 
 
     return (
@@ -44,20 +54,29 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
 
                 <p className="mb-4">{products?.length > 0 ? products : "Products offered"}</p>
 
-                {description?.length > 0 ? <p className={`mb-4 ${showFullDescription ? '' : 'line-clamp-4'}`}>
-                    {showFullDescription ? description : truncatedDescription}
-                    {shouldShowSeeMoreButton && (
-                        <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
-                            {showFullDescription ? 'See Less' : 'See More'}
-                        </button>
-                    )}
-                </p>
+                {description?.length > 0 ? (
+                    <p className={`mb-4 ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                        {showFullDescription ? (
+                            <span dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
+                        ) : (
+                            <span dangerouslySetInnerHTML={{ __html: truncatedDescription.replace(/\n/g, '<br>') }} />
+                        )}
+                        {shouldShowSeeMoreButton && (
+                            <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
+                                {showFullDescription ? 'See Less' : 'See More'}
+                            </button>
+                        )}
+                    </p>
+                ) : <p className="mb-4">Description of your business</p>}
 
-                    : <p className="mb-4">Description of your business</p>}
 
                 <p className=" mb-4 italic">{openingHours?.length > 0 ? openingHours : "Opening Hours"}</p>
-                <p >Delivery methods</p>
-                <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+                {!deliveryMethod ? <p >Delivery methods</p>
+                    :
+                    <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+                }
+
+
                 <div className="card-actions mt-5">
                     <div>
                         <label>Contact: </label>
