@@ -241,7 +241,7 @@ export default function MemberRegister() {
                             />
                         </div> */}
                         <LocationSearch />
-                        <div className="flex flex-col w-1/2">
+                        <div className="flex flex-col w-1/2 mt-4">
                             <label>Post Code</label>
                             <input
                                 type="text"

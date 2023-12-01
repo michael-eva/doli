@@ -1,15 +1,55 @@
-import listings from "../data/listings.json";
 import { Card } from "../components/Card";
 import businessType from "../data/businessTypes.json"
 import LocationSearch from "../components/LocationSearch";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import supabase from "../config/supabaseClient";
+type CardProps = {
+    postId: string,
+    imgUrl: string | null,
+    name: string,
+    suburb: string,
+    state: string,
+    postcode: string,
+    address: string,
+    type: string,
+    selectedTags: string[],
+    description: string,
+    openingHours: string,
+    pickUp: boolean,
+    delivery: boolean,
+    dineIn: boolean,
+    contact: string,
+    website: string,
+}
 export default function Home() {
     const [isChecked, setIsChecked] = useState(false)
+    const [posts, setPosts] = useState<CardProps[]>([])
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
+
+    useEffect(() => {
+        const getPosts = async () => {
+            const { error, data } = await supabase
+                .from("posts")
+                .select("*")
+
+            if (error) {
+                return console.error(error);
+            }
+            const parsedData = data.map((post) => ({
+                ...post,
+                selectedTags: JSON.parse(post.selectedTags),
+            }));
+
+            setPosts(parsedData);
+        }
+        getPosts()
+    }, [])
+
+    console.log(posts);
+
 
     return (
         <>
@@ -66,9 +106,9 @@ export default function Home() {
                     </div>
                 </div >
                 <div className="flex flex-wrap justify-between h-full">
-                    {listings.map((item) => {
+                    {posts.map((item: CardProps) => {
                         return (
-                            <div key={item.id} className="mt-10">
+                            <div key={item.postId} className="mt-10">
                                 <Card {...item} />
                             </div>
                         );

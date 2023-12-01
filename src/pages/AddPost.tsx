@@ -81,6 +81,8 @@ export default function AddPost() {
         }
     };
 
+
+
     const handleFormSubmit = async (formData: FormData) => {
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -88,7 +90,7 @@ export default function AddPost() {
         }
         try {
             const postId = nanoid()
-            const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id });
+            const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags });
             if (insertError) {
                 console.error('Error inserting post:', insertError);
                 return;
@@ -108,7 +110,8 @@ export default function AddPost() {
                 const { error: updateError } = await supabase
                     .from('posts')
                     .update({ imgUrl: imageUrl })
-                    .eq('id', user?.id);
+                    .eq('id', user?.id)
+                    .eq('postId', postId);
 
                 if (updateError) {
                     console.error('Error updating imgUrl:', updateError);
@@ -123,7 +126,12 @@ export default function AddPost() {
         }
         setDeliveryMethodError(false)
 
+
+
     }
+    // console.log(typeof (selectedTags));
+    // console.log(typeof (watch().selectedTags));
+
 
     return (
         <div className="flex justify-center">
