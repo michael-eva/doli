@@ -4,6 +4,7 @@ import LocationSearch from "../components/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 type CardProps = {
+    id: string,
     postId: string,
     imgUrl: string | null,
     name: string,
@@ -30,26 +31,33 @@ export default function Home() {
     }
 
     useEffect(() => {
-        const getPosts = async () => {
-            const { error, data } = await supabase
-                .from("posts")
-                .select("*")
-
-            if (error) {
-                return console.error(error);
-            }
-            const parsedData = data.map((post) => ({
-                ...post,
-                selectedTags: JSON.parse(post.selectedTags),
-            }));
-
-            setPosts(parsedData);
-        }
         getPosts()
     }, [])
+    const getPosts = async () => {
+        const { error, data } = await supabase
+            .from("posts")
+            .select("*")
 
-    console.log(posts);
+        if (error) {
+            return console.error(error);
+        }
+        const parsedData = data.map((post) => ({
+            ...post,
+            selectedTags: JSON.parse(post.selectedTags),
+        }));
 
+        setPosts(parsedData);
+    }
+    const deletePost = async (postId: string) => {
+        const { error } = await supabase
+            .from("posts")
+            .delete()
+            .eq('postId', postId)
+        if (error) {
+            console.error(error);
+        }
+        getPosts()
+    }
 
     return (
         <>
@@ -109,7 +117,7 @@ export default function Home() {
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
-                                <Card {...item} />
+                                <Card {...item} onDelete={deletePost} />
                             </div>
                         );
                     })}

@@ -22,16 +22,14 @@ export default function NavBar() {
             console.error('Error:', error.message);
         }
     };
-
     function postListingEl() {
 
         if (user) {
-            return <NavLink to='/business-register'>Post a Listing</NavLink>;
+            return <NavLink to='/post-listing'>Post a Listing</NavLink>;
         } else {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
         }
     }
-
     function specialsEl() {
         if (user) {
             return <NavLink to='/specials'>Specials</NavLink>;
@@ -39,7 +37,19 @@ export default function NavBar() {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view specials' } })}>Specials</button>;
         }
     }
-
+    function profileEl() {
+        return (
+            <div className="dropdown dropdown-end dropdown-hover">
+                <div tabIndex={0} role="button" className="text-xl">Profile</div>
+                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a>Update Details</a></li>
+                    <li><a>Manage Listings</a></li>
+                    <div className="divider" style={{ margin: '0' }}></div>
+                    <li><a onClick={handleLogout}>Logout</a></li>
+                </ul>
+            </div>
+        )
+    }
 
 
 
@@ -52,20 +62,17 @@ export default function NavBar() {
                 <ul className="menu menu-horizontal px-1 ">
                     <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
                     <li className="text-xl">{postListingEl()}</li>
-                    {/* {!session ? <li className="text-xl"><NavLink to='/member-register'>Become a Member</NavLink></li>
-                        : <li className="text-xl"><NavLink to='/manage-listings'>Manage Listings</NavLink></li>
-                    } */}
                     <li className="text-xl">{specialsEl()}</li>
                 </ul>
             </div>
             <div className="navbar-end">
-                <ul className="menu menu-horizontal ">
+                <div className="menu menu-horizontal ">
                     {user ?
-                        <li className="text-xl"><button onClick={handleLogout}>Logout</button></li>
+                        <div className="text-xl mr-5">{profileEl()}</div>
                         :
-                        <li className="text-xl"><NavLink to='/login'>Login / Signup</NavLink></li>
+                        <div className="text-xl mr-5"><NavLink to='/login'>Login / Signup</NavLink></div>
                     }
-                </ul>
+                </div>
 
             </div>
             <Toaster />

@@ -9,6 +9,7 @@ import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
 import AddPost from "./pages/AddPost"
+import AuthRequired from "./Auth/AuthRequired"
 
 
 function App() {
@@ -18,10 +19,12 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="business-register" element={<AddPost />} />
+        <Route element={<AuthRequired />}>
+          <Route path="post-listing" element={<AddPost />} />
+          <Route path="manage-listings" element={<ManageListings />} />
+        </Route>
         <Route path="member-register" element={<MemberRegister />} />
         <Route path="login" element={<Login />} />
-        <Route path="manage-listings" element={<ManageListings />} />
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
       </Routes>

@@ -6,6 +6,8 @@ import businessType from "../data/businessTypes.json"
 import { useForm } from "react-hook-form"
 import supabase from "../config/supabaseClient.ts";
 import { PreviewCard } from "../components/PreviewCard.tsx";
+import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 type imgPath = {
     path: string
@@ -32,13 +34,16 @@ type FormData = {
 }
 
 export default function AddPost() {
-    const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm();
+    const navigate = useNavigate()
+    const { register, handleSubmit, watch, formState: { errors }, setValue, reset } = useForm();
     const user = useUser();
     const [selectedFile, setSelectedFile] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>("");
     const [isChecked, setIsChecked] = useState<boolean>(true)
+    const MAX_FILE_SIZE_IN_BYTES = 300000;
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -46,25 +51,34 @@ export default function AddPost() {
     const CDNUrl = (imgPath: imgPath) => {
         return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
     }
+    const formCleanup = () => {
+        setDeliveryMethodError(false)
+        setIsSubmitting(false)
+        setSelectedTags([])
+        reset()
+        toast.success("Listing posted successfully!")
+        setTimeout(() => {
+            navigate("/");
+        }, 1000);
+    }
     const handleTagChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
         const isOptionSelected = selectedTags.includes(selectedOptions[0]);
 
         setSelectedTags((prev) => {
             if (isOptionSelected) {
-                // Remove the tag from selectedTags state
                 const updatedTags = prev.filter((tag) => tag !== selectedOptions[0]);
-                setValue('selectedTags', updatedTags); // Update the form state
+                setValue('selectedTags', updatedTags);
                 return updatedTags;
             }
             if (prev.length + selectedOptions.length <= 5) {
                 const updatedTags = [...prev, ...selectedOptions];
-                setValue('selectedTags', updatedTags); // Update the form state
+                setValue('selectedTags', updatedTags);
                 return updatedTags;
             } else {
                 const remainingSlots = 5 - prev.length;
                 const updatedTags = [...prev, ...selectedOptions.slice(0, remainingSlots)];
-                setValue('selectedTags', updatedTags); // Update the form state
+                setValue('selectedTags', updatedTags);
                 return updatedTags;
             }
         });
@@ -84,6 +98,7 @@ export default function AddPost() {
 
 
     const handleFormSubmit = async (formData: FormData) => {
+        setIsSubmitting(true)
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
@@ -117,22 +132,12 @@ export default function AddPost() {
                     console.error('Error updating imgUrl:', updateError);
                     return;
                 }
-
-                console.log('Image uploaded and imgUrl updated successfully:', imageUrl);
             }
-
         } catch (error) {
             console.error('Error handling submit:', error);
         }
-        setDeliveryMethodError(false)
-
-
-
+        formCleanup()
     }
-    // console.log(typeof (selectedTags));
-    // console.log(typeof (watch().selectedTags));
-
-
     return (
         <div className="flex justify-center">
             <div>
@@ -160,7 +165,7 @@ export default function AddPost() {
                             >
                                 <option value="" selected disabled>Select Type</option>
                                 {businessType.map(item => (
-                                    <option key={nanoid()}>{item}</option>
+                                    <option key={item}>{item}</option>
                                 ))}
                             </select>
                         </div>
@@ -253,7 +258,7 @@ export default function AddPost() {
                         </div>
                         <div className="flex mt-7 gap-4">
                             <div className="flex flex-col w-1/2">
-                                <label>Website (optional)</label>
+                                <label>Website (recommended)</label>
                                 <input
                                     type="text"
                                     className="input input-bordered "
@@ -261,7 +266,7 @@ export default function AddPost() {
                                 />
                             </div>
                             <div className="flex flex-col w-1/2">
-                                <label>Contact Number (optional)</label>
+                                <label>Contact Number (recommended)</label>
                                 <input
                                     type="text"
                                     className="input input-bordered "
@@ -271,12 +276,20 @@ export default function AddPost() {
                         </div>
                         <div className="cover-photo">
                             <h2 className="mt-7">Add Cover Photo</h2>
+                            <p className=" text-xs"> Max image size of 300KB</p>
                             {errors.imgUrl && <p className=" text-red-600">*{errors.imgUrl.message?.toString()}</p>}
                             <input
                                 type="file"
                                 className="file-input file-input-bordered w-full"
-                                {...register("imgUrl", { required: "Cover photo is required" })}
+                                {...register("imgUrl", {
+                                    required: "Cover photo is required",
+                                    validate: {
+                                        maxSize: (value) =>
+                                            !value || value[0].size <= MAX_FILE_SIZE_IN_BYTES || 'File size exceeds the limit of 300KB',
+                                    },
+                                })}
                                 onChange={handleFileChange}
+                                accept="image/*"
                             />
                         </div>
                         <div className="divider"></div>
@@ -317,7 +330,10 @@ export default function AddPost() {
                             </div>
                         </div>
                         <div className=" flex gap-2 mt-7">
-                            <button className="btn btn-primary w-full">Submit</button>
+                            {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                                :
+                                <button className="btn btn-primary w-full">Submit</button>
+                            }
                         </div>
                     </div>
                 </form >
@@ -340,7 +356,7 @@ export default function AddPost() {
                                 }`}
                         ></span>
                     </span>
-                    <span className='label flex items-center text-sm font-medium text-black'>
+                    <span className='label flex items-center text-sm font-medium'>
                         Show Preview
                     </span>
                 </label>
@@ -366,6 +382,7 @@ export default function AddPost() {
                     </div>
                 )}
             </div>
+            <Toaster />
         </div >
     )
 }
