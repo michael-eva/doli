@@ -2,6 +2,10 @@ import { NavLink, useNavigate } from "react-router-dom"
 import supabase from "../config/supabaseClient";
 import { Toaster, toast } from "react-hot-toast"
 import { useUser } from "@supabase/auth-helpers-react";
+import { IoIosLogOut } from "react-icons/io";
+import { RxAvatar } from "react-icons/rx";
+
+
 
 
 export default function NavBar() {
@@ -40,12 +44,17 @@ export default function NavBar() {
     function profileEl() {
         return (
             <div className="dropdown dropdown-end dropdown-hover">
-                <div tabIndex={0} role="button" className="text-xl">Profile</div>
+                <div tabIndex={0} role="button" className="text-xl">
+                    <div className="flex items-center gap-2">
+                        <p>Profile</p>
+                        <RxAvatar />
+                    </div>
+                </div>
                 <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a>Update Details</a></li>
                     <li><a>Manage Listings</a></li>
                     <div className="divider" style={{ margin: '0' }}></div>
-                    <li><a onClick={handleLogout}>Logout</a></li>
+                    <li className=" text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>
                 </ul>
             </div>
         )

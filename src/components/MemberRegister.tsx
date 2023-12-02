@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import months from "../data/months.json"
 import { nanoid } from "nanoid"
 import supabase from "../config/supabaseClient"
 import { Link } from "react-router-dom"
 import LocationSearch from "./LocationSearch"
+import { useUser } from "@supabase/auth-helpers-react"
 
 type FormData = {
     firstName: string,
@@ -32,7 +33,12 @@ export default function MemberRegister() {
     const [emailError, setEmailError] = useState<string>("")
     const [passwordError, setPasswordError] = useState<string>("")
     const [formData, setFormData] = useState<FormData>(initialFormState)
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const user = useUser()
+
+    console.log(user);
     const signUpAndInsertData = async () => {
+        setIsSubmitting(true)
         try {
             const signUpResponse = await supabase.auth.signUp({
                 email: formData.email,
@@ -70,6 +76,7 @@ export default function MemberRegister() {
         } catch (error: any) {
             console.error('Error:', error.message);
         }
+        setIsSubmitting(false)
     };
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -113,15 +120,60 @@ export default function MemberRegister() {
                 );
         }
     };
-
-
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+    const getMembers = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("members")
+                .select("*")
+                .eq('id', user?.id);
 
+            if (error) {
+                return console.error(error);
+            }
+
+            if (data && data.length > 0) {
+                const memberData = data[0]; // Assuming you're fetching a single member
+
+                // Extract the specific fields you want from the member data
+                const {
+                    firstName,
+                    lastName,
+                    email,
+                    birthMonth,
+                    birthYear,
+                    suburb,
+                    postcode,
+                } = memberData;
+
+                // Update the form state with the extracted fields
+                setFormData({
+                    ...formData,
+                    firstName: firstName || "",
+                    lastName: lastName || "",
+                    email: email || "",
+                    birthMonth: birthMonth || "",
+                    birthYear: birthYear || "",
+                    suburb: suburb || "",
+                    postcode: postcode || "",
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (user?.id) {
+            getMembers();
+        }
+    }, [user?.id]);
+    console.log(formData);
 
     return (
         <>
@@ -157,7 +209,7 @@ export default function MemberRegister() {
                             />
                         </div>
                     </div>
-                    <div className=" flex flex-col mt-7 mb-7">
+                    <div className=" flex flex-col mt-7">
                         {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
                         <label>Email</label>
                         <input
@@ -170,7 +222,7 @@ export default function MemberRegister() {
                         />
                     </div>
                     {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
-                    <div className="container flex gap-3 ">
+                    {!user && <div className="container flex gap-3 mt-7">
                         <div className="flex flex-col w-1/2">
                             <label>Password</label>
                             <input
@@ -193,7 +245,7 @@ export default function MemberRegister() {
                                 value={formData.confirmPassword}
                             />
                         </div>
-                    </div>
+                    </div>}
 
                     <div className="container flex gap-3 mt-7">
                         <div className="flex flex-col w-1/2">
@@ -228,8 +280,8 @@ export default function MemberRegister() {
                             </select>
                         </div>
                     </div>
-                    <div className="container flex gap-3 mt-7">
-                        {/* <div className="flex flex-col w-1/2">
+                    <div className=" flex gap-3 mt-7 w-full">
+                        <div className="flex flex-col w-1/2 mt-4">
                             <label>Suburb</label>
                             <input
                                 type="text"
@@ -239,8 +291,7 @@ export default function MemberRegister() {
                                 required
                                 value={formData.suburb}
                             />
-                        </div> */}
-                        <LocationSearch />
+                        </div>
                         <div className="flex flex-col w-1/2 mt-4">
                             <label>Post Code</label>
                             <input
@@ -253,23 +304,12 @@ export default function MemberRegister() {
                             />
                         </div>
                     </div>
-                    <button className="btn btn-primary mt-7" onClick={handleSubmit}>Submit</button>
-                    <dialog id="my_modal_1" className="modal">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-lg">Welcome, you are the newest doli member!</h3>
-                            <p className="py-4">Click "Post Listing" to post a listing, or "View Listings" to view listings.</p>
-                            <div className="modal-action">
-                                <form method="dialog">
-                                    <div className=" flex gap-3">
-                                        <Link to="/business-register" className="btn">Post Listing</Link>
-                                        <Link to="/" className="btn">View Listings</Link>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </dialog>
+                    {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                        :
+                        <button className="btn btn-primary mt-7 w-full">Submit</button>
+                    }
 
-                    <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>
+                    {!user && <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
                 </div>
             </form>
         </>
