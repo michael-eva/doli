@@ -23,7 +23,7 @@ type CardProps = {
     website: string,
 }
 export default function Home() {
-    const [isChecked, setIsChecked] = useState(false)
+    const [isChecked, setIsChecked] = useState(true)
     const [posts, setPosts] = useState<CardProps[]>([])
 
     const handleCheckboxChange = () => {

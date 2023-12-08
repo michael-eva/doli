@@ -10,7 +10,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <SessionContextProvider supabaseClient={supabase}>
       <BrowserRouter>
+        {/* <div style={{ backgroundColor: "#d8d8d4" }}> */}
         <App />
+        {/* </div> */}
       </BrowserRouter>
     </SessionContextProvider>
   </React.StrictMode>,

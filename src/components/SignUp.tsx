@@ -2,13 +2,15 @@ import { ChangeEvent, useEffect, useState } from "react"
 import months from "../data/months.json"
 import { nanoid } from "nanoid"
 import supabase from "../config/supabaseClient"
-import { Link } from "react-router-dom"
-import LocationSearch from "./LocationSearch"
+import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "@supabase/auth-helpers-react"
+import toast, { Toaster } from "react-hot-toast"
+import { FaInfoCircle } from "react-icons/fa";
+import Modal from "./Modal"
 
 type FormData = {
-    firstName: string,
-    lastName: string,
+    username: string,
+    gender: string,
     email: string,
     password: string,
     confirmPassword: string,
@@ -18,8 +20,8 @@ type FormData = {
     postcode: string
 }
 const initialFormState = {
-    firstName: "",
-    lastName: "",
+    username: "",
+    gender: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,12 +31,13 @@ const initialFormState = {
     postcode: "",
 };
 
-export default function MemberRegister() {
+export default function SignUp() {
     const [emailError, setEmailError] = useState<string>("")
     const [passwordError, setPasswordError] = useState<string>("")
     const [formData, setFormData] = useState<FormData>(initialFormState)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const user = useUser()
+    const navigate = useNavigate()
 
     console.log(user);
     const signUpAndInsertData = async () => {
@@ -78,6 +81,31 @@ export default function MemberRegister() {
         }
         setIsSubmitting(false)
     };
+
+    const handleUpdateDetailsSubmit = async (e: any) => {
+        setIsSubmitting(true)
+        e.preventDefault()
+
+        const { error } = await supabase
+            .from("members")
+            .update({
+                username: formData.username,
+                gender: formData.gender,
+                email: formData.email,
+                birthMonth: formData.birthMonth,
+                birthYear: formData.birthYear,
+                suburb: formData.suburb,
+                postcode: formData.postcode,
+            })
+            .eq('id', user?.id)
+        if (error) {
+            console.error(error);
+        }
+        setIsSubmitting(false)
+        toast.success("Details updated successfully")
+        navigate("/")
+
+    }
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         if (formData.password != formData.confirmPassword) {
@@ -92,8 +120,8 @@ export default function MemberRegister() {
                 .from("members")
                 .insert({
                     id: sessionData.user.id,
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
+                    username: formData.username,
+                    gender: formData.gender,
                     email: formData.email,
                     birthMonth: formData.birthMonth,
                     birthYear: formData.birthYear,
@@ -102,24 +130,20 @@ export default function MemberRegister() {
                 })
                 .single()
                 .then(
-                    ({ data, error }) => {
+                    ({ error }) => {
                         if (error) {
                             console.log(error);
-                        } else {
-                            console.log(data);
-                            const modalElement = document.getElementById('my_modal_1') as HTMLDialogElement;
-                            modalElement.showModal();
                         }
                         setFormData(initialFormState);
                         setPasswordError("")
                         setEmailError("");
                     },
-                    (err: any) => {
-                        console.log(err);
-                    }
-                );
+                )
         }
+        toast.success("Signed up successfully")
+        navigate("/")
     };
+
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
@@ -142,8 +166,8 @@ export default function MemberRegister() {
 
                 // Extract the specific fields you want from the member data
                 const {
-                    firstName,
-                    lastName,
+                    username,
+                    gender,
                     email,
                     birthMonth,
                     birthYear,
@@ -154,8 +178,8 @@ export default function MemberRegister() {
                 // Update the form state with the extracted fields
                 setFormData({
                     ...formData,
-                    firstName: firstName || "",
-                    lastName: lastName || "",
+                    username: username || "",
+                    gender: gender || "",
                     email: email || "",
                     birthMonth: birthMonth || "",
                     birthYear: birthYear || "",
@@ -163,9 +187,10 @@ export default function MemberRegister() {
                     postcode: postcode || "",
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error:', error.message);
         }
+
     };
 
     useEffect(() => {
@@ -173,54 +198,53 @@ export default function MemberRegister() {
             getMembers();
         }
     }, [user?.id]);
+
+    const getSubmitFunction = () => {
+        if (user) {
+            return handleUpdateDetailsSubmit
+        } else {
+            return handleSubmit
+        }
+    }
     console.log(formData);
+
 
     return (
         <>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={getSubmitFunction()}>
                 <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
                     <div className="mb-6">
                         <h3 className=" text-xl font-semibold mb-3">
-                            Please enter your details:
+                            {!user ? `Please enter your details:` : `Update user details:`}
                         </h3>
-                        <p className=" text-red-600 italic">Enter description on what it means to be a member</p>
+                        {!user && <p className=" text-red-600 italic">Enter description on what it means to be a member</p>}
                     </div>
-                    <div className="container flex gap-3">
+                    <div className=" flex mt-7 items-center gap-3">
                         <div className="flex flex-col w-1/2">
-                            <label>First Name</label>
+                            <label>Username</label>
                             <input
                                 type="text"
                                 className="input input-bordered"
-                                name="firstName"
+                                name="username"
                                 onChange={handleChange}
                                 required
-                                value={formData.firstName}
+                                value={formData.username}
                             />
                         </div>
+                        {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
                         <div className="flex flex-col w-1/2">
-                            <label>Last Name</label>
+                            <label>Email</label>
                             <input
                                 type="text"
                                 className="input input-bordered "
-                                name="lastName"
+                                name="email"
                                 onChange={handleChange}
                                 required
-                                value={formData.lastName}
+                                value={formData.email}
                             />
                         </div>
                     </div>
-                    <div className=" flex flex-col mt-7">
-                        {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
-                        <label>Email</label>
-                        <input
-                            type="text"
-                            className="input input-bordered "
-                            name="email"
-                            onChange={handleChange}
-                            required
-                            value={formData.email}
-                        />
-                    </div>
+
                     {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
                     {!user && <div className="container flex gap-3 mt-7">
                         <div className="flex flex-col w-1/2">
@@ -246,7 +270,6 @@ export default function MemberRegister() {
                             />
                         </div>
                     </div>}
-
                     <div className="container flex gap-3 mt-7">
                         <div className="flex flex-col w-1/2">
                             <label>Birth Month</label>
@@ -278,6 +301,50 @@ export default function MemberRegister() {
                                     <option value={year} key={year}>{year}</option>
                                 ))}
                             </select>
+                        </div>
+
+                    </div>
+                    <div className="container flex gap-3 mt-7">
+
+                        <div className="flex flex-col w-1/2">
+                            <label>Gender</label>
+                            <select
+                                className="select select-bordered w-full max-w-xs"
+                                name="gender"
+                                onChange={handleChange}
+                                value={formData.gender}
+                                required
+                            >
+                                <option value="" disabled selected>- Select Year -</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-1/2">
+                            <div className="flex justify-between">
+                                <label>
+                                    Country
+                                </label>
+                                <button onClick={() => document.getElementById('my_modal_2').showModal()}><FaInfoCircle /></button>
+                                <dialog id="my_modal_2" className="modal">
+                                    <div className="modal-box">
+                                        <h3 className="font-bold text-lg">doli</h3>
+                                        <p className="py-4">Limited to Australia for the time being.</p>
+                                    </div>
+                                    <form method="dialog" className="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            </div>
+                            <input
+                                type="text"
+                                className="input input-bordered "
+                                name="country"
+                                value="Australia"
+                                disabled
+                            />
                         </div>
                     </div>
                     <div className=" flex gap-3 mt-7 w-full">
@@ -312,6 +379,7 @@ export default function MemberRegister() {
                     {!user && <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
                 </div>
             </form>
+            <Toaster />
         </>
     )
 }

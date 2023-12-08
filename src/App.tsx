@@ -1,6 +1,5 @@
 
-import MemberRegister from "./components/MemberRegister"
-import BusinessRegister from "./pages/BusinessRegister"
+import SignUp from "./components/SignUp"
 import NavBar from "./components/NavBar"
 import { Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
@@ -10,6 +9,7 @@ import About from "./pages/About"
 import Specials from "./pages/Specials"
 import AddPost from "./pages/AddPost"
 import AuthRequired from "./Auth/AuthRequired"
+import ResetPassword from "./components/ResetPassword"
 
 
 function App() {
@@ -22,11 +22,13 @@ function App() {
         <Route element={<AuthRequired />}>
           <Route path="post-listing" element={<AddPost />} />
           <Route path="manage-listings" element={<ManageListings />} />
+          <Route path="update-details" element={<SignUp />} />
         </Route>
-        <Route path="member-register" element={<MemberRegister />} />
+        <Route path="member-register" element={<SignUp />} />
         <Route path="login" element={<Login />} />
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
+        < Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   )
