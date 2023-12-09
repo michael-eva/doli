@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
-import { FaExclamationTriangle } from "react-icons/fa";
 import { Rating } from 'flowbite-react';
+import SimpleModal from "./Modals/SimpleModal";
+import DeleteModal from "./Modals/DeleteModal";
+import Toggle from "./Toggle/Toggle";
+import ToggleOn from "./Toggle/ToggleOn";
+import ToggleButton from "./Toggle/ToggleButton";
 
 
 type CardProps = {
@@ -32,7 +36,6 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
 
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
-
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -101,38 +104,25 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
             </div>
             {
                 user?.id === id ? <div className="flex items-center justify-around bg-gray-100">
-                    <button className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Edit</button>
-                    <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Delete</button>
-                    <dialog id="my_modal_2" className="modal">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-lg">Hello!</h3>
-                            <p className="py-4">These buttons are still under construction</p>
-                        </div>
-                        <form method="dialog" className="modal-backdrop">
-                            <button>close</button>
-                        </form>
-                    </dialog>
-                    <dialog id="my_modal_1" className="modal">
-                        <div className="modal-box">
-                            <div className="flex items-center gap-2 ">
-                                <div style={{ backgroundColor: 'pink', width: '30px', height: '30px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <FaExclamationTriangle style={{ color: 'red', fontSize: '18px' }} />
-                                </div>
-                                <h3 className="font-bold text-lg"> Delete Post</h3>
-                            </div>
-                            <p className="py-4">Are you sure you want to delete this listing? </p>
-                            <div className="modal-action">
-                                <form method="dialog">
-                                    <div className="flex gap-2">
-                                        <button className="btn">Cancel</button>
-                                        <button className="btn btn-error" onClick={() => onDelete(postId)}>Delete</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </dialog>
+                    {/* <button className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white" onClick={openModal}>Edit</button> */}
+                    {/* <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white" onClick={openModal}>Delete</button> */}
+                    {/* {isModalOpen && <SimpleModal closeModal={closeModal} title="Hello!"> This button is still under construction.</SimpleModal>} */}
+                    {/* {isModalOpen && <DeleteModal closeModal={closeModal} clickFunction={onDelete} id={postId} btnText="Delete" title="Delete Post"> Are you sure you want to delete this listing? </DeleteModal>} */}
+                    <Toggle>
+                        <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">Edit</ToggleButton>
+                        <ToggleOn>
+                            <SimpleModal title="doli">This button is still under construction.</SimpleModal >
+                        </ToggleOn>
+                    </Toggle>
+
+                    <Toggle>
+                        <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Delete</ToggleButton>
+                        <ToggleOn>
+                            <DeleteModal title="Delete Post" btnText="Delete" clickFunction={onDelete} id={postId}>Are you sure you want to delete this listing? </DeleteModal>
+                        </ToggleOn>
+                    </Toggle>
                 </div> : null
             }
-        </div >
+        </div>
     )
 }

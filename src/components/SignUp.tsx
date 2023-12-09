@@ -6,7 +6,11 @@ import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "@supabase/auth-helpers-react"
 import toast, { Toaster } from "react-hot-toast"
 import { FaInfoCircle } from "react-icons/fa";
-import Modal from "./Modal"
+import SimpleModal from "./Modals/SimpleModal"
+import Toggle from "./Toggle/Toggle"
+import ToggleOn from "./Toggle/ToggleOn"
+import ToggleButton from "./Toggle/ToggleButton"
+
 
 type FormData = {
     username: string,
@@ -38,6 +42,7 @@ export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const user = useUser()
     const navigate = useNavigate()
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     console.log(user);
     const signUpAndInsertData = async () => {
@@ -206,8 +211,14 @@ export default function SignUp() {
             return handleSubmit
         }
     }
-    console.log(formData);
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     return (
         <>
@@ -324,19 +335,13 @@ export default function SignUp() {
                         </div>
                         <div className="flex flex-col w-1/2">
                             <div className="flex justify-between">
-                                <label>
-                                    Country
-                                </label>
-                                <button onClick={() => document.getElementById('my_modal_2').showModal()}><FaInfoCircle /></button>
-                                <dialog id="my_modal_2" className="modal">
-                                    <div className="modal-box">
-                                        <h3 className="font-bold text-lg">doli</h3>
-                                        <p className="py-4">Limited to Australia for the time being.</p>
-                                    </div>
-                                    <form method="dialog" className="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
+                                <p>Country</p>
+                                <Toggle>
+                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                    <ToggleOn>
+                                        <SimpleModal title="doli" >Limited to Australia for the time being.</SimpleModal>
+                                    </ToggleOn>
+                                </Toggle>
                             </div>
                             <input
                                 type="text"
