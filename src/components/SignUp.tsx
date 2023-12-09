@@ -42,9 +42,7 @@ export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const user = useUser()
     const navigate = useNavigate()
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    console.log(user);
     const signUpAndInsertData = async () => {
         setIsSubmitting(true)
         try {
@@ -211,14 +209,6 @@ export default function SignUp() {
             return handleSubmit
         }
     }
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
 
     return (
         <>

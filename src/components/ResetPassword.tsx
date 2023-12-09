@@ -3,7 +3,6 @@ import supabase from "../config/supabaseClient";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-// import { useUser } from "@supabase/auth-helpers-react";
 
 type FormType = {
     id: string,
@@ -14,8 +13,6 @@ function ResetPassword() {
     const { register, handleSubmit, formState: { errors }, setError, reset } = useForm()
     const navigate = useNavigate()
     const [isSubmitting, setIsSubmitting] = useState<boolean>()
-    // const user = useUser()
-    // console.log(user);
 
     async function onSubmit(formData: FormType) {
         console.log(formData);

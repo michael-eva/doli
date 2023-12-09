@@ -104,10 +104,6 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
             </div>
             {
                 user?.id === id ? <div className="flex items-center justify-around bg-gray-100">
-                    {/* <button className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white" onClick={openModal}>Edit</button> */}
-                    {/* <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white" onClick={openModal}>Delete</button> */}
-                    {/* {isModalOpen && <SimpleModal closeModal={closeModal} title="Hello!"> This button is still under construction.</SimpleModal>} */}
-                    {/* {isModalOpen && <DeleteModal closeModal={closeModal} clickFunction={onDelete} id={postId} btnText="Delete" title="Delete Post"> Are you sure you want to delete this listing? </DeleteModal>} */}
                     <Toggle>
                         <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">Edit</ToggleButton>
                         <ToggleOn>
