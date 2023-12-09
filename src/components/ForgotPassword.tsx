@@ -45,7 +45,7 @@ export default function ForgotPassword() {
         if (isMember) {
             setIsRecoverySubmitting(true)
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: "https://doli-app.netlify.app/reset-password" })
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: "**--https://doli-app.netlify.app/reset-password" })
                 if (error) throw error
                 setSuccess(true)
             } catch (error) {
