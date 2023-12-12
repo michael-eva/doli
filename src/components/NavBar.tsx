@@ -5,6 +5,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { IoIosLogOut } from "react-icons/io";
 import { RxAvatar } from "react-icons/rx";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 
 
@@ -14,6 +15,8 @@ export default function NavBar() {
     const user = useUser()
     const location = useLocation()
     const isResetPasswordPage = location.pathname === '/reset-password'
+    const [isJod, setIsJod] = useState<boolean | null>(null)
+
 
     const handleLogout = async () => {
         try {
@@ -64,7 +67,10 @@ export default function NavBar() {
                     </div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li><NavLink to={'update-details'}>Update Details</NavLink></li>
-                            <li><a>Manage Listings</a></li>
+                            <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
+
+                            {isJod && <li><NavLink to={'validate-updates'}>Validate Updates</NavLink></li>
+                            }
                             <div className="divider" style={{ margin: '0' }}></div>
                             <li className=" text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>
                         </ul>
@@ -73,8 +79,28 @@ export default function NavBar() {
             </div>
         )
     }
+    useEffect(() => {
+        const getMembers = async () => {
+            const { data, error } = await supabase
+                .from("members")
+                .select("*")
+                .eq('id', user?.id)
+                .eq('isJod', true) // Filter for 'isJod' property being true
 
-
+            if (error) {
+                return console.error("Error:", error);
+            }
+            if (data && data.length > 0) {
+                setIsJod(true);
+            }
+        }
+        if (user?.id) {
+            getMembers();
+        }
+        if (!user) {
+            setIsJod(false)
+        }
+    }, [user?.id]);
 
     return (
         <div className="navbar bg-base-100 shadow-md mb-10">

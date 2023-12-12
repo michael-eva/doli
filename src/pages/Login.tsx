@@ -29,11 +29,6 @@ export default function Login() {
     const [members, setMembers] = useState<Members[]>([])
     const [loginError, setLoginError] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-    // const [isRecoverySubmitting, setIsRecoverySubmitting] = useState<boolean>(false)
-    // const [email, setEmail] = useState<string>('')
-    // const [success, setSuccess] = useState<boolean>(false)
-    // const [resetPasswordEmail, setResetPasswordEmail] = useState<string>("")
-    // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { register, formState: { errors }, handleSubmit, reset } = useForm()
 
     useEffect(() => {
@@ -55,13 +50,11 @@ export default function Login() {
         }
         getUsers()
     }, [])
-    // console.log(members);
 
     async function handleFormSubmit(data: LoginData) {
         setLoginError("");
         setIsUser("");
         const existingUser = members.find(member => member.email === data.email);
-        console.log(existingUser);
 
         if (!existingUser) {
             setLoginError("An account with that email address doesn't exist");
@@ -90,41 +83,6 @@ export default function Login() {
         setLoginError("");
         setIsUser("");
     }
-    // const handleResetPassword = async (event: any) => {
-    //     event.preventDefault()
-    //     const isMember = members.some(member => member.email === email);
-    //     if (isMember) {
-    //         setIsRecoverySubmitting(true)
-    //         try {
-    //             const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: "https://doli-app.netlify.app/reset-password" })
-    //             if (error) throw error
-    //             setSuccess(true)
-    //         } catch (error) {
-    //             console.error('Error resetting password:', error)
-    //             setSuccess(false)
-    //         }
-    //     } else {
-    //         setResetPasswordEmail('No member with that email address exists');
-    //         setSuccess(false);
-    //         return
-    //     }
-    //     setResetPasswordEmail("")
-    //     setIsRecoverySubmitting(false)
-    // }
-    // const recoveryBtnEl = () => {
-    //     if (success) {
-    //         return null
-    //     } else {
-    //         return <button className="btn btn-primary mt-7 w-full" onClick={handleResetPassword}>Send recovery email</button>
-    //     }
-    // }
-    // const openModal = () => {
-    //     setIsModalOpen(true);
-    // };
-
-    // const closeModal = () => {
-    //     setIsModalOpen(false);
-    // };
 
     return (
         <div className="shadow-2xl max-w-xl px-24 pb-20 pt-12 m-auto mt-24 rounded-lg">

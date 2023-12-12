@@ -3,6 +3,7 @@ import businessType from "../data/businessTypes.json"
 import LocationSearch from "../components/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
+import { nanoid } from "nanoid";
 type CardProps = {
     id: string,
     postId: string,
@@ -37,6 +38,7 @@ export default function Home() {
         const { error, data } = await supabase
             .from("posts")
             .select("*")
+            .eq("isVerified", true)
 
         if (error) {
             return console.error(error);
@@ -93,7 +95,7 @@ export default function Home() {
                         <select name="type" className="select select-bordered">
                             <option value="" selected>All Types</option>
                             {businessType.map(item => (
-                                <option>{item}</option>
+                                <option key={nanoid()}>{item}</option>
                             ))}
 
                         </select>

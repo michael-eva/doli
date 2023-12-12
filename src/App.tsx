@@ -10,6 +10,10 @@ import Specials from "./pages/Specials"
 import AddPost from "./pages/AddPost"
 import AuthRequired from "./Auth/AuthRequired"
 import ResetPassword from "./components/ResetPassword"
+import Validation from "./Jod/Validation"
+import JodRequired from "./Jod/JodRequired"
+import NotFound from "./pages/NotFound"
+import EditPost from "./pages/EditPost"
 
 
 function App() {
@@ -23,12 +27,18 @@ function App() {
           <Route path="post-listing" element={<AddPost />} />
           <Route path="manage-listings" element={<ManageListings />} />
           <Route path="update-details" element={<SignUp />} />
+          <Route path="manage-listings" element={<ManageListings />} />
+          <Route path="edit-post/:postId" element={<EditPost />} />
+          <Route element={<JodRequired />} >
+            <Route path="validate-updates" element={<Validation />} />
+          </Route>
         </Route>
         <Route path="member-register" element={<SignUp />} />
         <Route path="login" element={<Login />} />
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
         < Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   )

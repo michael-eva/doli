@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react"
+import { useState, ChangeEvent, useEffect } from "react"
 import tags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import { nanoid } from "nanoid";
@@ -33,9 +33,9 @@ type FormData = {
     contact: string;
 }
 
-export default function AddPost() {
+export default function AddPost({ postData }) {
     const navigate = useNavigate()
-    const { register, handleSubmit, watch, formState: { errors }, setValue, reset } = useForm();
+    const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues } = useForm();
     const user = useUser();
     const [selectedFile, setSelectedFile] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -56,7 +56,7 @@ export default function AddPost() {
         setIsSubmitting(false)
         setSelectedTags([])
         reset()
-        toast.success("Listing posted successfully!")
+        toast.success("Listing will be submitted for verification!")
         setTimeout(() => {
             navigate("/");
         }, 1000);
@@ -82,7 +82,7 @@ export default function AddPost() {
                 return updatedTags;
             }
         });
-    };
+    }
     const handleFileChange = (e: any) => {
         const file = e.target.files[0];
         setSelectedFile(file);
@@ -93,19 +93,31 @@ export default function AddPost() {
             };
             fileReader.readAsDataURL(file);
         }
-    };
+    }
 
-
+    const insertOrUpdate = () => {
+        if (postData) {
+            return "update"
+        } else {
+            return "insert"
+        }
+    }
 
     const handleFormSubmit = async (formData: FormData) => {
         setIsSubmitting(true)
+
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
         try {
-            const postId = nanoid()
-            const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags });
+            const { data, error: insertError } = await supabase
+                .from('posts')
+                .update({ ...formData, selectedTags: selectedTags, isVerified: false });
+            // .eq('postId', postData.id);
+
+
+
             if (insertError) {
                 console.error('Error inserting post:', insertError);
                 return;
@@ -113,7 +125,7 @@ export default function AddPost() {
             if (selectedFile) {
                 const { data: imageData, error: imageError } = await supabase.storage
                     .from('cover_images')
-                    .upload(user?.id + '/' + postId, selectedFile);
+                    .upload(user?.id + '/' + postData.postId, selectedFile);
 
                 if (imageError) {
                     console.error('Error uploading image:', imageError);
@@ -126,7 +138,7 @@ export default function AddPost() {
                     .from('posts')
                     .update({ imgUrl: imageUrl })
                     .eq('id', user?.id)
-                    .eq('postId', postId);
+                    .eq('postId', postData.postId);
 
                 if (updateError) {
                     console.error('Error updating imgUrl:', updateError);
@@ -136,8 +148,82 @@ export default function AddPost() {
         } catch (error) {
             console.error('Error handling submit:', error);
         }
+
         formCleanup()
     }
+    // const handleFormSubmit = async (formData: FormData) => {
+    //     setIsSubmitting(true)
+
+    //     if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
+    //         setDeliveryMethodError(true)
+    //         return
+    //     }
+    //     try {
+    //         const postId = nanoid()
+    //         const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false })
+
+    //         if (insertError) {
+    //             console.error('Error inserting post:', insertError);
+    //             return;
+    //         }
+    //         if (selectedFile) {
+    //             const { data: imageData, error: imageError } = await supabase.storage
+    //                 .from('cover_images')
+    //                 .upload(user?.id + '/' + postId, selectedFile);
+
+    //             if (imageError) {
+    //                 console.error('Error uploading image:', imageError);
+    //                 return;
+    //             }
+
+    //             const imageUrl = CDNUrl(imageData);
+
+    //             const { error: updateError } = await supabase
+    //                 .from('posts')
+    //                 .update({ imgUrl: imageUrl })
+    //                 .eq('id', user?.id)
+    //                 .eq('postId', postId);
+
+    //             if (updateError) {
+    //                 console.error('Error updating imgUrl:', updateError);
+    //                 return;
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error handling submit:', error);
+    //     }
+    //     formCleanup()
+    // }
+
+    console.log(postData);
+
+    useEffect(() => {
+        if (postData) {
+            setValue('name', postData.name)
+            setValue('suburb', postData.suburb)
+            setValue('address', postData.address)
+            setValue('postcode', postData.postcode)
+            setValue('state', postData.state)
+            setValue('type', postData.type)
+            setValue('description', postData.description || null)
+            setValue('pickUp', postData.pickUp);
+            setValue('delivery', postData.delivery);
+            setValue('openingHours', postData.openingHours);
+            setValue('dineIn', postData.dineIn);
+            setValue('contact', postData.contact);
+            setValue('website', postData.website);
+            setValue('imgUrl', "postData.imgUrl")
+            setValue('selectedTags', postData.selectedTags)
+            setSelectedTags(postData.selectedTags)
+            setPreviewUrl(postData.imgUrl)
+        }
+    }, [postData]);
+
+    // const handleFileChange = (e) => {
+    //     const selectedFile = e.target.files[0]; // Access the first selected file
+    //     console.log(selectedFile); // Do something with the file data
+    // };
+
     return (
         <div className="flex justify-center">
             <div>
@@ -188,7 +274,6 @@ export default function AddPost() {
                                     <input
                                         {...register("pickUp")}
                                         type="checkbox"
-                                        checked={watch().pickUp || false}
                                         className="checkbox checkbox-xs mr-2 mt-1"
                                     />
                                     <label>Pick-Up</label>
@@ -197,7 +282,6 @@ export default function AddPost() {
                                     <input
                                         {...register("delivery")}
                                         type="checkbox"
-                                        checked={watch().delivery || false}
                                         className="checkbox checkbox-xs mr-2 mt-1"
                                     />
                                     <label>Delivery</label>
@@ -206,7 +290,6 @@ export default function AddPost() {
                                     <input
                                         {...register("dineIn")}
                                         type="checkbox"
-                                        checked={watch().dineIn || false}
                                         className="checkbox checkbox-xs mr-2 mt-1"
                                     />
                                     <label>Dine-In</label>
@@ -231,7 +314,6 @@ export default function AddPost() {
                                 {...register('selectedTags', { required: "Business tags are required" })}
                                 className="select select-bordered"
                                 onChange={handleTagChange}
-                                value={selectedTags}
                             >
                                 {tags.map((tag, index) => (
                                     <option key={index} value={tag}>
@@ -239,7 +321,7 @@ export default function AddPost() {
                                     </option>
                                 ))}
                             </select>
-                            {selectedTags.length > 0 && (
+                            {selectedTags?.length > 0 && (
                                 <div className="flex mt-5">
                                     <div className="mt-3">
                                         Selected options: {selectedTags.join(", ")}
@@ -274,7 +356,7 @@ export default function AddPost() {
                                 />
                             </div>
                         </div>
-                        <div className="cover-photo">
+                        {postData ? <div className="cover-photo">
                             <h2 className="mt-7">Add Cover Photo</h2>
                             <p className=" text-xs"> Max image size of 300KB</p>
                             {errors.imgUrl && <p className=" text-red-600">*{errors.imgUrl.message?.toString()}</p>}
@@ -291,7 +373,25 @@ export default function AddPost() {
                                 onChange={handleFileChange}
                                 accept="image/*"
                             />
-                        </div>
+                        </div> : null}
+                        {/* <div className="cover-photo">
+                            <h2 className="mt-7">Add Cover Photo</h2>
+                            <p className=" text-xs"> Max image size of 300KB</p>
+                            {errors.imgUrl && <p className=" text-red-600">*{errors.imgUrl.message?.toString()}</p>}
+                            <input
+                                type="file"
+                                className="file-input file-input-bordered w-full"
+                                {...register("imgUrl", {
+                                    required: "Cover photo is required",
+                                    validate: {
+                                        maxSize: (value) =>
+                                            !value || value[0].size <= MAX_FILE_SIZE_IN_BYTES || 'File size exceeds the limit of 300KB',
+                                    },
+                                })}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                            />
+                        </div> */}
                         <div className="divider"></div>
                         <h2>Street Address</h2>
                         {errors.address && <p className=" text-red-600">*{errors.address.message?.toString()}</p>}

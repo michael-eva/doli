@@ -9,7 +9,9 @@ import ToggleButton from "./Toggle/ToggleButton";
 
 
 type CardProps = {
-    onDelete: any
+    handleEditSubmit?: any
+    onDelete?: any
+    handleSubmit?: any,
     postId: string,
     id: string,
     imgUrl: string | null,
@@ -27,9 +29,12 @@ type CardProps = {
     dineIn: boolean,
     contact: string,
     website: string,
+    isJod?: boolean
+    showStatus?: boolean
+    isVerified?: boolean,
 }
 
-export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+export function Card({ handleEditSubmit, isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
@@ -40,10 +45,22 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
     };
+    const isManageListingsPage = location.pathname === '/manage-listings'
+    const badgePicker = () => {
+        if (isVerified) {
+            return <div className="badge badge-success badge-outline">Verified</div>
+        } else {
+            return <div className="badge badge-warning badge-outline">Pending Verification</div>
+        }
+    }
+
     return (
         <div className="card card-compact bg-base-100 shadow-xl" style={{ width: '300px' }}>
             <img src={imgUrl!} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
             <div className="card-body p-4">
+
+                {isManageListingsPage && badgePicker()}
+
                 <h2 className="card-title">{name}</h2>
                 <h2 className="text-blue-600 font-semibold">{suburb}, {state} {postcode}</h2>
                 <h3 className="font-light">{address}</h3>
@@ -104,12 +121,17 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
             </div>
             {
                 user?.id === id ? <div className="flex items-center justify-around bg-gray-100">
-                    <Toggle>
+                    {/* <Toggle>
                         <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">Edit</ToggleButton>
                         <ToggleOn>
                             <SimpleModal title="doli">This button is still under construction.</SimpleModal >
                         </ToggleOn>
-                    </Toggle>
+                    </Toggle> */}
+                    <button
+                        onClick={() => handleEditSubmit(postId)}
+                        className="m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">
+                        Edit
+                    </button>
 
                     <Toggle>
                         <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Delete</ToggleButton>
@@ -119,6 +141,14 @@ export function Card({ onDelete, postId, id, imgUrl, name, suburb, state, postco
                     </Toggle>
                 </div> : null
             }
+            {isJod && <div className="flex items-center justify-around bg-gray-100">
+                <button
+                    className=" m-2 px-5 py-2 rounded-lg bg-green-400 text-xs hover:bg-gray-500 hover:text-white"
+                    onClick={() => handleSubmit(postId)}
+                >Verify</button>
+                <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Reject</button>
+
+            </div>}
         </div>
     )
 }
