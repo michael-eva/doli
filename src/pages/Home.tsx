@@ -115,7 +115,7 @@ export default function Home() {
                             className="input input-bordered w-72" />
                     </div>
                 </div >
-                <div className="flex flex-wrap justify-between h-full">
+                <div className="flex flex-wrap justify-evenly h-full">
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">

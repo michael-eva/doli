@@ -39,8 +39,11 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
 
+
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
+
+
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -76,22 +79,19 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 <h2 className="font-bold mt-4 mb-3 text-b">{type}</h2>
 
                 {selectedTags && selectedTags.length > 0 &&
-                    <div className="mb-4" style={{ height: '40px' }}>
+                    <div className="mb-4">
                         <p>{selectedTags.join(', ')}</p>
                     </div>
                 }
-                <p className={`mb-4 ${showFullDescription ? '' : 'line-clamp-4'}`} style={{ minHeight: '80px' }}>
-                    {showFullDescription ? (
-                        <span dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
-                    ) : (
-                        <span dangerouslySetInnerHTML={{ __html: truncatedDescription.replace(/\n/g, '<br>') }} />
-                    )}
-                    {shouldShowSeeMoreButton && (
-                        <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
-                            {showFullDescription ? 'See Less' : 'See More'}
-                        </button>
-                    )}
+                <p className={` ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                    <span dangerouslySetInnerHTML={{ __html: showFullDescription ? description.replace(/\n/g, '<br>') : truncatedDescription.replace(/\n/g, '<br>') }} />
                 </p>
+                {/* Display the button separately */}
+                {shouldShowSeeMoreButton && (
+                    <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
+                        {showFullDescription ? 'See Less' : 'See More'}
+                    </button>
+                )}
 
                 <p className="mb-4 italic">{openingHours}</p>
                 <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>

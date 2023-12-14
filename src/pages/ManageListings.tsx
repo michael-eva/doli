@@ -66,7 +66,7 @@ export default function ManageListings() {
 
     const cardsEl = () => {
         return (
-            <div className="flex flex-wrap justify-between h-full">
+            <div className="flex flex-wrap justify-evenly h-full max-w-7xl m-auto">
                 {posts.map((item: CardProps) => {
                     return (
                         <div key={item.postId} className="mt-10">

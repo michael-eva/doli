@@ -22,7 +22,6 @@ type CardProps = {
 }
 export default function Validation() {
     const [posts, setPosts] = useState<CardProps[]>([])
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     useEffect(() => {
         getPosts()
@@ -45,7 +44,6 @@ export default function Validation() {
     }
     console.log(posts);
     async function handleSubmit(postId: string) {
-        setIsSubmitting(true);
         try {
             const { error } = await supabase
                 .from("posts")
@@ -73,7 +71,7 @@ export default function Validation() {
                 <h3>Validations required: {posts.length}</h3>
             </div>
             <div className=" max-w-7xl m-auto">
-                <div className="flex flex-wrap justify-between h-full">
+                <div className="flex flex-wrap justify-evenly h-full">
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
