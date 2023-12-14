@@ -7,7 +7,7 @@ import Login from "./pages/Login"
 import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
-import AddPost from "./pages/AddPost"
+import PostForm from "./pages/PostForm"
 import AuthRequired from "./Auth/AuthRequired"
 import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
@@ -24,7 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route element={<AuthRequired />}>
-          <Route path="post-listing" element={<AddPost />} />
+          <Route path="post-listing" element={<PostForm postData={undefined} />} />
           <Route path="manage-listings" element={<ManageListings />} />
           <Route path="update-details" element={<SignUp />} />
           <Route path="manage-listings" element={<ManageListings />} />

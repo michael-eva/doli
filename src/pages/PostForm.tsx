@@ -1,13 +1,13 @@
 import { useState, ChangeEvent, useEffect } from "react"
 import tags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
-import { nanoid } from "nanoid";
 import businessType from "../data/businessTypes.json"
 import { useForm } from "react-hook-form"
 import supabase from "../config/supabaseClient.ts";
 import { PreviewCard } from "../components/PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { nanoid } from "nanoid";
 
 type imgPath = {
     path: string
@@ -33,17 +33,39 @@ type FormData = {
     contact: string;
 }
 
-export default function AddPost({ postData }) {
+type PostData = {
+    imgUrl: string,
+    name: string,
+    suburb: string,
+    state: string,
+    postcode: string,
+    address: string,
+    type: string,
+    selectedTags: string[],
+    description: string,
+    openingHours: string,
+    pickUp: boolean,
+    delivery: boolean,
+    dineIn: boolean,
+    contact: string,
+    website: string,
+    isVerified: boolean,
+    postId: string
+}
+
+export default function PostForm({ postData }: { postData: PostData | undefined }) {
     const navigate = useNavigate()
-    const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues } = useForm();
+    const { register, handleSubmit, watch, formState: { errors }, setValue, reset } = useForm();
     const user = useUser();
     const [selectedFile, setSelectedFile] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
-    const [previewUrl, setPreviewUrl] = useState<string>("");
+    const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [show, setShow] = useState<boolean>(false)
+
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -95,28 +117,80 @@ export default function AddPost({ postData }) {
         }
     }
 
-    const insertOrUpdate = () => {
-        if (postData) {
-            return "update"
-        } else {
-            return "insert"
+    //HANDLE EDIT SUBMIT
+    const handleEditFormSubmit = async (formData: FormData) => {
+        if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
+            setDeliveryMethodError(true)
+            return
         }
-    }
+        setIsSubmitting(true);
 
-    const handleFormSubmit = async (formData: FormData) => {
-        setIsSubmitting(true)
+        try {
+            const { error: insertError } = await supabase
+                .from('posts')
+                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl })
+                .match({ postId: postData?.postId });
+
+            if (insertError) {
+                console.error('Error updating post details:', insertError);
+                return;
+            }
+
+            if (selectedFile) {
+                // Delete the current cover image from storage
+                const currentImageName = user?.id + '/' + postData?.postId;
+                const { error: deleteError } = await supabase.storage
+                    .from('cover_images')
+                    .remove([currentImageName]);
+
+                if (deleteError) {
+                    console.error('Error deleting current image:', deleteError);
+                    return;
+                }
+
+                // Upload the new cover image to storage
+                const { data: imageData, error: imageError } = await supabase.storage
+                    .from('cover_images')
+                    .upload(user?.id + '/' + postData?.postId, selectedFile);
+
+                if (imageError) {
+                    console.error('Error uploading image:', imageError);
+                    return;
+                }
+
+
+                const imageUrl = CDNUrl(imageData);
+
+                const { error: updateError } = await supabase
+                    .from('posts')
+                    .update({ imgUrl: imageUrl })
+                    .eq('id', user?.id)
+                    .eq('postId', postData?.postId);
+
+                if (updateError) {
+                    console.error('Error updating imgUrl:', updateError);
+                    return;
+                }
+            }
+
+            console.log('Post details updated successfully!');
+        } catch (error) {
+            console.error('Error handling submit:', error);
+        }
+        setIsSubmitting(false);
+        formCleanup()
+    };
+
+    const handleNewFormSubmit = async (formData: FormData) => {
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
+        setIsSubmitting(true)
         try {
-            const { data, error: insertError } = await supabase
-                .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: false });
-            // .eq('postId', postData.id);
-
-
+            const postId = nanoid()
+            const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -125,7 +199,7 @@ export default function AddPost({ postData }) {
             if (selectedFile) {
                 const { data: imageData, error: imageError } = await supabase.storage
                     .from('cover_images')
-                    .upload(user?.id + '/' + postData.postId, selectedFile);
+                    .upload(user?.id + '/' + postId, selectedFile);
 
                 if (imageError) {
                     console.error('Error uploading image:', imageError);
@@ -138,7 +212,7 @@ export default function AddPost({ postData }) {
                     .from('posts')
                     .update({ imgUrl: imageUrl })
                     .eq('id', user?.id)
-                    .eq('postId', postData.postId);
+                    .eq('postId', postId);
 
                 if (updateError) {
                     console.error('Error updating imgUrl:', updateError);
@@ -148,55 +222,15 @@ export default function AddPost({ postData }) {
         } catch (error) {
             console.error('Error handling submit:', error);
         }
-
         formCleanup()
     }
-    // const handleFormSubmit = async (formData: FormData) => {
-    //     setIsSubmitting(true)
-
-    //     if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
-    //         setDeliveryMethodError(true)
-    //         return
-    //     }
-    //     try {
-    //         const postId = nanoid()
-    //         const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false })
-
-    //         if (insertError) {
-    //             console.error('Error inserting post:', insertError);
-    //             return;
-    //         }
-    //         if (selectedFile) {
-    //             const { data: imageData, error: imageError } = await supabase.storage
-    //                 .from('cover_images')
-    //                 .upload(user?.id + '/' + postId, selectedFile);
-
-    //             if (imageError) {
-    //                 console.error('Error uploading image:', imageError);
-    //                 return;
-    //             }
-
-    //             const imageUrl = CDNUrl(imageData);
-
-    //             const { error: updateError } = await supabase
-    //                 .from('posts')
-    //                 .update({ imgUrl: imageUrl })
-    //                 .eq('id', user?.id)
-    //                 .eq('postId', postId);
-
-    //             if (updateError) {
-    //                 console.error('Error updating imgUrl:', updateError);
-    //                 return;
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error handling submit:', error);
-    //     }
-    //     formCleanup()
-    // }
-
-    console.log(postData);
-
+    const submitChooser = (formData: FormData) => {
+        if (postData) {
+            return handleEditFormSubmit(formData)
+        } else {
+            return handleNewFormSubmit(formData)
+        }
+    }
     useEffect(() => {
         if (postData) {
             setValue('name', postData.name)
@@ -212,22 +246,15 @@ export default function AddPost({ postData }) {
             setValue('dineIn', postData.dineIn);
             setValue('contact', postData.contact);
             setValue('website', postData.website);
-            setValue('imgUrl', "postData.imgUrl")
             setValue('selectedTags', postData.selectedTags)
-            setSelectedTags(postData.selectedTags)
-            setPreviewUrl(postData.imgUrl)
+            setSelectedTags(postData?.selectedTags)
+            setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
-
-    // const handleFileChange = (e) => {
-    //     const selectedFile = e.target.files[0]; // Access the first selected file
-    //     console.log(selectedFile); // Do something with the file data
-    // };
-
     return (
         <div className="flex justify-center">
             <div>
-                <form onSubmit={handleSubmit((data) => handleFormSubmit(data as FormData))}>
+                <form onSubmit={handleSubmit((data) => submitChooser(data as FormData))}>
                     <div className="max-w-3xl mr-10 shadow-lg px-24 pb-24 pt-10">
                         <header className="mb-7">
                             <h1 className=" text-xl font-bold ">Profile</h1>
@@ -356,42 +383,90 @@ export default function AddPost({ postData }) {
                                 />
                             </div>
                         </div>
-                        {postData ? <div className="cover-photo">
-                            <h2 className="mt-7">Add Cover Photo</h2>
-                            <p className=" text-xs"> Max image size of 300KB</p>
-                            {errors.imgUrl && <p className=" text-red-600">*{errors.imgUrl.message?.toString()}</p>}
-                            <input
-                                type="file"
-                                className="file-input file-input-bordered w-full"
-                                {...register("imgUrl", {
-                                    required: "Cover photo is required",
-                                    validate: {
-                                        maxSize: (value) =>
-                                            !value || value[0].size <= MAX_FILE_SIZE_IN_BYTES || 'File size exceeds the limit of 300KB',
-                                    },
-                                })}
-                                onChange={handleFileChange}
-                                accept="image/*"
-                            />
-                        </div> : null}
-                        {/* <div className="cover-photo">
-                            <h2 className="mt-7">Add Cover Photo</h2>
-                            <p className=" text-xs"> Max image size of 300KB</p>
-                            {errors.imgUrl && <p className=" text-red-600">*{errors.imgUrl.message?.toString()}</p>}
-                            <input
-                                type="file"
-                                className="file-input file-input-bordered w-full"
-                                {...register("imgUrl", {
-                                    required: "Cover photo is required",
-                                    validate: {
-                                        maxSize: (value) =>
-                                            !value || value[0].size <= MAX_FILE_SIZE_IN_BYTES || 'File size exceeds the limit of 300KB',
-                                    },
-                                })}
-                                onChange={handleFileChange}
-                                accept="image/*"
-                            />
-                        </div> */}
+                        {postData ?
+                            <>
+                                <div className="flex flex-col gap-5">
+                                    {!show ? <img
+                                        src={previewUrl}
+                                        alt="Cover"
+                                        style={{ height: '225px', width: '300px' }}
+                                        className=" mt-5 rounded-lg"
+                                    />
+                                        :
+                                        <>{previewUrl && <img
+                                            src={previewUrl}
+                                            alt="Cover"
+                                            style={{ height: '225px', width: '300px' }}
+                                            className=" mt-5 rounded-lg"
+                                        />}
+                                            <div className="cover-photo">
+                                                <h2 className="mt-1">Update Cover Photo</h2>
+                                                <p className="text-xs">Max image size of 300KB</p>
+
+                                                {errors.imgUrl && (
+                                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    className="file-input file-input-bordered w-full"
+                                                    {...register("imgUrl", {
+                                                        required: "Cover photo is required",
+                                                        validate: {
+                                                            maxSize: (value) =>
+                                                                !value ||
+                                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                                                "File size exceeds the limit of 300KB",
+                                                        },
+                                                    })}
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
+
+                                            </div>
+                                        </>
+                                    }
+                                    {!show ? <p onClick={() => setShow(!show)}
+                                        className="btn btn-primary w-"
+                                    >Update Cover Photo</p>
+                                        :
+                                        <p onClick={() => { setPreviewUrl(postData.imgUrl); setShow(!show) }}
+                                            className="btn btn-primary w-"
+                                        >Cancel</p>
+                                    }
+                                </div>
+                            </>
+
+                            :
+                            <div className="cover-photo">
+                                <h2 className="mt-7">Add Cover Photo</h2>
+                                <p className="text-xs">Max image size of 300KB</p>
+                                {errors.imgUrl && (
+                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
+                                )}
+                                <input
+                                    type="file"
+                                    className="file-input file-input-bordered w-full"
+                                    {...register("imgUrl", {
+                                        required: "Cover photo is required",
+                                        validate: {
+                                            maxSize: (value) =>
+                                                !value ||
+                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                                "File size exceeds the limit of 300KB",
+                                        },
+                                    })}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                />
+                                {previewUrl && <img
+                                    src={previewUrl}
+                                    alt="Cover"
+                                    style={{ height: '225px', width: '300px' }}
+                                    className=" mt-5 rounded-lg"
+                                />}
+                            </div>
+                        }
+
                         <div className="divider"></div>
                         <h2>Street Address</h2>
                         {errors.address && <p className=" text-red-600">*{errors.address.message?.toString()}</p>}

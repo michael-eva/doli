@@ -3,7 +3,6 @@ import supabase from "../config/supabaseClient"
 import { useUser } from "@supabase/auth-helpers-react"
 import { Card } from "../components/Card"
 import Loading from "../components/Loading"
-import { Navigate, useNavigate } from "react-router"
 
 type CardProps = {
     id: string,
@@ -27,7 +26,6 @@ type CardProps = {
 }
 
 export default function ManageListings() {
-    const navigate = useNavigate()
     const user = useUser()
     const [posts, setPosts] = useState([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -43,31 +41,36 @@ export default function ManageListings() {
             .from("posts")
             .select("*")
             .eq("id", user?.id)
-        console.log(data);
 
         if (error) {
             return console.error(error);
         }
-        const parsedData = data.map((post) => ({
+        const parsedData: any = data.map((post) => ({
             ...post,
             selectedTags: JSON.parse(post.selectedTags),
         }));
 
         setPosts(parsedData);
-    }
-
-    const handleEditSubmit = (postId: string) => {
-
-        navigate(`/edit-post/${postId}`)
 
     }
+    const deletePost = async (postId: string) => {
+        const { error } = await supabase
+            .from("posts")
+            .delete()
+            .eq('postId', postId)
+        if (error) {
+            console.error(error);
+        }
+        getPosts()
+    }
+
     const cardsEl = () => {
         return (
             <div className="flex flex-wrap justify-between h-full">
                 {posts.map((item: CardProps) => {
                     return (
                         <div key={item.postId} className="mt-10">
-                            <Card {...item} showStatus={true} handleEditSubmit={handleEditSubmit} />
+                            <Card {...item} showStatus={true} onDelete={deletePost} />
                         </div>
                     );
                 })}

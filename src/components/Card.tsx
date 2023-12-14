@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
 import { Rating } from 'flowbite-react';
-import SimpleModal from "./Modals/SimpleModal";
 import DeleteModal from "./Modals/DeleteModal";
 import Toggle from "./Toggle/Toggle";
 import ToggleOn from "./Toggle/ToggleOn";
 import ToggleButton from "./Toggle/ToggleButton";
+import { useNavigate } from "react-router";
 
 
 type CardProps = {
@@ -34,7 +34,7 @@ type CardProps = {
     isVerified?: boolean,
 }
 
-export function Card({ handleEditSubmit, isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
@@ -54,9 +54,17 @@ export function Card({ handleEditSubmit, isVerified, handleSubmit, isJod, onDele
         }
     }
 
+    const navigate = useNavigate()
+
+    const handleEditSubmit = (postId: string) => {
+
+        navigate(`/edit-post/${postId}`)
+
+    }
+
     return (
         <div className="card card-compact bg-base-100 shadow-xl" style={{ width: '300px' }}>
-            <img src={imgUrl!} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
+            <img src={`${imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
             <div className="card-body p-4">
 
                 {isManageListingsPage && badgePicker()}
@@ -72,7 +80,6 @@ export function Card({ handleEditSubmit, isVerified, handleSubmit, isJod, onDele
                         <p>{selectedTags.join(', ')}</p>
                     </div>
                 }
-
                 <p className={`mb-4 ${showFullDescription ? '' : 'line-clamp-4'}`} style={{ minHeight: '80px' }}>
                     {showFullDescription ? (
                         <span dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
@@ -121,12 +128,6 @@ export function Card({ handleEditSubmit, isVerified, handleSubmit, isJod, onDele
             </div>
             {
                 user?.id === id ? <div className="flex items-center justify-around bg-gray-100">
-                    {/* <Toggle>
-                        <ToggleButton className=" m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">Edit</ToggleButton>
-                        <ToggleOn>
-                            <SimpleModal title="doli">This button is still under construction.</SimpleModal >
-                        </ToggleOn>
-                    </Toggle> */}
                     <button
                         onClick={() => handleEditSubmit(postId)}
                         className="m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">

@@ -37,10 +37,6 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
             setDeliveryMethod(false)
         }
     }, [dineIn, delivery, pickUp])
-
-
-
-
     return (
 
         <div className="card card-compact w-72 bg-base-100 shadow-xl">

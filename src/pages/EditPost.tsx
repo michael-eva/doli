@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import AddPost from "./AddPost";
 import supabase from "../config/supabaseClient";
 import { useParams } from "react-router";
+import PostForm from "./PostForm";
 
 export default function EditPost() {
     const [post, setPost] = useState()
@@ -33,7 +33,6 @@ export default function EditPost() {
     }
 
     return (
-        <AddPost postData={post} />
-        // null
+        <PostForm postData={post} />
     )
 }
