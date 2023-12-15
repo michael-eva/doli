@@ -79,7 +79,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 <h2 className="font-bold mt-4 mb-3 text-b">{type}</h2>
 
                 {selectedTags && selectedTags.length > 0 &&
-                    <div className="mb-4">
+                    <div className="mb-3">
                         <p>{selectedTags.join(', ')}</p>
                     </div>
                 }

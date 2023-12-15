@@ -10,6 +10,7 @@ import SimpleModal from "./Modals/SimpleModal"
 import Toggle from "./Toggle/Toggle"
 import ToggleOn from "./Toggle/ToggleOn"
 import ToggleButton from "./Toggle/ToggleButton"
+import ForgotPassword from "./ForgotPassword"
 
 
 type FormData = {
@@ -22,6 +23,7 @@ type FormData = {
     birthYear: string,
     suburb: string,
     postcode: string
+    country: string
 }
 const initialFormState = {
     username: "",
@@ -33,6 +35,7 @@ const initialFormState = {
     birthYear: "",
     suburb: "",
     postcode: "",
+    country: ""
 };
 
 export default function SignUp() {
@@ -85,6 +88,7 @@ export default function SignUp() {
         setIsSubmitting(false)
     };
 
+
     const handleUpdateDetailsSubmit = async (e: any) => {
         setIsSubmitting(true)
         e.preventDefault()
@@ -101,9 +105,13 @@ export default function SignUp() {
                 postcode: formData.postcode,
             })
             .eq('id', user?.id)
+
         if (error) {
             console.error(error);
         }
+
+
+
         setIsSubmitting(false)
         toast.success("Details updated successfully")
         navigate("/")
@@ -165,9 +173,8 @@ export default function SignUp() {
             }
 
             if (data && data.length > 0) {
-                const memberData = data[0]; // Assuming you're fetching a single member
+                const memberData = data[0];
 
-                // Extract the specific fields you want from the member data
                 const {
                     username,
                     gender,
@@ -178,7 +185,6 @@ export default function SignUp() {
                     postcode,
                 } = memberData;
 
-                // Update the form state with the extracted fields
                 setFormData({
                     ...formData,
                     username: username || "",
@@ -233,7 +239,7 @@ export default function SignUp() {
                             />
                         </div>
                         {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
-                        <div className="flex flex-col w-1/2">
+                        {user ? <div className="flex flex-col w-1/2">
                             <label>Email</label>
                             <input
                                 type="text"
@@ -242,8 +248,22 @@ export default function SignUp() {
                                 onChange={handleChange}
                                 required
                                 value={formData.email}
+                                disabled
                             />
                         </div>
+                            :
+                            <div className="flex flex-col w-1/2">
+                                <label>Email</label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered "
+                                    name="email"
+                                    onChange={handleChange}
+                                    required
+                                    value={formData.email}
+
+                                />
+                            </div>}
                     </div>
 
                     {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
@@ -342,7 +362,7 @@ export default function SignUp() {
                             />
                         </div>
                     </div>
-                    <div className=" flex gap-3 mt-7 w-full">
+                    <div className=" flex gap-3 mt-7 w-full mb-2">
                         <div className="flex flex-col w-1/2 mt-4">
                             <label>Suburb</label>
                             <input
@@ -366,6 +386,14 @@ export default function SignUp() {
                             />
                         </div>
                     </div>
+                    <Toggle>
+                        <ToggleButton className=" text-sm underline italic cursor-pointer">
+                            Forgot Password?
+                        </ToggleButton>
+                        <ToggleOn>
+                            <ForgotPassword />
+                        </ToggleOn>
+                    </Toggle>
                     {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                         :
                         <button className="btn btn-primary mt-7 w-full">Submit</button>

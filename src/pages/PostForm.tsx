@@ -8,6 +8,7 @@ import { PreviewCard } from "../components/PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
+import OpeningHours from "../components/OpeningHours.tsx"
 
 type imgPath = {
     path: string
@@ -55,7 +56,7 @@ type PostData = {
 
 export default function PostForm({ postData }: { postData: PostData | undefined }) {
     const navigate = useNavigate()
-    const { register, handleSubmit, watch, formState: { errors }, setValue, reset } = useForm();
+    const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues, setError, clearErrors } = useForm();
     const user = useUser();
     const [selectedFile, setSelectedFile] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -251,6 +252,15 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
+
+    // const register = () => {
+    //     return { ...register("location", { required: "Opening hours are required" }) }
+    // }
+
+    console.log(watch());
+    console.log('errors:', errors);
+
+
     return (
         <div className="flex justify-center">
             <div>
@@ -324,14 +334,14 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             </div>
                         </div>
                         <div className="flex flex-col mb-5">
-                            <label >Opening Hours</label>
+                            <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            <input
+                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} />
+                            {/* <input
                                 placeholder="eg Mon-Fri 9am-5pm"
                                 type="text"
                                 className="input input-bordered w-full max-w-xs "
-                                {...register("openingHours", { required: "Opening hours are required" })}
-                            />
+                            /> */}
                         </div>
                         <div className="flex flex-col mb-5">
                             <label>Choose up to 5 options:</label>
