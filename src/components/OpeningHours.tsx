@@ -2,10 +2,9 @@ const initialOpeningHours = [
     {
         day: "Monday",
         isOpen: false,
-        times: {
-            fromTime: "",
-            toTime: ""
-        }
+        fromTime: "",
+        toTime: ""
+
     },
     {
         day: "Tuesday",
@@ -45,7 +44,7 @@ const initialOpeningHours = [
     },
 ]
 
-export default function OpeningHours({ register, setValue, getValues, errors, setError, clearErrors }: any) {
+export default function OpeningHours({ register, setValue, getValues, errors, setError, clearErrors, watch }: any) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -67,6 +66,19 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
 
         return toTotalMinutes > fromTotalMinutes;
     };
+
+    const formattedOpeningHours = initialOpeningHours
+        .filter((item) => watch(`${item.day}.isOpen`) === 'open')
+        .map((item) => ({
+            day: item.day,
+            isOpen: true,
+            fromTime: watch(`${item.day}.fromTime`),
+            toTime: watch(`${item.day}.toTime`),
+        }));
+
+    // console.log(formattedOpeningHours);
+    // setValue('openingHours', formattedOpeningHours)
+
     return (
         <div className="">
             <div className="mt-5 flex flex-col">
@@ -89,13 +101,13 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                 </thead>
                                 <tbody className="bg-white">
                                     {initialOpeningHours.map((item, index) => (
-                                        <tr key={item.day} className={index % 2 === 0 ? undefined : 'bg-gray-50'}>
+                                        <tr key={index} className={index % 2 === 0 ? undefined : 'bg-gray-50'}>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                                 {item.day}
                                             </td>
                                             <td>
                                                 <select
-                                                    id={`${item.day}`}
+                                                    id={`openingHours-${item.day}`}
                                                     className="input input-bordered"
                                                     defaultValue='closed'
                                                     {...register(`${item.day}.isOpen`)}
@@ -107,14 +119,14 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
 
                                             {getValues(`${item.day}.isOpen`) === 'open' ?
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    {errors && errors[item.day]?.time?.toTime && (
-                                                        <p className=" text-red-500">*{errors[item.day].time.toTime.message}</p>
+                                                    {errors && errors[item.day]?.toTime && (
+                                                        <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
                                                     )}
                                                     <div className="flex items-center gap-2">
                                                         <p>From</p>
                                                         <select
                                                             id={`${item.fromTime}`}
-                                                            {...register(`${item.day}.time.fromTime`)}
+                                                            {...register(`${item.day}.fromTime`)}
                                                             className="input input-bordered w-1/2"
                                                         >
                                                             {timeOptions.map((time, index) => (
@@ -125,19 +137,19 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                                         <select
                                                             id={`${item.fromTime}`}
                                                             className="input input-bordered w-1/2"
-                                                            {...register(`${item.day}.time.toTime`)}
+                                                            {...register(`${item.day}.toTime`)}
                                                             onChange={(e) => {
                                                                 const toTimeValue = e.target.value;
-                                                                const fromTimeValue = getValues(`${item.day}.time.fromTime`);
+                                                                const fromTimeValue = getValues(`${item.day}.fromTime`);
                                                                 if (!isTimeAfter(fromTimeValue, toTimeValue)) {
-                                                                    setError(`${item.day}.time.toTime`, {
+                                                                    setError(`${item.day}.toTime`, {
                                                                         type: 'manual',
                                                                         message: 'Closing time needs to be after opening time'
                                                                     });
-                                                                    setValue(`${item.day}.time.fromTime`, "00:00")
-                                                                    setValue(`${item.day}.time.toTime`, "00:00")
+                                                                    setValue(`${item.day}.fromTime`, "00:00")
+                                                                    setValue(`${item.day}.toTime`, "00:00")
                                                                 } else {
-                                                                    clearErrors(`${item.day}.time.toTime`);
+                                                                    clearErrors(`${item.day}.toTime`);
                                                                 }
                                                             }}
                                                         >

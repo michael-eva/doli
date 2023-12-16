@@ -118,7 +118,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
     }
 
-    //HANDLE EDIT SUBMIT
     const handleEditFormSubmit = async (formData: FormData) => {
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -183,6 +182,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     };
 
     const handleNewFormSubmit = async (formData: FormData) => {
+        console.log(formData);
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -253,12 +253,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
     }, [postData]);
 
-    // const register = () => {
-    //     return { ...register("location", { required: "Opening hours are required" }) }
-    // }
+    // console.log(watch().openingHours);
 
-    console.log(watch());
-    console.log('errors:', errors);
 
 
     return (
@@ -337,11 +333,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
                             <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} />
-                            {/* <input
-                                placeholder="eg Mon-Fri 9am-5pm"
-                                type="text"
-                                className="input input-bordered w-full max-w-xs "
-                            /> */}
                         </div>
                         <div className="flex flex-col mb-5">
                             <label>Choose up to 5 options:</label>

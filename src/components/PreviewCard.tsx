@@ -37,6 +37,17 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
             setDeliveryMethod(false)
         }
     }, [dineIn, delivery, pickUp])
+    const buttonEl = () => {
+        return (
+            <>
+                {shouldShowSeeMoreButton && (
+                    <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
+                        {showFullDescription ? 'See Less' : 'See More'}
+                    </button>
+                )}
+            </>)
+    }
+
     return (
 
         <div className="card card-compact w-72 bg-base-100 shadow-xl">
@@ -51,18 +62,12 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
                 <p className="mb-4">{products?.length > 0 ? products : "Products offered"}</p>
 
                 {description?.length > 0 ? (
-                    <p className={`mb-4 ${showFullDescription ? '' : 'line-clamp-4'}`}>
-                        {showFullDescription ? (
-                            <span dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
-                        ) : (
-                            <span dangerouslySetInnerHTML={{ __html: truncatedDescription.replace(/\n/g, '<br>') }} />
-                        )}
-                        {shouldShowSeeMoreButton && (
-                            <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
-                                {showFullDescription ? 'See Less' : 'See More'}
-                            </button>
-                        )}
-                    </p>
+                    <>
+                        <p className={` ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                            <span dangerouslySetInnerHTML={{ __html: showFullDescription ? description.replace(/\n/g, '<br>') : truncatedDescription.replace(/\n/g, '<br>') }} />
+                        </p>
+                        {buttonEl()}
+                    </>
                 ) : <p className="mb-4">Description of your business</p>}
 
 
