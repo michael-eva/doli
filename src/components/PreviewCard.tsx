@@ -48,6 +48,9 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
             </>)
     }
 
+    console.log("products:", products);
+
+
     return (
 
         <div className="card card-compact w-72 bg-base-100 shadow-xl">

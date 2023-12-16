@@ -1,5 +1,5 @@
-import { useState, ChangeEvent, useEffect } from "react"
-import tags from '../data/tags.ts'
+import { useState, useEffect } from "react"
+import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
 import { useForm } from "react-hook-form"
@@ -9,6 +9,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
 import OpeningHours from "../components/OpeningHours.tsx"
+import Select from "react-select"
 
 type imgPath = {
     path: string
@@ -84,28 +85,17 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             navigate("/");
         }, 1000);
     }
-    const handleTagChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-        const isOptionSelected = selectedTags.includes(selectedOptions[0]);
+    const handleTagChange = (selectedTags) => {
+        if (selectedTags.length <= 5) {
+            setSelectedTags(selectedTags);
+        }
+    };
 
-        setSelectedTags((prev) => {
-            if (isOptionSelected) {
-                const updatedTags = prev.filter((tag) => tag !== selectedOptions[0]);
-                setValue('selectedTags', updatedTags);
-                return updatedTags;
-            }
-            if (prev.length + selectedOptions.length <= 5) {
-                const updatedTags = [...prev, ...selectedOptions];
-                setValue('selectedTags', updatedTags);
-                return updatedTags;
-            } else {
-                const remainingSlots = 5 - prev.length;
-                const updatedTags = [...prev, ...selectedOptions.slice(0, remainingSlots)];
-                setValue('selectedTags', updatedTags);
-                return updatedTags;
-            }
-        });
-    }
+    console.log(selectedTags);
+
+    // console.log(serialisedTags);
+
+
     const handleFileChange = (e: any) => {
         const file = e.target.files[0];
         setSelectedFile(file);
@@ -119,6 +109,9 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     }
 
     const handleEditFormSubmit = async (formData: FormData) => {
+        console.log("form data:", formData);
+        const serialisedTags = JSON.stringify(selectedTags)
+
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
@@ -128,7 +121,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl })
+                .update({ ...formData, selectedTags: serialisedTags, isVerified: false, imgUrl: postData?.imgUrl })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -253,10 +246,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
     }, [postData]);
 
-    // console.log(watch().openingHours);
-
-
-
     return (
         <div className="flex justify-center">
             <div>
@@ -332,40 +321,17 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} />
+                            {/* <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} /> */}
                         </div>
-                        <div className="flex flex-col mb-5">
-                            <label>Choose up to 5 options:</label>
-                            {errors.selectedTags && <p className=" text-red-600">*{errors.selectedTags.message?.toString()}</p>}
-                            <select
-                                multiple
-                                {...register('selectedTags', { required: "Business tags are required" })}
-                                className="select select-bordered"
-                                onChange={handleTagChange}
-                            >
-                                {tags.map((tag, index) => (
-                                    <option key={index} value={tag}>
-                                        {tag}
-                                    </option>
-                                ))}
-                            </select>
-                            {selectedTags?.length > 0 && (
-                                <div className="flex mt-5">
-                                    <div className="mt-3">
-                                        Selected options: {selectedTags.join(", ")}
-                                    </div>
-                                    <button
-                                        className="btn ml-5 btn-error"
-                                        onClick={() => {
-                                            setSelectedTags([])
-                                            setValue('selectedTags', [])
-                                        }}
-                                    >
-                                        Clear Selection
-                                    </button>
-                                </div>
-                            )}
+                        <div className="flex mb-2">
+                            <label >Choose up to 5 options:</label>
                         </div>
+                        <Select
+                            value={selectedTags}
+                            onChange={handleTagChange}
+                            options={transformedTags}
+                            isMulti={true}
+                        />
                         <div className="flex mt-7 gap-4">
                             <div className="flex flex-col w-1/2">
                                 <label>Website (recommended)</label>
@@ -547,7 +513,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             postcode={watch().postcode}
                             address={watch().address}
                             type={watch().type}
-                            products={watch().selectedTags?.join(', ')}
+                            products={selectedTags.map(tag => tag.label).join(', ')}
                             description={watch().description}
                             openingHours={watch().openingHours}
                             contact={watch().contact}

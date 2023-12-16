@@ -25,7 +25,7 @@ export default function EditPost() {
         if (data) {
             const parsedData = {
                 ...data,
-                selectedTags: JSON.parse(data.selectedTags),
+                selectedTags: JSON.parse(data.selectedTags).map((tag: any) => tag.label),
             };
             setPost(parsedData);
         }

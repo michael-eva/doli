@@ -47,7 +47,7 @@ export default function ManageListings() {
         }
         const parsedData: any = data.map((post) => ({
             ...post,
-            selectedTags: JSON.parse(post.selectedTags),
+            selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag.label),
         }));
 
         setPosts(parsedData);
@@ -66,7 +66,7 @@ export default function ManageListings() {
 
     const cardsEl = () => {
         return (
-            <div className="flex flex-wrap justify-evenly h-full max-w-7xl m-auto">
+            <div className="flex flex-wrap justify-evenly h-full ">
                 {posts.map((item: CardProps) => {
                     return (
                         <div key={item.postId} className="mt-10">
