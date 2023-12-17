@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, SetStateAction } from "react"
 import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
@@ -54,6 +54,10 @@ type PostData = {
     isVerified: boolean,
     postId: string
 }
+type TagsType = {
+    value: string,
+    label: string
+}
 
 export default function PostForm({ postData }: { postData: PostData | undefined }) {
     const navigate = useNavigate()
@@ -91,10 +95,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
     };
 
-    console.log(selectedTags);
-
-    // console.log(serialisedTags);
-
 
     const handleFileChange = (e: any) => {
         const file = e.target.files[0];
@@ -109,8 +109,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     }
 
     const handleEditFormSubmit = async (formData: FormData) => {
-        console.log("form data:", formData);
         const serialisedTags = JSON.stringify(selectedTags)
+
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -121,7 +121,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: serialisedTags, isVerified: false, imgUrl: postData?.imgUrl })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -175,7 +175,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     };
 
     const handleNewFormSubmit = async (formData: FormData) => {
-        console.log(formData);
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -212,7 +211,32 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     console.error('Error updating imgUrl:', updateError);
                     return;
                 }
+
             }
+            const openingHoursArray = Object.values(formData.openingHours);
+
+            if (Array.isArray(openingHoursArray)) {
+                const openingHoursForDb = openingHoursArray.map((item) => ({
+
+                    day: item.day,
+                    isOpen: item.isOpen,
+                    fromTime: item.fromTime,
+                    toTime: item.toTime,
+                    postId: postId,
+
+                }))
+                const openingHoursForDbFiltered = openingHoursForDb.filter(item => item.isOpen === "open");
+                const { error: openingHoursError } = await supabase
+                    .from("openingHours")
+                    .insert(openingHoursForDbFiltered)
+
+                if (openingHoursError) {
+                    console.error(openingHoursError);
+                }
+            } else {
+                console.error('Opening hours data is not an array:', formData.openingHours);
+            }
+
         } catch (error) {
             console.error('Error handling submit:', error);
         }
@@ -245,6 +269,9 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
+
+
+
 
     return (
         <div className="flex justify-center">
@@ -321,10 +348,10 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            {/* <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} /> */}
+                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} />
                         </div>
                         <div className="flex mb-2">
-                            <label >Choose up to 5 options:</label>
+                            <label >Choose up to 5 options that best describe your business:</label>
                         </div>
                         <Select
                             value={selectedTags}
@@ -513,7 +540,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             postcode={watch().postcode}
                             address={watch().address}
                             type={watch().type}
-                            products={selectedTags.map(tag => tag.label).join(', ')}
+                            products={selectedTags.map(tag => tag?.label).join(', ')}
                             description={watch().description}
                             openingHours={watch().openingHours}
                             contact={watch().contact}

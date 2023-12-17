@@ -48,8 +48,7 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
             </>)
     }
 
-    console.log("products:", products);
-
+    console.log(products);
 
     return (
 

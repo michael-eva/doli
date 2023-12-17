@@ -47,7 +47,7 @@ export default function ManageListings() {
         }
         const parsedData: any = data.map((post) => ({
             ...post,
-            selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag.label),
+            selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
         }));
 
         setPosts(parsedData);

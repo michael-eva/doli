@@ -64,6 +64,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
         navigate(`/edit-post/${postId}`)
 
     }
+    console.log(selectedTags);
 
     return (
         <div className="card card-compact bg-base-100 shadow-xl" style={{ width: '300px' }}>
@@ -80,7 +81,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
 
                 {selectedTags && selectedTags.length > 0 &&
                     <div className="mb-3">
-                        <p>{selectedTags.join(', ')}</p>
+                        <p>{selectedTags.map(tag => tag?.label).join(', ')}</p>
                     </div>
                 }
                 <p className={` ${showFullDescription ? '' : 'line-clamp-4'}`}>
