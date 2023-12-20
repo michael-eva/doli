@@ -26,6 +26,7 @@ export default function EditPost() {
             const parsedData = {
                 ...data,
                 selectedTags: JSON.parse(data.selectedTags).map((tag: any) => tag),
+                openingHours: JSON.parse(data.openingHours).map((tag: any) => tag)
             };
             setPost(parsedData);
         }

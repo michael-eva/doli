@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import OpeningHours from "../components/OpeningHours.tsx"
 import Select from "react-select"
 
+
 type imgPath = {
     path: string
 }
@@ -109,7 +110,12 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     }
 
     const handleEditFormSubmit = async (formData: FormData) => {
-        const serialisedTags = JSON.stringify(selectedTags)
+        const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
+            return {
+                day,
+                ...data
+            };
+        });
 
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
@@ -121,7 +127,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -175,6 +181,12 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     };
 
     const handleNewFormSubmit = async (formData: FormData) => {
+        const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
+            return {
+                day,
+                ...data
+            };
+        });
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -183,7 +195,10 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         setIsSubmitting(true)
         try {
             const postId = nanoid()
-            const { error: insertError } = await supabase.from('posts').insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false })
+            // const openingHoursForDbFiltered = openingHoursArray.filter(item => item.isOpen === "open");
+            const { error: insertError } = await supabase
+                .from('posts')
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -212,29 +227,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     return;
                 }
 
-            }
-            const openingHoursArray = Object.values(formData.openingHours);
-
-            if (Array.isArray(openingHoursArray)) {
-                const openingHoursForDb = openingHoursArray.map((item) => ({
-
-                    day: item.day,
-                    isOpen: item.isOpen,
-                    fromTime: item.fromTime,
-                    toTime: item.toTime,
-                    postId: postId,
-
-                }))
-                const openingHoursForDbFiltered = openingHoursForDb.filter(item => item.isOpen === "open");
-                const { error: openingHoursError } = await supabase
-                    .from("openingHours")
-                    .insert(openingHoursForDbFiltered)
-
-                if (openingHoursError) {
-                    console.error(openingHoursError);
-                }
-            } else {
-                console.error('Opening hours data is not an array:', formData.openingHours);
             }
 
         } catch (error) {
@@ -269,7 +261,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
-
 
 
 
@@ -348,7 +339,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} />
+                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>

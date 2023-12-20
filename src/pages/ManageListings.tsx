@@ -45,10 +45,15 @@ export default function ManageListings() {
         if (error) {
             return console.error(error);
         }
-        const parsedData: any = data.map((post) => ({
-            ...post,
-            selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-        }));
+        const parsedData = data?.map((post) => {
+
+            return {
+                ...post,
+                selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+                openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
+            };
+        });
+
 
         setPosts(parsedData);
 

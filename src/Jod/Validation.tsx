@@ -38,6 +38,7 @@ export default function Validation() {
         const parsedData = data.map((post) => ({
             ...post,
             selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+            openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
         }));
 
         setPosts(parsedData);

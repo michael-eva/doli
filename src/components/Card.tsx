@@ -39,11 +39,12 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
 
-
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 
-
+    const openDays = openingHours.filter(item => (
+        item.isOpen === 'open'
+    ))
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -64,7 +65,6 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
         navigate(`/edit-post/${postId}`)
 
     }
-    console.log(selectedTags);
 
     return (
         <div className="card card-compact bg-base-100 shadow-xl" style={{ width: '300px' }}>
@@ -87,14 +87,29 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 <p className={` ${showFullDescription ? '' : 'line-clamp-4'}`}>
                     <span dangerouslySetInnerHTML={{ __html: showFullDescription ? description.replace(/\n/g, '<br>') : truncatedDescription.replace(/\n/g, '<br>') }} />
                 </p>
-                {/* Display the button separately */}
+
                 {shouldShowSeeMoreButton && (
                     <button className="text-blue-500 hover:underline" onClick={toggleDescription}>
                         {showFullDescription ? 'See Less' : 'See More'}
                     </button>
                 )}
+                <p className=" text-md font-bold">Operating hours:</p>
+                {openDays?.map(item => {
+                    return (
+                        <div className="flex">
+                            <p className=" italic">
+                                {item.day}
+                            </p>
+                            <p className=" italic">
+                                {item.fromTime}
+                            </p>
+                            <p className=" italic">
+                                {item.toTime}
+                            </p>
+                        </div>
+                    )
+                })}
 
-                <p className="mb-4 italic">{openingHours}</p>
                 <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
                 <div className="rating flex flex-col mt-3">
                     <p className=" text-xs">Local rating:</p>

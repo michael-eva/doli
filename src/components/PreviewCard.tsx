@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import {preview} from "/images/preview.png"
+import OpeningHours from "./OpeningHours";
 
 type CardProps = {
     imgUrl: string | null,
@@ -11,11 +11,17 @@ type CardProps = {
     type: string,
     products: string,
     description: string,
-    openingHours: string,
+    openingHours?: string,
     pickUp: boolean,
     delivery: boolean,
     dineIn: boolean,
     contact: string
+}
+type OpeningHour = {
+    // day: string; 
+    isOpen: string;
+    fromTime?: string;
+    toTime?: string;
 }
 
 export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, type, products, description, openingHours, contact, pickUp, delivery, dineIn }: CardProps) {
@@ -47,8 +53,14 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
                 )}
             </>)
     }
+    const openingHoursArray = openingHours
+        ? Object.entries(openingHours).map(([day, data]) => ({
+            day,
+            ...data,
+        }))
+        : [];
 
-    console.log(products);
+    const openDays = openingHoursArray.filter(item => item.isOpen === 'open')
 
     return (
 
@@ -73,7 +85,13 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
                 ) : <p className="mb-4">Description of your business</p>}
 
 
-                <p className=" mb-4 italic">{openingHours?.length > 0 ? openingHours : "Opening Hours"}</p>
+                {openDays.map((item) => (
+                    <div key={item.day} className="flex">
+                        <p className="mb-4 italic">{item.day}</p>
+                        {item.fromTime && <p className="mb-4 italic">{item.fromTime}</p>}
+                        {item.toTime && <p className="mb-4 italic">{item.toTime}</p>}
+                    </div>
+                ))}
                 {!deliveryMethod ? <p >Delivery methods</p>
                     :
                     <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>

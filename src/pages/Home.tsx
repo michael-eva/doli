@@ -46,6 +46,7 @@ export default function Home() {
         const parsedData = data.map((post) => ({
             ...post,
             selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+            openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
         }));
 
         setPosts(parsedData);
@@ -60,7 +61,6 @@ export default function Home() {
         }
         getPosts()
     }
-
     return (
         <>
             <div className=" max-w-7xl m-auto">

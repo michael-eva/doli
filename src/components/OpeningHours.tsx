@@ -1,14 +1,6 @@
-const initialOpeningHours = [
-    { day: "Monday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Tuesday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Wednesday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Thursday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Friday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Saturday", isOpen: false, fromTime: "", toTime: "" },
-    { day: "Sunday", isOpen: false, fromTime: "", toTime: "" },
-];
+import { useEffect, useState } from "react";
 
-export default function OpeningHours({ register, setValue, getValues, errors, setError, clearErrors, watch }: any) {
+export default function OpeningHours({ register, setValue, getValues, errors, setError, clearErrors, watch, postData }: any) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -20,6 +12,16 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
         }
         return times;
     }
+
+    const [initialOpeningHours, setInitialOpeningHours] = useState([
+        { day: "Monday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Tuesday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Wednesday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Thursday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Friday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Saturday", isOpen: 'closed', fromTime: "", toTime: "" },
+        { day: "Sunday", isOpen: 'closed', fromTime: "", toTime: "" },])
+
     const timeOptions = generateTimeOptions();
     const isTimeAfter = (fromTime: string, toTime: string) => {
         const [fromHour, fromMinute] = fromTime.split(':').map(Number);
@@ -31,6 +33,97 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
         return toTotalMinutes > fromTotalMinutes;
     };
 
+    useEffect(() => {
+        if (postData) {
+            setInitialOpeningHours(postData.openingHours)
+        }
+    }, [postData]);
+
+    // console.log(initialOpeningHours);
+
+
+
+
+
+    const editOpeningTimesEl = () => {
+        return (
+            <>
+                {initialOpeningHours.map((item, index) => (
+                    <tr key={index} className={index % 2 === 0 ? undefined : 'bg-gray-50'}>
+                        <td
+                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                            {...register(`openingHours.${index}.day`, { value: item.day })}
+                        >
+                            {item.day}
+                        </td>
+                        <td>
+                            <select
+                                id={`openingHours.${index}.isOpen`}
+                                className="input input-bordered"
+                                defaultValue={initialOpeningHours[index].isOpen}
+                                {...register(`openingHours.${index}.isOpen`)}
+                            >
+                                <option value='open'>Open</option>
+                                <option value='closed'>Closed</option>
+                            </select>
+                        </td>
+                        {watch(`openingHours[${index}].isOpen`) === 'open' ? (
+                            // {initialOpeningHours[index].isOpen === 'open' ? (
+                            < td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {errors && errors[item.day]?.toTime && (
+                                    <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
+                                )}
+                                <div className="flex items-center gap-2">
+                                    <p>From</p>
+                                    <select
+                                        id={`openingHours.${index}.fromTime`}
+                                        {...register(`openingHours.${index}.fromTime`)}
+                                        className="input input-bordered w-1/2"
+                                        defaultValue={initialOpeningHours[index].fromTime || ""}
+                                    >
+                                        {timeOptions.map((time, idx) => (
+                                            <option key={idx}>{time}</option>
+                                        ))}
+                                    </select>
+                                    <p>To</p>
+                                    <select
+                                        id={`openingHours.${index}.toTime`}
+                                        className="input input-bordered w-1/2"
+                                        {...register(`openingHours.${index}.toTime`)}
+                                        value={item.toTime}
+                                        onBlur={(e) => {
+                                            const toTimeValue = e.target.value;
+                                            const fromTimeValue = watch(`openingHours.${index}.fromTime`);
+                                            if (!isTimeAfter(fromTimeValue, toTimeValue)) {
+                                                setError(`openingHours.${index}.toTime`, {
+                                                    type: 'manual',
+                                                    message: 'Closing time needs to be after opening time'
+                                                });
+                                            } else {
+                                                clearErrors(`openingHours.${index}.toTime`);
+                                            }
+                                        }}
+                                    >
+                                        {timeOptions.map((time, idx) => (
+                                            <option key={idx}>{time}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </td>
+                        ) : (
+                            <td>
+                                <div className="flex justify-center">
+                                    <p>Closed</p>
+                                </div>
+                            </td>
+                        )}
+                    </tr >
+                ))
+                }
+            </>
+        );
+
+    }
     return (
         <div className="">
             <div className="mt-5 flex flex-col">
@@ -52,78 +145,84 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
-                                    {initialOpeningHours.map((item, index) => (
-                                        <tr key={index} className={index % 2 === 0 ? undefined : 'bg-gray-50'}>
-                                            <td
-                                                className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                                                {...register(`openingHours.${item.day}.day`, { value: item.day })}
 
-                                            >
-                                                {item.day}
-                                            </td>
-                                            <td>
-                                                <select
-                                                    id={`openingHours.${item.day}.isOpen`}
-                                                    className="input input-bordered"
-                                                    defaultValue='closed'
-                                                    {...register(`openingHours.${item.day}.isOpen`)}
-                                                >
-                                                    <option value='open'>Open</option>
-                                                    <option value='closed'>Closed</option>
-                                                </select>
-                                            </td>
-
-                                            {getValues(`openingHours.${item.day}.isOpen`) === 'open' ?
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    {errors && errors[item.day]?.toTime && (
-                                                        <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
-                                                    )}
-                                                    <div className="flex items-center gap-2">
-                                                        <p>From</p>
+                                    {postData ? editOpeningTimesEl()
+                                        :
+                                        <>
+                                            {initialOpeningHours.map((item, index) => (
+                                                <tr key={index} className={index % 2 === 0 ? undefined : 'bg-gray-50'}>
+                                                    <td
+                                                        className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                                                        {...register(`openingHours.${item.day}.day`, { value: item.day })}
+                                                    >
+                                                        {item.day}
+                                                    </td>
+                                                    <td>
                                                         <select
-                                                            id={`openingHours.${item.day}.fromTime`}
-                                                            {...register(`openingHours.${item.day}.fromTime`)}
-                                                            className="input input-bordered w-1/2"
+                                                            id={`openingHours.${item.day}.isOpen`}
+                                                            className="input input-bordered"
+                                                            defaultValue="closed"
+                                                            {...register(`openingHours.${item.day}.isOpen`)}
                                                         >
-                                                            {timeOptions.map((time, index) => (
-                                                                <option key={index}>{time}</option>
-                                                            ))}
+                                                            <option value='open'>Open</option>
+                                                            <option value='closed'>Closed</option>
                                                         </select>
-                                                        <p>To</p>
-                                                        <select
-                                                            id={`openingHours.${item.day}.toTime`}
-                                                            className="input input-bordered w-1/2"
-                                                            {...register(`openingHours.${item.day}.toTime`)}
-                                                            onChange={(e) => {
-                                                                const toTimeValue = e.target.value;
-                                                                const fromTimeValue = getValues(`openingHours.${item.day}.fromTime`);
-                                                                if (!isTimeAfter(fromTimeValue, toTimeValue)) {
-                                                                    setError(`${item.day}.toTime`, {
-                                                                        type: 'manual',
-                                                                        message: 'Closing time needs to be after opening time'
-                                                                    });
-                                                                    setValue(`openingHours.${item.day}.fromTime`, "00:00")
-                                                                    setValue(`openingHours.${item.day}.toTime`, "00:00")
-                                                                } else {
-                                                                    clearErrors(`${item.day}.toTime`);
-                                                                }
-                                                            }}
-                                                        >
-                                                            {timeOptions.map((time, index) => (
-                                                                <option key={index}>{time}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </td> :
-                                                <td>
+                                                    </td>
 
-                                                    <div className="flex justify-center">
-                                                        <p>Closed</p>
-                                                    </div>
-                                                </td>
-                                            }
-                                        </tr>
-                                    ))}
+                                                    {watch(`openingHours.${item.day}.isOpen`) === 'open' ?
+                                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                            {errors && errors[item.day]?.toTime && (
+                                                                <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
+                                                            )}
+                                                            <div className="flex items-center gap-2">
+                                                                <p>From</p>
+                                                                <select
+                                                                    id={`openingHours.${item.day}.fromTime`}
+                                                                    {...register(`openingHours.${item.day}.fromTime`)}
+                                                                    className="input input-bordered w-1/2"
+                                                                    value={item.fromTime}
+                                                                >
+                                                                    {timeOptions.map((time, index) => (
+                                                                        <option key={index}>{time}</option>
+                                                                    ))}
+                                                                </select>
+                                                                <p>To</p>
+                                                                <select
+                                                                    id={`openingHours.${item.day}.toTime`}
+                                                                    className="input input-bordered w-1/2"
+                                                                    {...register(`openingHours.${item.day}.toTime`)}
+                                                                    value={item.toTime}
+                                                                    onBlur={(e) => {
+                                                                        const toTimeValue = e.target.value;
+                                                                        const fromTimeValue = watch(`openingHours.${item.day}.fromTime`);
+                                                                        if (!isTimeAfter(fromTimeValue, toTimeValue)) {
+                                                                            setError(`openingHours.${item.day}.toTime`, {
+                                                                                type: 'manual',
+                                                                                message: 'Closing time needs to be after opening time'
+                                                                            });
+                                                                        } else {
+                                                                            clearErrors(`openingHours.${item.day}.toTime`);
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {timeOptions.map((time, index) => (
+                                                                        <option key={index}>{time}</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+                                                        </td> :
+                                                        <td>
+
+                                                            <div className="flex justify-center">
+                                                                <p>Closed</p>
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            ))}
+                                        </>
+                                    }
+
                                 </tbody>
                             </table>
                         </div>
