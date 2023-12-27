@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from "react"
+import { useState, useEffect } from "react"
 import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
@@ -54,10 +54,6 @@ type PostData = {
     website: string,
     isVerified: boolean,
     postId: string
-}
-type TagsType = {
-    value: string,
-    label: string
 }
 
 export default function PostForm({ postData }: { postData: PostData | undefined }) {
@@ -195,7 +191,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         setIsSubmitting(true)
         try {
             const postId = nanoid()
-            // const openingHoursForDbFiltered = openingHoursArray.filter(item => item.isOpen === "open");
             const { error: insertError } = await supabase
                 .from('posts')
                 .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
@@ -262,7 +257,14 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
     }, [postData]);
 
-
+    function countChars(name: string) {
+        const watchValue = getValues(name)
+        const inputLength = watchValue?.length
+        return inputLength
+    }
+    const isNumeric = (value) => {
+        return /^\d+$/.test(value);
+    };
 
     return (
         <div className="flex justify-center">
@@ -301,10 +303,20 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             <textarea
                                 className="textarea textarea-bordered w-full "
                                 placeholder="Write a few detailed sentences about your business."
-                                {...register("description", { required: "A description is required" })}
+                                {...register("description", {
+                                    required: "A description is required",
+                                })}
+                                maxLength={500}
                                 style={{ whiteSpace: 'pre-wrap' }}
                             >
                             </textarea>
+                            <div className="label">
+                                <span className="label-text-alt"></span>
+                                <span className={countChars("description") >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
+                                    {countChars("description") || 0}/500
+                                </span>
+
+                            </div>
                         </div>
                         <div className="flex flex-col mb-5 ">
                             <p >Delivery Method</p>
@@ -339,7 +351,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
                             {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            <OpeningHours register={register} setValue={setValue} watch={watch} getValues={getValues} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
+                            <OpeningHours register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>
@@ -354,7 +366,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             <div className="flex flex-col w-1/2">
                                 <label>Website (recommended)</label>
                                 <input
-                                    type="text"
+                                    type="website"
                                     className="input input-bordered "
                                     {...register("website")}
                                 />
@@ -363,7 +375,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                                 <label>Contact Number (recommended)</label>
                                 <input
                                     type="text"
-                                    className="input input-bordered "
+                                    className="input input-bordered"
                                     {...register("contact")}
                                 />
                             </div>

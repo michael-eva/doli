@@ -1,6 +1,6 @@
 import UnderConstruction from "../components/UnderConstruction";
 
-export default function Specials() {
+export default function Wholesale() {
     return (
         <UnderConstruction />
     )

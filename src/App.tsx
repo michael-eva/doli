@@ -14,6 +14,7 @@ import Validation from "./Jod/Validation"
 import JodRequired from "./Jod/JodRequired"
 import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost"
+import Wholesale from "./pages/Wholesale"
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
+        <Route path="wholesale" element={<Wholesale />} />
         < Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

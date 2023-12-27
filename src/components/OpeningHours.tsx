@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function OpeningHours({ register, setValue, getValues, errors, setError, clearErrors, watch, postData }: any) {
+export default function OpeningHours({ register, errors, setError, clearErrors, watch, postData }: any) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -39,12 +39,6 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
         }
     }, [postData]);
 
-    // console.log(initialOpeningHours);
-
-
-
-
-
     const editOpeningTimesEl = () => {
         return (
             <>
@@ -68,7 +62,6 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                             </select>
                         </td>
                         {watch(`openingHours[${index}].isOpen`) === 'open' ? (
-                            // {initialOpeningHours[index].isOpen === 'open' ? (
                             < td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 {errors && errors[item.day]?.toTime && (
                                     <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
@@ -90,7 +83,7 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                         id={`openingHours.${index}.toTime`}
                                         className="input input-bordered w-1/2"
                                         {...register(`openingHours.${index}.toTime`)}
-                                        value={item.toTime}
+                                        defaultValue={initialOpeningHours[index].toTime || ""}
                                         onBlur={(e) => {
                                             const toTimeValue = e.target.value;
                                             const fromTimeValue = watch(`openingHours.${index}.fromTime`);
@@ -145,8 +138,8 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
-
-                                    {postData ? editOpeningTimesEl()
+                                    {editOpeningTimesEl()}
+                                    {/* {postData ? editOpeningTimesEl()
                                         :
                                         <>
                                             {initialOpeningHours.map((item, index) => (
@@ -221,7 +214,7 @@ export default function OpeningHours({ register, setValue, getValues, errors, se
                                                 </tr>
                                             ))}
                                         </>
-                                    }
+                                    } */}
 
                                 </tbody>
                             </table>

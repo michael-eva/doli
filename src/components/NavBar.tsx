@@ -47,9 +47,16 @@ export default function NavBar() {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view specials' } })}>Specials</button>;
         }
     }
+    function wholesaleEl() {
+        if (user) {
+            return <NavLink to='/wholesale'>Wholesale</NavLink>;
+        } else {
+            return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view wholesales' } })}>Wholesale</button>;
+        }
+    }
     function profileEl() {
         return (
-            <div className="dropdown dropdown-end dropdown-hover">
+            <div className="dropdown dropdown-end dropdown-hover ">
                 {isResetPasswordPage ?
                     <>
                         <div className="text-xl">
@@ -106,13 +113,15 @@ export default function NavBar() {
         <div className="navbar bg-base-100 shadow-md mb-10">
             {isResetPasswordPage ? <>
                 <div className="navbar-start">
-                    <p className=" p-5 normal-case text-xl text-gray-500">doli </p>
+                    {/* <p className=" normal-case text-xl text-gray-500">doli </p> */}
+                    <img src="images/IMG_20231227_130328.jpg" alt="" width={150} />
                 </div>
                 <div className="navbar-center hidden lg:flex">
                     <ul className="menu menu-horizontal px-1 ">
                         <li className="text-xl mx-4 text-gray-500">Home</li>
                         <li className="text-xl mx-4 text-gray-500">Post a Listing</li>
                         <li className="text-xl mx-4 text-gray-500">Specials</li>
+                        <li className="text-xl mx-4 text-gray-500">Wholesale</li>
                     </ul>
                 </div>
                 <div className="navbar-end">
@@ -127,13 +136,15 @@ export default function NavBar() {
                 :
                 <>
                     <div className="navbar-start">
-                        <p className=" p-5 normal-case text-xl"><a href="/">doli</a> </p>
+                        {/* <p className="  normal-case text-xl"><a href="/">doli</a> </p> */}
+                        <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
                     </div>
                     <div className="navbar-center hidden lg:flex">
                         <ul className="menu menu-horizontal px-1 ">
                             <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
                             <li className="text-xl ">{postListingEl()}</li>
                             <li className="text-xl">{specialsEl()}</li>
+                            <li className="text-xl">{wholesaleEl()}</li>
                         </ul>
                     </div>
 

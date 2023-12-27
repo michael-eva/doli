@@ -14,7 +14,6 @@ import ForgotPassword from "./ForgotPassword"
 
 
 type FormData = {
-    username: string,
     gender: string,
     email: string,
     password: string,
@@ -22,11 +21,10 @@ type FormData = {
     birthMonth: string,
     birthYear: string,
     suburb: string,
-    postcode: string
+    altSuburb: string
     country: string
 }
 const initialFormState = {
-    username: "",
     gender: "",
     email: "",
     password: "",
@@ -34,7 +32,7 @@ const initialFormState = {
     birthMonth: "",
     birthYear: "",
     suburb: "",
-    postcode: "",
+    altSuburb: "",
     country: ""
 };
 
@@ -96,13 +94,12 @@ export default function SignUp() {
         const { error } = await supabase
             .from("members")
             .update({
-                username: formData.username,
                 gender: formData.gender,
                 email: formData.email,
                 birthMonth: formData.birthMonth,
                 birthYear: formData.birthYear,
                 suburb: formData.suburb,
-                postcode: formData.postcode,
+                altSuburb: formData.altSuburb,
             })
             .eq('id', user?.id)
 
@@ -131,13 +128,13 @@ export default function SignUp() {
                 .from("members")
                 .insert({
                     id: sessionData.user.id,
-                    username: formData.username,
                     gender: formData.gender,
                     email: formData.email,
                     birthMonth: formData.birthMonth,
                     birthYear: formData.birthYear,
                     suburb: formData.suburb,
-                    postcode: formData.postcode,
+                    altSuburb: formData.altSuburb,
+                    isJod: false
                 })
                 .single()
                 .then(
@@ -176,24 +173,22 @@ export default function SignUp() {
                 const memberData = data[0];
 
                 const {
-                    username,
                     gender,
                     email,
                     birthMonth,
                     birthYear,
                     suburb,
-                    postcode,
+                    altSuburb,
                 } = memberData;
 
                 setFormData({
                     ...formData,
-                    username: username || "",
                     gender: gender || "",
                     email: email || "",
                     birthMonth: birthMonth || "",
                     birthYear: birthYear || "",
                     suburb: suburb || "",
-                    postcode: postcode || "",
+                    altSuburb: altSuburb || "",
                 });
             }
         } catch (error: any) {
@@ -227,19 +222,8 @@ export default function SignUp() {
                         {!user && <p className=" text-red-600 italic">Enter description on what it means to be a member</p>}
                     </div>
                     <div className=" flex mt-7 items-center gap-3">
-                        <div className="flex flex-col w-1/2">
-                            <label>Username</label>
-                            <input
-                                type="text"
-                                className="input input-bordered"
-                                name="username"
-                                onChange={handleChange}
-                                required
-                                value={formData.username}
-                            />
-                        </div>
                         {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
-                        {user ? <div className="flex flex-col w-1/2">
+                        {user ? <div className="flex flex-col w-full">
                             <label>Email</label>
                             <input
                                 type="text"
@@ -252,7 +236,7 @@ export default function SignUp() {
                             />
                         </div>
                             :
-                            <div className="flex flex-col w-1/2">
+                            <div className="flex flex-col w-full">
                                 <label>Email</label>
                                 <input
                                     type="text"
@@ -264,10 +248,29 @@ export default function SignUp() {
 
                                 />
                             </div>}
+                        {/* <div className="flex flex-col w-1/2">
+                            <div className="flex justify-between">
+                                <p>Country</p>
+                                <Toggle>
+                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                    <ToggleOn>
+                                        <SimpleModal title="doli" >Limited to Australia for the time being.</SimpleModal>
+                                    </ToggleOn>
+                                </Toggle>
+                            </div>
+                            <input
+                                type="text"
+                                className="input input-bordered "
+                                name="country"
+                                value="Australia"
+                                disabled
+                            />
+                        </div> */}
                     </div>
 
                     {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
                     {!user && <div className="container flex gap-3 mt-7">
+
                         <div className="flex flex-col w-1/2">
                             <label>Password</label>
                             <input
@@ -339,6 +342,7 @@ export default function SignUp() {
                                 <option value="" disabled selected>- Select Year -</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
+                                <option value="female">Non-binary</option>
                                 <option value="other">Other</option>
 
                             </select>
@@ -375,14 +379,22 @@ export default function SignUp() {
                             />
                         </div>
                         <div className="flex flex-col w-1/2 mt-4">
-                            <label>Post Code</label>
+                            <div className="flex justify-between">
+                                <label>Alternative suburb</label>
+                                <Toggle>
+                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                    <ToggleOn>
+                                        <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
+                                    </ToggleOn>
+                                </Toggle>
+                            </div>
                             <input
                                 type="text"
                                 className="input input-bordered "
-                                name="postcode"
+                                name="altSuburb"
+                                placeholder="Home away from home"
                                 onChange={handleChange}
-                                required
-                                value={formData.postcode}
+                                value={formData.altSuburb}
                             />
                         </div>
                     </div>
