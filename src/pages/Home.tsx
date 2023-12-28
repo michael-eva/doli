@@ -125,11 +125,16 @@ export default function Home() {
         }
         if (searchFilter && searchFilter.trim() !== "") {
             const searchResults = filterPosts.filter(post =>
-                Object.values(post).some(value =>
-                    typeof value === "string" && value.toLowerCase().includes(searchFilter.toLowerCase())
-                )
-            )
-            return searchResults
+                Object.entries(post).some(([key, value]) => {
+                    if (Array.isArray(value)) {
+                        return value.some(tag =>
+                            typeof tag.label === "string" && tag.label.toLowerCase().includes(searchFilter.toLowerCase())
+                        );
+                    }
+                    return typeof value === "string" && value.toLowerCase().includes(searchFilter.toLowerCase());
+                })
+            );
+            return searchResults;
         }
 
         return filterPosts
