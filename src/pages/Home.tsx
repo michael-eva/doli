@@ -4,7 +4,6 @@ import LocationSearch from "../components/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
-import { nanoid } from "nanoid";
 import { useForm } from "react-hook-form"
 type CardProps = {
     id: string,
@@ -113,7 +112,6 @@ export default function Home() {
     // }
     // LocationSearch()
 
-    console.log(deliveryFilter);
 
     const filterOrders = () => {
         let filterPosts = [...posts]
@@ -136,8 +134,6 @@ export default function Home() {
 
         return filterPosts
     }
-
-
     return (
         <>
             <div className=" max-w-7xl m-auto">

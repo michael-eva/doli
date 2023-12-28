@@ -69,30 +69,32 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
 
-
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
     const CDNUrl = (imgPath: imgPath) => {
         return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
     }
-    const formCleanup = () => {
+    const formCleanup = (shouldSetVerifiedFalse: boolean) => {
         setDeliveryMethodError(false)
         setIsSubmitting(false)
         setSelectedTags([])
         reset()
-        toast.success("Listing will be submitted for verification!")
+        {
+            !shouldSetVerifiedFalse ?
+                toast.success("Listing will be submitted for verification!")
+                :
+                toast.success("Listing has been submitted!")
+        }
         setTimeout(() => {
             navigate("/");
         }, 1000);
     }
-    const handleTagChange = (selectedTags) => {
+    const handleTagChange = (selectedTags: string | any[] | ((prevState: string[]) => string[])) => {
         if (selectedTags.length <= 5) {
             setSelectedTags(selectedTags);
         }
     };
-
-
     const handleFileChange = (e: any) => {
         const file = e.target.files[0];
         setSelectedFile(file);
@@ -104,8 +106,52 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             fileReader.readAsDataURL(file);
         }
     }
-
+    const deleteCurrentImage = async () => {
+        const currentImageName = user?.id + '/' + postData?.postId;
+        const { error: deleteError } = await supabase.storage
+            .from('cover_images')
+            .remove([currentImageName]);
+        if (deleteError) {
+            console.error('Error deleting current image:', deleteError);
+        }
+    };
+    const uploadNewImage = async () => {
+        const { data: imageData, error: imageError } = await supabase.storage
+            .from('cover_images')
+            .upload(user?.id + '/' + postData?.postId, selectedFile);
+        if (imageError) {
+            console.error('Error uploading image:', imageError);
+            return null;
+        }
+        return CDNUrl(imageData);
+    };
+    const updateImage = async (imageUrl: string) => {
+        const { error: updateError } = await supabase
+            .from('posts')
+            .update({ imgUrl: imageUrl })
+            .eq('id', user?.id)
+            .eq('postId', postData?.postId);
+        if (updateError) {
+            console.error('Error updating imgUrl:', updateError);
+        }
+    };
+    const countChars = (name: string) => {
+        const watchValue = getValues(name)
+        const inputLength = watchValue?.length
+        return inputLength
+    }
+    const determineVerificationStatus = (formData: FormData, postData?: PostData) => {
+        const isNameChanged = formData.name !== postData?.name;
+        const isDescriptionChanged = formData.description !== postData?.description;
+        const isImageChanged = formData.imgUrl.length > 0; // Assuming selectedFile is set when changing the image
+        console.log("Name change:", isNameChanged);
+        console.log("Description change:", isDescriptionChanged);
+        console.log("Image change:", isImageChanged);
+        return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
+    };
     const handleEditFormSubmit = async (formData: FormData) => {
+        console.log(formData.imgUrl);
+
         const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
             return {
                 day,
@@ -113,17 +159,17 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             };
         });
 
-
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
         setIsSubmitting(true);
 
+        const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: false, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -132,29 +178,11 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             }
 
             if (selectedFile) {
-                // Delete the current cover image from storage
-                const currentImageName = user?.id + '/' + postData?.postId;
-                const { error: deleteError } = await supabase.storage
-                    .from('cover_images')
-                    .remove([currentImageName]);
-
-                if (deleteError) {
-                    console.error('Error deleting current image:', deleteError);
-                    return;
+                await deleteCurrentImage();
+                const imageUrl = await uploadNewImage();
+                if (imageUrl !== null) {
+                    await updateImage(imageUrl);
                 }
-
-                // Upload the new cover image to storage
-                const { data: imageData, error: imageError } = await supabase.storage
-                    .from('cover_images')
-                    .upload(user?.id + '/' + postData?.postId, selectedFile);
-
-                if (imageError) {
-                    console.error('Error uploading image:', imageError);
-                    return;
-                }
-
-
-                const imageUrl = CDNUrl(imageData);
 
                 const { error: updateError } = await supabase
                     .from('posts')
@@ -167,15 +195,13 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     return;
                 }
             }
-
             console.log('Post details updated successfully!');
         } catch (error) {
             console.error('Error handling submit:', error);
         }
         setIsSubmitting(false);
-        formCleanup()
-    };
-
+        formCleanup(shouldSetVerifiedFalse)
+    }
     const handleNewFormSubmit = async (formData: FormData) => {
         const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
             return {
@@ -256,15 +282,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
-
-    function countChars(name: string) {
-        const watchValue = getValues(name)
-        const inputLength = watchValue?.length
-        return inputLength
-    }
-    const isNumeric = (value) => {
-        return /^\d+$/.test(value);
-    };
 
     return (
         <div className="flex justify-center">
