@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-// import { Rating } from 'flowbite-react';
-// import { RatingStar } from 'flowbite-react/lib/esm/components/Rating/RatingStar';
 import Toggle from '../Toggle/Toggle';
 import ToggleButton from '../Toggle/ToggleButton';
 import ToggleOn from '../Toggle/ToggleOn';
 import SimpleModal from '../Modals/SimpleModal';
 import supabase from '../../config/supabaseClient';
 import StarRatings from 'react-star-ratings';
+import { useNavigate } from 'react-router';
 
 type NameType = {
     name: string
@@ -16,9 +15,9 @@ type NameType = {
 
 export default function RatingComp({ name, postId, user }: NameType) {
     const [userRating, setUserRating] = useState(null);
-    // const [isModalOpen, setIsModalOpen] = useState(false)
     const [ratings, setRating] = useState()
     const [ratingSubmitted, setRatingSubmitted] = useState(false);
+    const navigate = useNavigate()
 
 
     const handleStarClick = (rating: number) => {
@@ -50,7 +49,6 @@ export default function RatingComp({ name, postId, user }: NameType) {
             if (error) {
                 console.log(error);
             }
-            // getRatings();
         }
         setRatingSubmitted(true);
     }
@@ -92,6 +90,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
                                 btnClassName="btn btn-success"
                                 condBtnRender={userRating}
                                 ratingSubmitted={ratingSubmitted}
+                                btnName="Submit"
                             >
                                 <StarRatings
                                     rating={userRating || 0}
@@ -100,6 +99,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
                                     changeRating={handleStarClick}
                                     numberOfStars={5}
                                     name='userRating'
+
                                 />
                             </SimpleModal>
                             :
@@ -107,7 +107,14 @@ export default function RatingComp({ name, postId, user }: NameType) {
                                 <p>You've already rated this business</p>
                             </SimpleModal>
                         ) :
-                            <SimpleModal>Please login to continue</SimpleModal>
+                            <SimpleModal
+                                btnClassName="btn btn-primary"
+                                condBtnRender={true}
+                                btnName="Login"
+                                // TODO
+                                //Navigate to the path where the user came from.
+                                onClickFunction={() => navigate("/login")}
+                            >Please login to continue</SimpleModal>
                         }
                     </ToggleOn>
                 </Toggle>

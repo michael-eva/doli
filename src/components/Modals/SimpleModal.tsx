@@ -8,13 +8,14 @@ import { IoCheckmarkCircleOutline } from "react-icons/io5";
 type ModalType = {
     title?: string,
     children?: any,
-    onClickFunction?: () => void,
+    onClickFunction?: any,
     btnClassName?: string
     condBtnRender?: any
     ratingSubmitted?: boolean
+    btnName?: string
 }
 
-export default function SimpleModal({ title, children, onClickFunction, btnClassName, condBtnRender, ratingSubmitted }: ModalType) {
+export default function SimpleModal({ title, children, onClickFunction, btnClassName, condBtnRender, ratingSubmitted, btnName }: ModalType) {
     const { toggle }: any = useContext(ToggleContext);
 
     return (
@@ -25,7 +26,7 @@ export default function SimpleModal({ title, children, onClickFunction, btnClass
                     <>
                         <h2 className="font-bold text-xl my-4">{title}</h2>
                         <div className="my-4 text-lg">{children}</div>
-                        {condBtnRender && (onClickFunction && <button className={btnClassName} onClick={onClickFunction}>Submit</button>)}
+                        {condBtnRender && (onClickFunction && <button className={btnClassName} onClick={onClickFunction}>{btnName}</button>)}
                     </>
                     :
                     <>
