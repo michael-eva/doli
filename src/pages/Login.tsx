@@ -22,6 +22,7 @@ type LoginData = {
     email: string,
     password: string
 }
+
 export default function Login() {
     let navigate = useNavigate()
     const [isUser, setIsUser] = useState<string>("")
@@ -76,6 +77,7 @@ export default function Login() {
         toast.success("Logged in successfully");
 
         setTimeout(() => {
+
             navigate("/");
         }, 1000);
 
@@ -100,7 +102,8 @@ export default function Login() {
                         <input
                             type="email"
                             placeholder="Type here"
-                            className="input input-bordered w-full max-w-xs"
+                            className="input input-bordered w-full"
+                            style={{ backgroundColor: "white", color: "black" }}
                             {...register('email', { required: "Please enter your email address" })}
                         />
                     </div>
@@ -113,7 +116,7 @@ export default function Login() {
                         <input
                             type="password"
                             placeholder="Type here"
-                            className="input input-bordered w-full max-w-xs"
+                            className="input input-bordered w-full"
                             {...register('password', { required: "Please enter your password" })}
                         />
                     </div>

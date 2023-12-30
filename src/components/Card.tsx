@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
-import { Rating } from 'flowbite-react';
+// import { Rating } from 'flowbite-react';
 import DeleteModal from "./Modals/DeleteModal";
 import Toggle from "./Toggle/Toggle";
 import ToggleOn from "./Toggle/ToggleOn";
 import ToggleButton from "./Toggle/ToggleButton";
 import { useNavigate } from "react-router";
+import RatingComp from "./Rating/Rating";
 
 
 type CardProps = {
@@ -77,7 +78,9 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 <h2 className="text-blue-600 font-semibold">{suburb}, {state} {postcode}</h2>
                 <h3 className="font-light">{address}</h3>
 
-                <h2 className="font-bold mt-4 mb-3 text-b">{type}</h2>
+
+
+                <h2 className="font-bold mt-4 mb-3">{type}</h2>
 
                 {selectedTags && selectedTags.length > 0 &&
                     <div className="mb-3">
@@ -93,6 +96,9 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                         {showFullDescription ? 'See Less' : 'See More'}
                     </button>
                 )}
+                <div className="pb-3">
+                    <RatingComp name={name} postId={postId} user={user} />
+                </div>
                 <p className=" text-md font-bold">Operating hours:</p>
                 {openDays?.map(item => {
                     return (
@@ -111,24 +117,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 })}
 
                 <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
-                <div className="rating flex flex-col mt-3">
-                    <p className=" text-xs">Local rating:</p>
-                    <Rating size="md">
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star filled={false} />
-                    </Rating>
-                    <p className=" text-xs">Travellers rating:</p>
-                    <Rating>
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star />
-                        <Rating.Star filled={false} />
-                    </Rating>
-                </div>
+
                 <div className="card-actions mt-5" style={{ height: '48px' }}>
                     {contact.length > 0 &&
                         <div>

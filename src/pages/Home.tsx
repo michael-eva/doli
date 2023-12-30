@@ -139,6 +139,7 @@ export default function Home() {
 
         return filterPosts
     }
+
     return (
         <>
             <div className=" max-w-7xl m-auto">
@@ -174,6 +175,7 @@ export default function Home() {
                             {...register('type')}
                             className="select select-bordered"
                             onChange={(e) => genNewSearchParams('type', e.target.value)}
+                            value={typeFilter || ""}
                         >
                             <option value="all" selected>All Types</option>
                             {businessType.map(item => (
@@ -189,6 +191,7 @@ export default function Home() {
                             name="deliveryMethod"
                             className="select select-bordered"
                             onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
+                            value={deliveryFilter || ""}
                         >
                             <option value="all" selected>All Methods</option>
                             <option value="delivery" >Delivery</option>
@@ -202,17 +205,26 @@ export default function Home() {
                             className="input input-bordered w-72"
                             {...register("search")}
                             onChange={(e) => genNewSearchParams("search", e.target.value)}
+                            value={searchFilter || ""}
                         />
                     </div>
                 </div >
                 <div className="flex flex-wrap justify-evenly h-full">
-                    {filterOrders().map((item: CardProps) => {
-                        return (
-                            <div key={item.postId} className="mt-10">
-                                <Card {...item} onDelete={deletePost} />
+
+                    {
+                        filterOrders()?.length > 0 ? (
+                            filterOrders().map((item: CardProps) => (
+                                <div key={item.postId} className="mt-10">
+                                    <Card {...item} onDelete={deletePost} />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="my-6">
+                                <p className=" text-3xl font-thin">Sorry, no results found.</p>
+                                <p className=" text-2xl font-thin">Please try a different search criteria.</p>
                             </div>
-                        );
-                    })}
+                        )
+                    }
                 </div>
             </div>
         </>
