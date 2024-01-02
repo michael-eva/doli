@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useState } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
-// import { Rating } from 'flowbite-react';
 import DeleteModal from "./Modals/DeleteModal";
 import Toggle from "./Toggle/Toggle";
 import ToggleOn from "./Toggle/ToggleOn";
@@ -22,9 +21,17 @@ type CardProps = {
     postcode: string,
     address: string,
     type: string,
-    selectedTags?: string[] | undefined,
+    selectedTags?: [{
+        value: string,
+        label: string
+    }] | undefined,
     description: string,
-    openingHours: string,
+    openingHours: [{
+        day: string,
+        isOpen: string,
+        fromTime: string,
+        toTime: string
+    }],
     pickUp: boolean,
     delivery: boolean,
     dineIn: boolean,
@@ -35,15 +42,18 @@ type CardProps = {
     isVerified?: boolean,
 }
 
+
+
 export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
+    console.log(selectedTags);
 
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 
-    const openDays = openingHours.filter(item => (
+    const openDays = openingHours.filter((item: { isOpen: string; }) => (
         item.isOpen === 'open'
     ))
 
@@ -100,7 +110,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                     <RatingComp name={name} postId={postId} user={user} />
                 </div>
                 <p className=" text-md font-bold">Operating hours:</p>
-                {openDays?.map(item => {
+                {openDays?.map((item: { day: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; fromTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; toTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => {
                     return (
                         <div className="flex">
                             <p className=" italic">

@@ -15,9 +15,17 @@ type CardProps = {
     postcode: string,
     address: string,
     type: string,
-    selectedTags: string[],
+    selectedTags: [{
+        value: string,
+        label: string
+    }],
     description: string,
-    openingHours: string,
+    openingHours: [{
+        day: string,
+        isOpen: string,
+        fromTime: string,
+        toTime: string
+    }],
     pickUp: boolean,
     delivery: boolean,
     dineIn: boolean,
@@ -36,6 +44,8 @@ export default function Home() {
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
+    console.log(posts);
+
 
     useEffect(() => {
         getPosts()
@@ -113,32 +123,41 @@ export default function Home() {
     // LocationSearch()
 
 
+    const containsSearchText = (text: string, searchTerm: string) =>
+        text.toLowerCase().includes(searchTerm.toLowerCase());
+
     const filterOrders = () => {
-        let filterPosts = [...posts]
+        let filterPosts = [...posts];
 
         if (typeFilter && typeFilter !== "all") {
-            filterPosts = filterPosts.filter(post => post.type === typeFilter)
+            filterPosts = filterPosts.filter((post) => post.type === typeFilter);
         }
 
         if (deliveryFilter && deliveryFilter !== "all") {
-            filterPosts = filterPosts.filter(post => post[deliveryFilter] === true)
+            filterPosts = filterPosts.filter(
+                (post) => post[deliveryFilter as keyof CardProps] === true
+            );
         }
+
         if (searchFilter && searchFilter.trim() !== "") {
-            const searchResults = filterPosts.filter(post =>
-                Object.entries(post).some(([key, value]) => {
+            const searchResults = filterPosts.filter((post) => {
+                return Object.values(post).some((value) => {
                     if (Array.isArray(value)) {
-                        return value.some(tag =>
-                            typeof tag.label === "string" && tag.label.toLowerCase().includes(searchFilter.toLowerCase())
+                        return value.some(
+                            (tag: any) =>
+                                typeof tag.label === "string" &&
+                                containsSearchText(tag.label, searchFilter)
                         );
                     }
-                    return typeof value === "string" && value.toLowerCase().includes(searchFilter.toLowerCase());
-                })
-            );
+                    return typeof value === "string" && containsSearchText(value, searchFilter);
+                });
+            });
             return searchResults;
         }
 
-        return filterPosts
-    }
+        return filterPosts;
+    };
+
 
     return (
         <>

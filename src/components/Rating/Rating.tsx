@@ -2,29 +2,35 @@ import { useEffect, useState } from 'react';
 import Toggle from '../Toggle/Toggle';
 import ToggleButton from '../Toggle/ToggleButton';
 import ToggleOn from '../Toggle/ToggleOn';
-import SimpleModal from '../Modals/SimpleModal';
 import supabase from '../../config/supabaseClient';
 import StarRatings from 'react-star-ratings';
-import { useNavigate } from 'react-router';
+// import { useNavigate } from 'react-router';
+import CustomModal from '../Modals/CustomModal';
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
+import Login from '../../pages/Login';
 
 type NameType = {
     name: string
     postId: string
     user: any
 }
-
+type RatingsType = {
+    id: number,
+    userId: string,
+    rating: number,
+    postId: string,
+}
 export default function RatingComp({ name, postId, user }: NameType) {
-    const [userRating, setUserRating] = useState(null);
-    const [ratings, setRating] = useState()
-    const [ratingSubmitted, setRatingSubmitted] = useState(false);
-    const navigate = useNavigate()
-
+    const [userRating, setUserRating] = useState<number>(0);
+    const [ratings, setRating] = useState<RatingsType[]>()
+    const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
+    // const navigate = useNavigate()
 
     const handleStarClick = (rating: number) => {
         setUserRating(rating);
     };
     const getRatings = async () => {
-        const { data, error } = await supabase
+        const { data, error }: any = await supabase
             .from("ratings")
             .select("*")
 
@@ -55,11 +61,64 @@ export default function RatingComp({ name, postId, user }: NameType) {
     const filteredRatings = ratings?.filter(rating => rating.postId === postId);
     const displayRating = () => {
         if (filteredRatings && filteredRatings.length > 0) {
-            const averageRating = filteredRatings.reduce((acc, curr) => acc + curr.rating, 0) / filteredRatings.length;
-            return +averageRating.toFixed(2);
+            const averageRating =
+                filteredRatings.reduce((acc, curr) => acc + curr.rating, 0) /
+                filteredRatings.length;
+            return isNaN(averageRating) ? 0 : +averageRating.toFixed(2);
         }
         return 0;
     };
+    const ratingModalEl = () => {
+        if (ratingSubmitted) {
+            return (
+                <>
+                    <div className="flex items-center flex-col gap-5">
+                        <div style={{ fontSize: "50px" }}>
+
+                            <IoCheckmarkCircleOutline style={{ color: 'green' }} />
+                        </div>
+
+
+                        <h2 className=" text-xl">Thank you for submitting your rating!</h2>
+                        <h2 className=" text-lg">Your rating will be displayed when page refreshes.</h2>
+                    </div>
+                </>
+            )
+        }
+        if (!user) {
+            return (
+                <>
+                    {/* <div className="my-4 text-lg">Please login to continue</div>
+                <button className="btn btn-primary" onClick={() => navigate("/login")}>Login</button> */}
+                    <Login />
+                </>
+            )
+        }
+        else {
+            if (!hasRated) {
+                return (
+                    <div className="flex flex-col items-center gap-5">
+                        <h2 className="font-bold text-xl">Leave a rating for {name}</h2>
+                        <StarRatings
+                            rating={userRating || 0}
+                            starRatedColor="gold"
+                            starHoverColor="gold"
+                            changeRating={handleStarClick}
+                            numberOfStars={5}
+                            name='userRating'
+
+                        />
+                        <button className={`${userRating ? "btn btn-success" : "btn btn-disabled"}`} onClick={handleClick}>Submit</button>
+                    </div>
+                )
+
+            }
+            else if (hasRated) {
+                return <div className="my-4 text-lg">You've already rated this business.</div>
+            }
+        }
+    }
+
 
     return (
         <div className="rating flex flex-col mt-3">
@@ -78,44 +137,13 @@ export default function RatingComp({ name, postId, user }: NameType) {
                 <Toggle>
                     <ToggleButton
                         className="text-xs text-blue-600 italic cursor-pointer"
-                    // optionalFunction={() => setIsModalOpen(true)}
                     >
                         Add a rating
                     </ToggleButton>
                     <ToggleOn>
-                        {user ? (!hasRated ?
-                            <SimpleModal
-                                title={`Leave a rating for ${name}`}
-                                onClickFunction={handleClick}
-                                btnClassName="btn btn-success"
-                                condBtnRender={userRating}
-                                ratingSubmitted={ratingSubmitted}
-                                btnName="Submit"
-                            >
-                                <StarRatings
-                                    rating={userRating || 0}
-                                    starRatedColor="gold"
-                                    starHoverColor="gold"
-                                    changeRating={handleStarClick}
-                                    numberOfStars={5}
-                                    name='userRating'
-
-                                />
-                            </SimpleModal>
-                            :
-                            <SimpleModal>
-                                <p>You've already rated this business</p>
-                            </SimpleModal>
-                        ) :
-                            <SimpleModal
-                                btnClassName="btn btn-primary"
-                                condBtnRender={true}
-                                btnName="Login"
-                                // TODO
-                                //Navigate to the path where the user came from.
-                                onClickFunction={() => navigate("/login")}
-                            >Please login to continue</SimpleModal>
-                        }
+                        <CustomModal>
+                            {ratingModalEl()}
+                        </CustomModal>
                     </ToggleOn>
                 </Toggle>
             </div>
