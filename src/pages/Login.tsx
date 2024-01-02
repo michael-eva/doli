@@ -23,7 +23,11 @@ type LoginData = {
     password: string
 }
 
-export default function Login() {
+type LoginProps = {
+    title?: string
+}
+
+export default function Login({ title }: LoginProps) {
     let navigate = useNavigate()
     const [isUser, setIsUser] = useState<string>("")
     const location = useLocation()
@@ -93,7 +97,7 @@ export default function Login() {
             )}
             <form onSubmit={handleSubmit((data) => handleFormSubmit(data as LoginData))}>
                 <div className="  gap-9 flex flex-col ">
-                    <p className=" text-lg font-semibold pb-5">Please enter your login details:</p>
+                    <p className=" text-lg font-semibold pb-5">{`${title ? title : "Please enter your login details:"}`}</p>
                     {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
                     <div className="flex">
                         <label className="label">

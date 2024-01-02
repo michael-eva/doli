@@ -8,6 +8,7 @@ import StarRatings from 'react-star-ratings';
 import CustomModal from '../Modals/CustomModal';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import Login from '../../pages/Login';
+import ForgotPassword from '../ForgotPassword';
 
 type NameType = {
     name: string
@@ -24,6 +25,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
     const [userRating, setUserRating] = useState<number>(0);
     const [ratings, setRating] = useState<RatingsType[]>()
     const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
+    const [openToggle, setOpenToggle] = useState(false)
     // const navigate = useNavigate()
 
     const handleStarClick = (rating: number) => {
@@ -88,11 +90,10 @@ export default function RatingComp({ name, postId, user }: NameType) {
         if (!user) {
             return (
                 <>
-                    {/* <div className="my-4 text-lg">Please login to continue</div>
-                <button className="btn btn-primary" onClick={() => navigate("/login")}>Login</button> */}
-                    <Login />
+                    <Login title="Please login to rate this business:" />
                 </>
             )
+            return
         }
         else {
             if (!hasRated) {
@@ -121,7 +122,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
 
 
     return (
-        <div className="rating flex flex-col mt-3">
+        <div className="mt-3">
             <div className="flex items-center">
                 <StarRatings
                     rating={displayRating()}
@@ -147,9 +148,6 @@ export default function RatingComp({ name, postId, user }: NameType) {
                     </ToggleOn>
                 </Toggle>
             </div>
-
-
-
         </div>
     );
 }
