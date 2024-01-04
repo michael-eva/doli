@@ -6,6 +6,7 @@ import ToggleOn from "./Toggle/ToggleOn";
 import ToggleButton from "./Toggle/ToggleButton";
 import { useNavigate } from "react-router";
 import RatingComp from "./Rating/Rating";
+import DispOpeningHours from "./Modals/DispOpeningHours";
 
 
 type CardProps = {
@@ -110,22 +111,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                     <RatingComp name={name} postId={postId} user={user} />
                 </div>
                 <p className=" text-md font-bold">Operating hours:</p>
-                {openDays?.map((item: { day: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; fromTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; toTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => {
-                    return (
-                        <div className="flex">
-                            <p className=" italic">
-                                {item.day}
-                            </p>
-                            <p className=" italic">
-                                {item.fromTime}
-                            </p>
-                            <p className=" italic">
-                                {item.toTime}
-                            </p>
-                        </div>
-                    )
-                })}
-
+                <DispOpeningHours openingHours={openingHours} />
                 <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
 
                 <div className="card-actions mt-5" style={{ height: '48px' }}>
