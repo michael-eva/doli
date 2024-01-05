@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form"
+import CardSkeleton from "../components/Loading/CardSkeleton";
 type CardProps = {
     id: string,
     postId: string,
@@ -40,16 +41,22 @@ export default function Home() {
     const deliveryFilter = searchParams.get("deliveryMethod")
     const searchFilter = searchParams.get("search")
     const { register, watch, getValues } = useForm()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
-    console.log(posts);
-
 
     useEffect(() => {
+        setIsLoading(true); // Set loading to true when fetching data
         getPosts()
-    }, [])
+            .then(() => setIsLoading(false)) // Set loading to false once data is fetched
+            .catch((error) => {
+                console.error(error);
+                setIsLoading(false); // Ensure loading is turned off on error too
+            });
+
+    }, [typeFilter, deliveryFilter, searchFilter]);
     const getPosts = async () => {
         const { error, data } = await supabase
             .from("posts")
@@ -158,7 +165,12 @@ export default function Home() {
         return filterPosts;
     };
 
-
+    const isFilter = () => {
+        if (typeFilter || deliveryFilter || searchFilter) {
+            return true
+        }
+        else return false
+    }
     return (
         <>
             <div className=" max-w-7xl m-auto">
@@ -230,20 +242,27 @@ export default function Home() {
                 </div >
                 <div className="flex flex-wrap justify-evenly h-full">
 
-                    {
+                    {isLoading ?
+                        <>
+                            {
+                                Array.from({ length: 4 }, (_) => (
+                                    <CardSkeleton />
+                                ))
+                            }
+                        </>
+                        :
                         filterOrders()?.length > 0 ? (
                             filterOrders().map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))
-                        ) : (
+                        ) : isFilter() ? (
                             <div className="my-6">
-                                <p className=" text-3xl font-thin">Sorry, no results found.</p>
-                                <p className=" text-2xl font-thin">Please try a different search criteria.</p>
+                                <p className="text-3xl font-thin">Sorry, no results found.</p>
+                                <p className="text-2xl font-thin">Please try a different search criteria.</p>
                             </div>
-                        )
-                    }
+                        ) : null}
                 </div>
             </div>
         </>

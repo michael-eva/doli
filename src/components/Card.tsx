@@ -1,4 +1,4 @@
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
 import DeleteModal from "./Modals/DeleteModal";
 import Toggle from "./Toggle/Toggle";
@@ -6,7 +6,7 @@ import ToggleOn from "./Toggle/ToggleOn";
 import ToggleButton from "./Toggle/ToggleButton";
 import { useNavigate } from "react-router";
 import RatingComp from "./Rating/Rating";
-import DispOpeningHours from "./Modals/DispOpeningHours";
+import DispOpeningHours from "./DispOpeningHours";
 
 
 type CardProps = {
@@ -54,9 +54,9 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 
-    const openDays = openingHours.filter((item: { isOpen: string; }) => (
-        item.isOpen === 'open'
-    ))
+    // const openDays = openingHours.filter((item: { isOpen: string; }) => (
+    //     item.isOpen === 'open'
+    // ))
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -112,9 +112,10 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 </div>
                 <p className=" text-md font-bold">Operating hours:</p>
                 <DispOpeningHours openingHours={openingHours} />
-                <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
 
-                <div className="card-actions mt-5" style={{ height: '48px' }}>
+                <p className=" mt-5">{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+
+                <div className="card-actions mt-4" style={{ height: '48px' }}>
                     {contact.length > 0 &&
                         <div>
                             <label>Contact: </label>
