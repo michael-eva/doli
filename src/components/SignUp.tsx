@@ -220,7 +220,7 @@ export default function SignUp() {
     return (
         <>
             {hasSubmitted ?
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36">
+                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center">
                     <div className="flex items-center flex-col gap-5">
                         <div style={{ fontSize: "50px" }}>
 
@@ -228,10 +228,11 @@ export default function SignUp() {
                         </div>
 
 
-                        <h2 className=" text-xl">Submitted.</h2>
+                        <h2 className=" text-xl font-bold">Submitted.</h2>
                         <h2 className=" text-md">Please check your email inbox for a confirmation link.</h2>
+                        <h2 className=" text-sm italic">Email may take a few minutes to come through.</h2>
                     </div>
-                </div>
+                </div >
                 :
                 <form onSubmit={getSubmitFunction()}>
                     <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
