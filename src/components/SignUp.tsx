@@ -161,7 +161,6 @@ export default function SignUp() {
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
-    console.log(hasSubmitted);
 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
@@ -418,7 +417,7 @@ export default function SignUp() {
                     </div>
                 </form>
             }
-            <Toaster />
+            {/* <Toaster /> */}
         </>
     )
 }
