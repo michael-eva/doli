@@ -25,17 +25,17 @@ export default function RatingComp({ name, postId, user }: NameType) {
     const [userRating, setUserRating] = useState<number>(0);
     const [ratings, setRating] = useState<RatingsType[]>()
     const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
-    const [openToggle, setOpenToggle] = useState(false)
     // const navigate = useNavigate()
+    console.log(ratings);
 
     const handleStarClick = (rating: number) => {
         setUserRating(rating);
     };
+
     const getRatings = async () => {
         const { data, error }: any = await supabase
             .from("ratings")
             .select("*")
-
         if (error) {
             console.log(error);
         }

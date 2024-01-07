@@ -49,14 +49,11 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
-    console.log(selectedTags);
+
+    console.log(user);
 
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
-
-    // const openDays = openingHours.filter((item: { isOpen: string; }) => (
-    //     item.isOpen === 'open'
-    // ))
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);

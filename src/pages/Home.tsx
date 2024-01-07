@@ -6,6 +6,8 @@ import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import CardSkeleton from "../components/Loading/CardSkeleton";
+import { useMediaQuery } from "react-responsive"
+
 type CardProps = {
     id: string,
     postId: string,
@@ -42,6 +44,7 @@ export default function Home() {
     const searchFilter = searchParams.get("search")
     const { register, watch, getValues } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const isMobile = useMediaQuery({ maxWidth: 640 });
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -240,12 +243,11 @@ export default function Home() {
                         />
                     </div>
                 </div >
-                <div className="flex flex-wrap justify-evenly h-full">
-
+                <div className={`flex ${isMobile ? 'flex flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
                             {
-                                Array.from({ length: 4 }, (_) => (
+                                Array.from({ length: 2 }, (_) => (
                                     <CardSkeleton />
                                 ))
                             }

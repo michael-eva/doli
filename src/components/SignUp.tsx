@@ -11,6 +11,7 @@ import Toggle from "./Toggle/Toggle"
 import ToggleOn from "./Toggle/ToggleOn"
 import ToggleButton from "./Toggle/ToggleButton"
 import ForgotPassword from "./ForgotPassword"
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
 
 
 type FormData = {
@@ -41,6 +42,7 @@ export default function SignUp() {
     const [passwordError, setPasswordError] = useState<string>("")
     const [formData, setFormData] = useState<FormData>(initialFormState)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [hasSubmitted, setHasSubmitted] = useState<boolean>(false)
     const user = useUser()
     const navigate = useNavigate()
 
@@ -68,18 +70,20 @@ export default function SignUp() {
                 setEmailError("")
                 return;
             }
-            const signInResponse = await supabase.auth.signInWithPassword({
-                email: formData.email,
-                password: formData.password,
-            });
+            // const signInResponse = await supabase.auth.signInWithPassword({
+            //     email: formData.email,
+            //     password: formData.password,
+            // });
 
-            if (signInResponse.error) {
-                console.log(signInResponse.error);
-                return;
-            }
-            const sessionData = signInResponse.data;
+            // if (signInResponse.error) {
+            //     console.log(signInResponse.error);
+            //     return;
+            // }
+            // const sessionData = signInResponse.data;
 
-            return sessionData;
+            // return sessionData;
+
+            return signUpResponse
         } catch (error: any) {
             console.error('Error:', error.message);
         }
@@ -121,13 +125,13 @@ export default function SignUp() {
             return;
         }
         setPasswordError("");
-        const sessionData = await signUpAndInsertData();
+        const signUpResponse = await signUpAndInsertData();
 
-        if (sessionData) {
+        if (signUpResponse && !signUpResponse.error) {
             supabase
                 .from("members")
                 .insert({
-                    id: sessionData.user.id,
+                    id: signUpResponse?.data?.user?.id,
                     gender: formData.gender,
                     email: formData.email,
                     birthMonth: formData.birthMonth,
@@ -147,14 +151,17 @@ export default function SignUp() {
                         setEmailError("");
                     },
                 )
-        }
-        toast.success("Signed up successfully")
-        navigate("/")
-    };
+            setHasSubmitted(true)
+            // toast.success("Signed up successfully, please check your email")
+            // navigate("/")
+            // }
+        };
+    }
 
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
+    console.log(hasSubmitted);
 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
@@ -213,30 +220,31 @@ export default function SignUp() {
 
     return (
         <>
-            <form onSubmit={getSubmitFunction()}>
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
-                    <div className="mb-6">
-                        <h3 className=" text-xl font-semibold mb-3">
-                            {!user ? `Please enter your details:` : `Update user details:`}
-                        </h3>
-                        {!user && <p className=" text-red-600 italic">Enter description on what it means to be a member</p>}
-                    </div>
-                    <div className=" flex mt-7 items-center gap-3">
-                        {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
-                        {user ? <div className="flex flex-col w-full">
-                            <label>Email</label>
-                            <input
-                                type="text"
-                                className="input input-bordered "
-                                name="email"
-                                onChange={handleChange}
-                                required
-                                value={formData.email}
-                                disabled
-                            />
+            {hasSubmitted ?
+                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36">
+                    <div className="flex items-center flex-col gap-5">
+                        <div style={{ fontSize: "50px" }}>
+
+                            <IoCheckmarkCircleOutline style={{ color: 'green' }} />
                         </div>
-                            :
-                            <div className="flex flex-col w-full">
+
+
+                        <h2 className=" text-xl">Submitted.</h2>
+                        <h2 className=" text-md">Please check your email inbox for a confirmation link.</h2>
+                    </div>
+                </div>
+                :
+                <form onSubmit={getSubmitFunction()}>
+                    <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
+                        <div className="mb-6">
+                            <h3 className=" text-xl font-semibold mb-3">
+                                {!user ? `Please enter your details:` : `Update user details:`}
+                            </h3>
+                            {!user && <p className=" text-red-600 italic">Enter description on what it means to be a member</p>}
+                        </div>
+                        <div className=" flex mt-7 items-center gap-3">
+                            {emailError && <p className=" text-lg text-red-600 italic">*{emailError}</p>}
+                            {user ? <div className="flex flex-col w-full">
                                 <label>Email</label>
                                 <input
                                     type="text"
@@ -245,175 +253,171 @@ export default function SignUp() {
                                     onChange={handleChange}
                                     required
                                     value={formData.email}
-
+                                    disabled
                                 />
-                            </div>}
-                        {/* <div className="flex flex-col w-1/2">
-                            <div className="flex justify-between">
-                                <p>Country</p>
-                                <Toggle>
-                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                    <ToggleOn>
-                                        <SimpleModal title="doli" >Limited to Australia for the time being.</SimpleModal>
-                                    </ToggleOn>
-                                </Toggle>
                             </div>
-                            <input
-                                type="text"
-                                className="input input-bordered "
-                                name="country"
-                                value="Australia"
-                                disabled
-                            />
-                        </div> */}
-                    </div>
+                                :
+                                <div className="flex flex-col w-full">
+                                    <label>Email</label>
+                                    <input
+                                        type="text"
+                                        className="input input-bordered "
+                                        name="email"
+                                        onChange={handleChange}
+                                        required
+                                        value={formData.email}
 
-                    {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
-                    {!user && <div className="container flex gap-3 mt-7">
-
-                        <div className="flex flex-col w-1/2">
-                            <label>Password</label>
-                            <input
-                                type="password"
-                                className="input input-bordered "
-                                onChange={handleChange}
-                                name="password"
-                                required
-                                value={formData.password}
-                            />
-                        </div>
-                        <div className="flex flex-col w-1/2">
-                            <label>Confirm Password</label>
-                            <input
-                                type="password"
-                                className="input input-bordered "
-                                onChange={handleChange}
-                                name="confirmPassword"
-                                required
-                                value={formData.confirmPassword}
-                            />
-                        </div>
-                    </div>}
-                    <div className="container flex gap-3 mt-7">
-                        <div className="flex flex-col w-1/2">
-                            <label>Birth Month</label>
-                            <select
-                                className="select select-bordered w-full max-w-xs"
-                                name="birthMonth"
-                                onChange={handleChange}
-                                required
-                                value={formData.birthMonth}
-                            >
-                                <option value="" disabled selected>- Select Month -</option>
-                                {months.map(month => (
-                                    <option key={nanoid()} value={month}>{month}</option>
-                                ))}
-
-                            </select>
-                        </div>
-                        <div className="flex flex-col w-1/2">
-                            <label>Birth Year</label>
-                            <select
-                                className="select select-bordered w-full max-w-xs"
-                                name="birthYear"
-                                onChange={handleChange}
-                                value={formData.birthYear}
-                                required
-                            >
-                                <option value="" disabled selected>- Select Year -</option>
-                                {years.map(year => (
-                                    <option value={year} key={year}>{year}</option>
-                                ))}
-                            </select>
+                                    />
+                                </div>}
                         </div>
 
-                    </div>
-                    <div className="container flex gap-3 mt-7">
+                        {passwordError && <p className=" mt-7 text-lg text-red-600 italic">*{passwordError}</p>}
+                        {!user && <div className="flex gap-3 mt-7 w-full mb-2">
 
-                        <div className="flex flex-col w-1/2">
-                            <label>Gender</label>
-                            <select
-                                className="select select-bordered w-full max-w-xs"
-                                name="gender"
-                                onChange={handleChange}
-                                value={formData.gender}
-                                required
-                            >
-                                <option value="" disabled selected>- Select Year -</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="female">Non-binary</option>
-                                <option value="other">Other</option>
-
-                            </select>
-                        </div>
-                        <div className="flex flex-col w-1/2">
-                            <div className="flex justify-between">
-                                <p>Country</p>
-                                <Toggle>
-                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                    <ToggleOn>
-                                        <SimpleModal title="doli" >Limited to Australia for the time being.</SimpleModal>
-                                    </ToggleOn>
-                                </Toggle>
+                            <div className="flex flex-col w-1/2">
+                                <label>Password</label>
+                                <input
+                                    type="password"
+                                    className="input input-bordered "
+                                    onChange={handleChange}
+                                    name="password"
+                                    required
+                                    value={formData.password}
+                                />
                             </div>
-                            <input
-                                type="text"
-                                className="input input-bordered "
-                                name="country"
-                                value="Australia"
-                                disabled
-                            />
-                        </div>
-                    </div>
-                    <div className=" flex gap-3 mt-7 w-full mb-2">
-                        <div className="flex flex-col w-1/2 mt-4">
-                            <label>Suburb</label>
-                            <input
-                                type="text"
-                                className="input input-bordered "
-                                name="suburb"
-                                onChange={handleChange}
-                                required
-                                value={formData.suburb}
-                            />
-                        </div>
-                        <div className="flex flex-col w-1/2 mt-4">
-                            <div className="flex justify-between">
-                                <label>Alternative suburb</label>
-                                <Toggle>
-                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                    <ToggleOn>
-                                        <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
-                                    </ToggleOn>
-                                </Toggle>
+                            <div className="flex flex-col w-1/2">
+                                <label>Confirm Password</label>
+                                <input
+                                    type="password"
+                                    className="input input-bordered "
+                                    onChange={handleChange}
+                                    name="confirmPassword"
+                                    required
+                                    value={formData.confirmPassword}
+                                />
                             </div>
-                            <input
-                                type="text"
-                                className="input input-bordered "
-                                name="altSuburb"
-                                placeholder="Home away from home"
-                                onChange={handleChange}
-                                value={formData.altSuburb}
-                            />
-                        </div>
-                    </div>
-                    <Toggle>
-                        <ToggleButton className=" text-sm underline italic cursor-pointer">
-                            Forgot Password?
-                        </ToggleButton>
-                        <ToggleOn>
-                            <ForgotPassword />
-                        </ToggleOn>
-                    </Toggle>
-                    {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
-                        :
-                        <button className="btn btn-primary mt-7 w-full">Submit</button>
-                    }
+                        </div>}
+                        <div className="flex gap-3 mt-7 w-full mb-2">
+                            <div className="flex flex-col w-1/2">
+                                <label>Birth Month</label>
+                                <select
+                                    className="select select-bordered w-full max-w-xs"
+                                    name="birthMonth"
+                                    onChange={handleChange}
+                                    required
+                                    value={formData.birthMonth}
+                                >
+                                    <option value="" disabled selected>- Select Month -</option>
+                                    {months.map(month => (
+                                        <option key={nanoid()} value={month}>{month}</option>
+                                    ))}
 
-                    {!user && <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
-                </div>
-            </form>
+                                </select>
+                            </div>
+                            <div className="flex flex-col w-1/2">
+                                <label>Birth Year</label>
+                                <select
+                                    className="select select-bordered w-full max-w-xs"
+                                    name="birthYear"
+                                    onChange={handleChange}
+                                    value={formData.birthYear}
+                                    required
+                                >
+                                    <option value="" disabled selected>- Select Year -</option>
+                                    {years.map(year => (
+                                        <option value={year} key={year}>{year}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                        </div>
+                        <div className="flex gap-3 mt-7 w-full mb-2">
+
+                            <div className="flex flex-col w-1/2">
+                                <label>Gender</label>
+                                <select
+                                    className="select select-bordered w-full max-w-xs"
+                                    name="gender"
+                                    onChange={handleChange}
+                                    value={formData.gender}
+                                    required
+                                >
+                                    <option value="" disabled selected>- Select Gender -</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="female">Non-binary</option>
+                                    <option value="other">Other</option>
+
+                                </select>
+                            </div>
+                            <div className="flex flex-col w-1/2">
+                                <div className="flex justify-between">
+                                    <p>Country</p>
+                                    <Toggle>
+                                        <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                        <ToggleOn>
+                                            <SimpleModal title="doli" >Limited to Australia for the time being.</SimpleModal>
+                                        </ToggleOn>
+                                    </Toggle>
+                                </div>
+                                <input
+                                    type="text"
+                                    className="input input-bordered "
+                                    name="country"
+                                    value="Australia"
+                                    disabled
+                                />
+                            </div>
+                        </div>
+                        <div className=" flex gap-3 mt-7 w-full mb-2">
+                            <div className="flex flex-col w-1/2 mt-4">
+                                <label>Suburb</label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered "
+                                    name="suburb"
+                                    onChange={handleChange}
+                                    required
+                                    value={formData.suburb}
+                                />
+                            </div>
+                            <div className="flex flex-col w-1/2 mt-4">
+                                <div className="flex justify-between">
+                                    <label>Alternative suburb</label>
+                                    <Toggle>
+                                        <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                        <ToggleOn>
+                                            <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
+                                        </ToggleOn>
+                                    </Toggle>
+                                </div>
+                                <input
+                                    type="text"
+                                    className="input input-bordered "
+                                    name="altSuburb"
+                                    placeholder="Home away from home"
+                                    onChange={handleChange}
+                                    value={formData.altSuburb}
+                                />
+                            </div>
+                        </div>
+                        <Toggle>
+                            <ToggleButton className=" text-sm underline italic cursor-pointer">
+                                Forgot Password?
+                            </ToggleButton>
+                            <ToggleOn>
+                                <ForgotPassword />
+                            </ToggleOn>
+                        </Toggle>
+                        {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                            :
+                            <button className="btn btn-primary mt-7 w-full">Submit</button>
+                        }
+
+                        {!user && <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
+                    </div>
+                </form>
+            }
             <Toaster />
         </>
     )
