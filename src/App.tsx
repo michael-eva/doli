@@ -1,5 +1,5 @@
 
-import SignUp from "./components/SignUp"
+import SignUp from "./pages/SignUp"
 import NavBar from "./components/NavBar"
 import { Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
