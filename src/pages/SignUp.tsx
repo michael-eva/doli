@@ -117,19 +117,20 @@ export default function SignUp() {
     }
 
     const existingEmail = errors.email?.message === "Email already exists in the system"
+    // console.log(watch());
 
     const getMembers = async () => {
         try {
-            const { data, error }: { data: FormData } = await supabase
+            const { data, error } = await supabase
                 .from("members")
                 .select("*")
-                .eq('id', user?.id);
+                .eq('id', user?.id)
+                .single()
 
             if (error) {
                 return console.error(error);
             }
-
-            if (data && data.length > 0) {
+            if (data) {
                 setValue('email', data.email)
                 setValue('suburb', data.suburb)
                 setValue('altSuburb', data.altSuburb)
@@ -140,9 +141,7 @@ export default function SignUp() {
         } catch (error: any) {
             console.error('Error:', error.message);
         }
-
     };
-
     useEffect(() => {
         if (user?.id) {
             getMembers();
@@ -194,7 +193,6 @@ export default function SignUp() {
             });
         }
     }
-
 
     return (
         <>
@@ -387,3 +385,5 @@ export default function SignUp() {
         </>
     )
 }
+
+

@@ -26,7 +26,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
     const [ratings, setRating] = useState<RatingsType[]>()
     const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
     // const navigate = useNavigate()
-    console.log(ratings);
+
 
     const handleStarClick = (rating: number) => {
         setUserRating(rating);
