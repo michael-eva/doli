@@ -196,6 +196,16 @@ export default function Home() {
                     <div className="flex flex-wrap justify-between">
                         <div className="flex flex-col">
                             {/* <LocationSearch /> */}
+                            <div className="flex flex-col mt-4">
+                                <label htmlFor="">Location:</label>
+                                <input type="text"
+                                    className="input input-bordered w-72"
+                                    placeholder='Fremantle'
+                                    {...register("location")}
+                                    onChange={(e) => genNewSearchParams("location", e.target.value)}
+                                    value={locationFilter || ""}
+                                />
+                            </div>
                             <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                 <input
                                     type='checkbox'
@@ -253,6 +263,7 @@ export default function Home() {
                             <label htmlFor="">Enter Search Term:</label>
                             <input type="text"
                                 className="input input-bordered w-72"
+                                placeholder='Beer'
                                 {...register("search")}
                                 onChange={(e) => genNewSearchParams("search", e.target.value)}
                                 value={searchFilter || ""}

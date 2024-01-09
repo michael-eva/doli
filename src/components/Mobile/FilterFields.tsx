@@ -22,6 +22,7 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                                 <label htmlFor="">Location:</label>
                                 <input type="text"
                                     className="input input-bordered w-72"
+                                    placeholder='eg: Fremantle'
                                     {...register("location")}
                                     onChange={(e) => genNewSearchParams("location", e.target.value)}
                                     value={locationFilter || ""}
@@ -84,6 +85,7 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                             <label htmlFor="">Enter Search Term:</label>
                             <input type="text"
                                 className="input input-bordered w-72"
+                                placeholder='eg: Beer'
                                 {...register("search")}
                                 onChange={(e) => genNewSearchParams("search", e.target.value)}
                                 value={searchFilter || ""}
