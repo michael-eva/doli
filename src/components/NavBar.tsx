@@ -178,3 +178,15 @@ export default function NavBar() {
         </div>
     )
 }
+// Mobile Nav
+{/* <div className="md:hidden text-2xl">
+<div className="dropdown dropdown-bottom dropdown-end">
+    <div tabIndex={1} role="button" className="flex items-center"> <CiMenuBurger /></div>
+    <ul tabIndex={1} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+        <li><NavLink to='/'>Home</NavLink></li>
+        <li><NavLink to='/specials'>Specials</NavLink></li>
+        <li><NavLink to='/wholesale'>Wholesale</NavLink></li>
+    </ul>
+</div>
+<div className="text-xl mr-5">{profileEl()}</div>
+</div> */}
