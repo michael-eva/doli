@@ -43,6 +43,7 @@ export default function Home() {
     const typeFilter = searchParams.get("type")
     const deliveryFilter = searchParams.get("deliveryMethod")
     const searchFilter = searchParams.get("search")
+    const locationFilter = searchParams.get("location")
     const { register, watch, getValues } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -150,8 +151,16 @@ export default function Home() {
             );
         }
 
+        if (locationFilter) {
+            const lowercaseLocationFilter = locationFilter.toLowerCase();
+            filterPosts = filterPosts.filter((post) => {
+                const lowercaseSuburb = post.suburb.toLowerCase();
+                return lowercaseSuburb.includes(lowercaseLocationFilter);
+            });
+        }
+
         if (searchFilter && searchFilter.trim() !== "") {
-            const searchResults = filterPosts.filter((post) => {
+            filterPosts = filterPosts.filter((post) => {
                 return Object.values(post).some((value) => {
                     if (Array.isArray(value)) {
                         return value.some(
@@ -163,11 +172,11 @@ export default function Home() {
                     return typeof value === "string" && containsSearchText(value, searchFilter);
                 });
             });
-            return searchResults;
         }
 
         return filterPosts;
     };
+
 
     const isFilter = () => {
         if (typeFilter || deliveryFilter || searchFilter) {
@@ -180,7 +189,7 @@ export default function Home() {
             <div className=" max-w-7xl m-auto">
                 {isMobile &&
                     <div className="flex justify-center">
-                        <FilterFields register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} deliveryFilter={deliveryFilter} businessType={businessType} searchFilter={searchFilter} />
+                        <FilterFields register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} deliveryFilter={deliveryFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} />
                     </div>
                 }
                 {!isMobile &&

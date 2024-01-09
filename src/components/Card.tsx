@@ -50,8 +50,6 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
 
-    console.log(user);
-
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 

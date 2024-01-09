@@ -67,12 +67,13 @@ export default function NavBar() {
                             </div>
                         </div>
                     </>
-                    : <><div tabIndex={0} role="button" className="text-xl">
-                        <div className="flex items-center gap-2 ">
-                            <p className=" hidden md:flex" >Profile</p>
-                            <RxAvatar />
+                    : <>
+                        <div tabIndex={0} role="button" className="text-xl">
+                            <div className="flex items-center gap-2 ">
+                                <p className=" hidden md:flex" >Profile</p>
+                                <RxAvatar />
+                            </div>
                         </div>
-                    </div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li><NavLink to={'update-details'}>Update Details</NavLink></li>
                             <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
