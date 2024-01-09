@@ -6,6 +6,7 @@ import { IoIosLogOut } from "react-icons/io";
 import { RxAvatar } from "react-icons/rx";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { CiMenuBurger } from "react-icons/ci";
 
 
 
@@ -61,14 +62,14 @@ export default function NavBar() {
                     <>
                         <div className="text-xl">
                             <div className="flex items-center gap-2">
-                                <p>Profile</p>
+                                <p className=" hidden md:flex">Profile</p>
                                 <RxAvatar />
                             </div>
                         </div>
                     </>
                     : <><div tabIndex={0} role="button" className="text-xl">
-                        <div className="flex items-center gap-2">
-                            <p>Profile</p>
+                        <div className="flex items-center gap-2 ">
+                            <p className=" hidden md:flex" >Profile</p>
                             <RxAvatar />
                         </div>
                     </div>
@@ -113,7 +114,6 @@ export default function NavBar() {
         <div className="navbar bg-base-100 shadow-md mb-10">
             {isResetPasswordPage ? <>
                 <div className="navbar-start">
-                    {/* <p className=" normal-case text-xl text-gray-500">doli </p> */}
                     <img src="images/IMG_20231227_130328.jpg" alt="" width={150} />
                 </div>
                 <div className="navbar-center hidden lg:flex">
@@ -127,7 +127,7 @@ export default function NavBar() {
                 <div className="navbar-end">
                     <div className="text-xl mr-5">
                         <div className="flex items-center gap-2">
-                            <p>Profile</p>
+                            <p className=" hidden md:flex">Profile</p>
                             <RxAvatar />
                         </div>
                     </div>
@@ -136,8 +136,9 @@ export default function NavBar() {
                 :
                 <>
                     <div className="navbar-start">
-                        {/* <p className="  normal-case text-xl"><a href="/">doli</a> </p> */}
-                        <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
+                        <NavLink to='/'>
+                            <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
+                        </NavLink>
                     </div>
                     <div className="navbar-center hidden lg:flex">
                         <ul className="menu menu-horizontal px-1 ">
@@ -148,10 +149,23 @@ export default function NavBar() {
                         </ul>
                     </div>
 
+
                     <div className="navbar-end">
                         <div className="menu menu-horizontal ">
                             {user ?
-                                <div className="text-xl mr-5">{profileEl()}</div>
+                                <>
+                                    <div className="text-xl mr-5">{profileEl()}</div>
+                                    <div className="md:hidden text-2xl">
+                                        <div className="dropdown dropdown-bottom dropdown-end">
+                                            <div tabIndex={1} role="button"> <CiMenuBurger /></div>
+                                            <ul tabIndex={1} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                                <li><NavLink to='/'>Home</NavLink></li>
+                                                <li><NavLink to='/specials'>Specials</NavLink></li>
+                                                <li><NavLink to='/wholesale'>Wholesale</NavLink></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </>
                                 :
                                 <div className="text-xl mr-5"><NavLink to='/login'>Login / Signup</NavLink></div>
                             }

@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
+import FilterFields from "../components/Mobile/FilterFields";
 
 type CardProps = {
     id: string,
@@ -176,10 +177,11 @@ export default function Home() {
     }
     return (
         <>
+            <FilterFields />
             <div className=" max-w-7xl m-auto">
                 <div className="flex flex-wrap justify-between">
                     <div className="flex flex-col">
-                        <LocationSearch />
+                        {/* <LocationSearch /> */}
                         <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                             <input
                                 type='checkbox'
