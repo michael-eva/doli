@@ -329,7 +329,7 @@ export default function Home() {
                 <p>
                     {startIndex} - {endIndex} of {searchItemLength()} results
                 </p>
-                <div className={`flex ${isMobile ? 'flex flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
+                <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
                             {
@@ -341,7 +341,7 @@ export default function Home() {
                         :
                         filterOrders()?.length > 0 ? (
                             filterOrders().map((item: CardProps) => (
-                                <div key={item.postId} className="mt-10">
+                                <div key={item.postId} className="mt-10 flex justify-center">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))

@@ -7,7 +7,7 @@ import ToggleButton from "./Toggle/ToggleButton";
 import { useNavigate } from "react-router";
 import RatingComp from "./Rating/Rating";
 import DispOpeningHours from "./DispOpeningHours";
-
+import { useMediaQuery } from "react-responsive";
 
 type CardProps = {
     handleEditSubmit?: any
@@ -43,13 +43,11 @@ type CardProps = {
     isVerified?: boolean,
 }
 
-
-
 export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
-
+    const isMobile = useMediaQuery({ maxWidth: 640 })
     const truncatedDescription = description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 
@@ -74,8 +72,9 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     }
 
     return (
-        <div className="card card-compact bg-base-100 shadow-xl" style={{ width: '300px' }}>
-            <img src={`${imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
+        <div className="card card-compact bg-base-100 shadow-xl" style={!isMobile ? { width: '300px' } : { width: "91%" }}>
+
+            < img src={`${imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
             <div className="card-body p-4">
 
                 {isManageListingsPage && badgePicker()}
@@ -139,14 +138,16 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                     </Toggle>
                 </div> : null
             }
-            {isJod && <div className="flex items-center justify-around bg-gray-100">
-                <button
-                    className=" m-2 px-5 py-2 rounded-lg bg-green-400 text-xs hover:bg-gray-500 hover:text-white"
-                    onClick={() => handleSubmit(postId)}
-                >Verify</button>
-                <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Reject</button>
+            {
+                isJod && <div className="flex items-center justify-around bg-gray-100">
+                    <button
+                        className=" m-2 px-5 py-2 rounded-lg bg-green-400 text-xs hover:bg-gray-500 hover:text-white"
+                        onClick={() => handleSubmit(postId)}
+                    >Verify</button>
+                    <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Reject</button>
 
-            </div>}
-        </div>
+                </div>
+            }
+        </div >
     )
 }
