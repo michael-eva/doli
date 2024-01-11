@@ -18,7 +18,7 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
     return (
         <>
 
-            <div className="collapse bg-base-200 collapse-arrow">
+            <div className="collapse bg-base-200 collapse-arrow mt-10">
                 <input type="checkbox" className="peer" />
                 <div className="collapse-title bg-primary text-primary-content peer-checked:text-primary-content">
                     Filters

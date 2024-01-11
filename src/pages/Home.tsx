@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form"
 import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
+import Pagination from "../components/Pagination";
 
 type CardProps = {
     id: string,
@@ -48,10 +49,13 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState('')
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const pageSize = 4
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
+    console.log(typeof (typeFilter));
 
     useEffect(() => {
         setIsLoading(true); // Set loading to true when fetching data
@@ -64,11 +68,17 @@ export default function Home() {
             });
 
     }, [typeFilter, locationFilter, searchFilter]);
+
+
     const getPosts = async () => {
+        // const pageSize = 3;
+        // const page = 1;
+        // console.log(posts);
         const { error, data } = await supabase
             .from("posts")
             .select("*")
             .eq("isVerified", true)
+        // .range(page * pageSize - pageSize, page * pageSize - 1)
 
         if (error) {
             return console.error(error);
@@ -186,6 +196,14 @@ export default function Home() {
             });
         }
 
+        // return filterPosts;
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        // Slice the array to get the posts for the current page
+        filterPosts = filterPosts.slice(startIndex, endIndex);
+
+
         return filterPosts;
     };
 
@@ -195,11 +213,13 @@ export default function Home() {
         }
         else return false
     }
-    console.log(typeFilter);
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     return (
         <>
-            <div className=" max-w-7xl m-auto">
+            <div className=" max-w-7xl m-auto mb-10">
                 {isMobile &&
                     <div className="flex justify-center">
                         <FilterFields register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} />
@@ -267,7 +287,7 @@ export default function Home() {
                             <div className="flex justify-center gap-10">
                                 <div className="flex flex-col w-72">
                                     <p className="text-xl" >Search Results:</p>
-                                    <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{filterOrders().length} <span>Businesses</span></p>
+                                    <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
                                 </div>
                                 <div className="flex flex-col">
                                     <p className="text-xl" >Active Members:</p>
@@ -323,6 +343,8 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
+                <Pagination totalItems={searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />
+                {/* <Pagination totalItems={posts.length} pageSize="4" currentPage={currentPage} onPageChange={handlePageChange} /> */}
             </div>
         </>
     );
