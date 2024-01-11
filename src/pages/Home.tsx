@@ -87,7 +87,7 @@ export default function Home() {
         setPosts(parsedData);
     }
     const getMembers = async () => {
-        const { error, data } = await supabase
+        const { error, data }: any = await supabase
             .from("members")
             .select("*")
 

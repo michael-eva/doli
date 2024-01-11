@@ -1,3 +1,13 @@
+import { ReactNode } from "react";
+
+type OpeningHours = {
+    id: string;
+    day: ReactNode;
+    isOpen: string;
+    fromTime: ReactNode;
+    toTime: ReactNode;
+}
+
 export default function DispOpeningHours({ openingHours }) {
     return (
         <div className="mt-5 flex flex-col">
@@ -6,7 +16,7 @@ export default function DispOpeningHours({ openingHours }) {
                     {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"> */}
                     <table className="min-w-full divide-y divide-gray-300">
                         <tbody className="bg-white">
-                            {openingHours?.map((item, index) => (
+                            {openingHours?.map((item: OpeningHours, index: number) => (
                                 <tr key={item.id} className={index % 2 === 0 ? undefined : ' bg-amber-50'}>
                                     <td
                                         className="whitespace-nowrap py-1  pr-3 text-xs font-medium text-gray-900 pl-6"

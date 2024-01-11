@@ -147,9 +147,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         const isNameChanged = formData.name !== postData?.name;
         const isDescriptionChanged = formData.description !== postData?.description;
         const isImageChanged = formData.imgUrl.length > 0; // Assuming selectedFile is set when changing the image
-        console.log("Name change:", isNameChanged);
-        console.log("Description change:", isDescriptionChanged);
-        console.log("Image change:", isImageChanged);
         return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
     };
     const handleEditFormSubmit = async (formData: FormData) => {

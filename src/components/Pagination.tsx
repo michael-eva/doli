@@ -46,7 +46,7 @@ export default function Pagination({ totalItems, pageSize, currentPage, onPageCh
         return pageNumbers;
     };
 
-    const handlePageChange = (page) => {
+    const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
             onPageChange(page);
         }
