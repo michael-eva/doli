@@ -79,8 +79,7 @@ export default function Pagination({ totalItems, pageSize, currentPage, onPageCh
                     </a>
                 </div>
             </nav>
-            <p className="text-center mt-2 text-gray-500 text-sm">Page {currentPage} of {totalPages}</p>
-
+            <p className="text-center  text-gray-500 text-sm">Page {currentPage} of {totalPages}</p>
         </>
     )
 }

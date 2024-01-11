@@ -50,7 +50,7 @@ export default function Home() {
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState('')
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageSize = 1
+    const pageSize = 8
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -70,14 +70,10 @@ export default function Home() {
 
 
     const getPosts = async () => {
-        // const pageSize = 3;
-        // const page = 1;
-        // console.log(posts);
         const { error, data } = await supabase
             .from("posts")
             .select("*")
             .eq("isVerified", true)
-        // .range(page * pageSize - pageSize, page * pageSize - 1)
 
         if (error) {
             return console.error(error);
@@ -195,11 +191,9 @@ export default function Home() {
             });
         }
 
-        // return filterPosts;
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
 
-        // Slice the array to get the posts for the current page
         filterPosts = filterPosts.slice(startIndex, endIndex);
 
 
@@ -222,6 +216,10 @@ export default function Home() {
         }
         return posts.length
     }
+    const startIndex = (currentPage - 1) * pageSize + 1;
+    const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
+
+
 
     return (
         <>
@@ -327,7 +325,10 @@ export default function Home() {
                             />
                         </div> */}
                     </div >}
-                {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {/* {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />} */}
+                <p>
+                    {startIndex} - {endIndex} of {searchItemLength()} results
+                </p>
                 <div className={`flex ${isMobile ? 'flex flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
