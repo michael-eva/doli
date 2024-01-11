@@ -72,7 +72,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     }
 
     return (
-        <div className="card card-compact bg-base-100 shadow-xl" style={!isMobile ? { width: '300px' } : { width: "91%" }}>
+        <div className="card card-compact bg-base-100 shadow-xl " style={!isMobile ? { width: '300px' } : { width: "315px" }}>
 
             < img src={`${imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
             <div className="card-body p-4">
