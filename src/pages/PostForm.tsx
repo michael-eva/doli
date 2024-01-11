@@ -10,6 +10,8 @@ import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
 import OpeningHours from "../components/OpeningHours.tsx"
 import Select from "react-select"
+import { useMediaQuery } from "react-responsive"
+
 
 
 type imgPath = {
@@ -68,6 +70,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
+    const isMobile = useMediaQuery({ maxWidth: 640 });
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -287,7 +290,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         <div className="flex justify-center">
             <div>
                 <form onSubmit={handleSubmit((data) => submitChooser(data as FormData))}>
-                    <div className="max-w-3xl mr-10 shadow-lg px-24 pb-24 pt-10">
+                    <div className="md:max-w-3xl mr-10 shadow-lg md:px-24 pb-24 pt-10">
                         <header className="mb-7">
                             <h1 className=" text-xl font-bold ">Profile</h1>
                             <p>This information will be displayed publicly.</p>
@@ -527,7 +530,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     </div>
                 </form >
             </div>
-            <div >
+            {!isMobile && <div >
                 <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                     <input
                         type='checkbox'
@@ -570,7 +573,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         />
                     </div>
                 )}
-            </div>
+            </div>}
             <Toaster />
         </div >
     )

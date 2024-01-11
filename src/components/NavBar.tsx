@@ -7,11 +7,11 @@ import { RxAvatar } from "react-icons/rx";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
-
-
-
+import SearchComp from "./SearchComp";
+import { useMediaQuery } from "react-responsive"
 
 export default function NavBar() {
+    const isMobile = useMediaQuery({ maxWidth: 640 });
     const navigate = useNavigate()
     const user = useUser()
     const location = useLocation()
@@ -112,28 +112,29 @@ export default function NavBar() {
     }, [user?.id]);
 
     return (
-        <div className="navbar bg-base-100 shadow-md mb-10">
-            {isResetPasswordPage ? <>
-                <div className="navbar-start">
-                    <img src="images/IMG_20231227_130328.jpg" alt="" width={150} />
-                </div>
-                <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1 ">
-                        <li className="text-xl mx-4 text-gray-500">Home</li>
-                        <li className="text-xl mx-4 text-gray-500">Post a Listing</li>
-                        <li className="text-xl mx-4 text-gray-500">Specials</li>
-                        <li className="text-xl mx-4 text-gray-500">Wholesale</li>
-                    </ul>
-                </div>
-                <div className="navbar-end">
-                    <div className="text-xl mr-5">
-                        <div className="flex items-center gap-2">
-                            <p className=" hidden md:flex">Profile</p>
-                            <RxAvatar />
+        <div className="navbar bg-base-100 shadow-md md:mb-10">
+            {isResetPasswordPage ?
+                <>
+                    <div className="navbar-start">
+                        <img src="images/IMG_20231227_130328.jpg" alt="" width={150} />
+                    </div>
+                    <div className="navbar-center hidden lg:flex">
+                        <ul className="menu menu-horizontal px-1 ">
+                            <li className="text-xl mx-4 text-gray-500">Home</li>
+                            <li className="text-xl mx-4 text-gray-500">Post a Listing</li>
+                            <li className="text-xl mx-4 text-gray-500">Specials</li>
+                            <li className="text-xl mx-4 text-gray-500">Wholesale</li>
+                        </ul>
+                    </div>
+                    <div className="navbar-end">
+                        <div className="text-xl mr-5">
+                            <div className="flex items-center gap-2">
+                                <p className=" hidden md:flex">Profile</p>
+                                <RxAvatar />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </>
+                </>
                 :
                 <>
                     <div className="navbar-start">
@@ -141,7 +142,7 @@ export default function NavBar() {
                             <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
                         </NavLink>
                     </div>
-                    <div className="navbar-center hidden lg:flex">
+                    <div className="navbar-center hidden md:flex">
                         <ul className="menu menu-horizontal px-1 ">
                             <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
                             <li className="text-xl ">{postListingEl()}</li>
@@ -149,13 +150,12 @@ export default function NavBar() {
                             <li className="text-xl">{wholesaleEl()}</li>
                         </ul>
                     </div>
-
-
-                    <div className="navbar-end">
-                        <div className="menu menu-horizontal ">
+                    <div className={`${isMobile ? "navbar-center" : "navbar-end"} m-auto flex items-center`}>
+                        <div className="menu menu-horizontal flex items-center md:gap-10 gap-5">
+                            <SearchComp />
                             {user ?
                                 <>
-                                    <div className="text-xl mr-5">{profileEl()}</div>
+                                    <div className="text-xl md:ml-10 md:mr-5">{profileEl()}</div>
                                     <div className="md:hidden text-2xl">
                                         <div className="dropdown dropdown-bottom dropdown-end">
                                             <div tabIndex={1} role="button"> <CiMenuBurger /></div>
@@ -168,7 +168,9 @@ export default function NavBar() {
                                     </div>
                                 </>
                                 :
-                                <div className="text-xl mr-5"><NavLink to='/login'>Login / Signup</NavLink></div>
+                                <div className=" flex items-center">
+                                    <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div>
+                                </div>
                             }
                         </div>
 
@@ -179,15 +181,3 @@ export default function NavBar() {
         </div>
     )
 }
-// Mobile Nav
-{/* <div className="md:hidden text-2xl">
-<div className="dropdown dropdown-bottom dropdown-end">
-    <div tabIndex={1} role="button" className="flex items-center"> <CiMenuBurger /></div>
-    <ul tabIndex={1} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-        <li><NavLink to='/'>Home</NavLink></li>
-        <li><NavLink to='/specials'>Specials</NavLink></li>
-        <li><NavLink to='/wholesale'>Wholesale</NavLink></li>
-    </ul>
-</div>
-<div className="text-xl mr-5">{profileEl()}</div>
-</div> */}

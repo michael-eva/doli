@@ -1,6 +1,15 @@
 import { useState } from 'react';
+type FilterFields = {
+    register: any
+    genNewSearchParams: (key: string, value: string) => void
+    typeFilter: string | null
+    businessType: string[] | null
+    searchFilter: string | null
+    locationFilter: string | null
 
-export default function FilterFields({ register, genNewSearchParams, typeFilter, deliveryFilter, businessType, searchFilter, locationFilter }) {
+}
+
+export default function FilterFields({ register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter }: FilterFields) {
     const [isChecked, setIsChecked] = useState(true)
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -60,14 +69,14 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                                 value={typeFilter || ""}
                             >
                                 <option value="all" selected>All Types</option>
-                                {businessType.map(item => (
+                                {businessType?.map(item => (
                                     <option
                                         key={item}
                                         value={item}>{item}</option>
                                 ))}
                             </select>
                         </div>
-                        <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                        {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
                             <label htmlFor="">Select Delivery Method:</label>
                             <select
                                 name="deliveryMethod"
@@ -80,7 +89,7 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                                 <option value="dineIn" >Dine-In</option>
                                 <option value="pickUp" >Pick-Up</option>
                             </select>
-                        </div>
+                        </div> */}
                         <div className="flex flex-col mt-4">
                             <label htmlFor="">Enter Search Term:</label>
                             <input type="text"

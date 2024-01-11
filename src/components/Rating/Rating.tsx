@@ -4,11 +4,9 @@ import ToggleButton from '../Toggle/ToggleButton';
 import ToggleOn from '../Toggle/ToggleOn';
 import supabase from '../../config/supabaseClient';
 import StarRatings from 'react-star-ratings';
-// import { useNavigate } from 'react-router';
 import CustomModal from '../Modals/CustomModal';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import Login from '../../pages/Login';
-import ForgotPassword from '../ForgotPassword';
 
 type NameType = {
     name: string
@@ -25,8 +23,6 @@ export default function RatingComp({ name, postId, user }: NameType) {
     const [userRating, setUserRating] = useState<number>(0);
     const [ratings, setRating] = useState<RatingsType[]>()
     const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
-    // const navigate = useNavigate()
-
 
     const handleStarClick = (rating: number) => {
         setUserRating(rating);
@@ -100,15 +96,17 @@ export default function RatingComp({ name, postId, user }: NameType) {
                 return (
                     <div className="flex flex-col items-center gap-5">
                         <h2 className="font-bold text-xl">Leave a rating for {name}</h2>
-                        <StarRatings
-                            rating={userRating || 0}
-                            starRatedColor="gold"
-                            starHoverColor="gold"
-                            changeRating={handleStarClick}
-                            numberOfStars={5}
-                            name='userRating'
+                        <div className=' w-80'>
+                            <StarRatings
+                                rating={userRating || 0}
+                                starRatedColor="gold"
+                                starHoverColor="gold"
+                                changeRating={handleStarClick}
+                                numberOfStars={5}
+                                name='userRating'
 
-                        />
+                            />
+                        </div>
                         <button className={`${userRating ? "btn btn-success" : "btn btn-disabled"}`} onClick={handleClick}>Submit</button>
                     </div>
                 )

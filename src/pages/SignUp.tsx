@@ -197,7 +197,7 @@ export default function SignUp() {
     return (
         <>
             {hasSubmitted ?
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center">
+                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center bg-green-500">
                     <div className="flex items-center flex-col gap-5">
                         <div style={{ fontSize: "50px" }}>
 
@@ -210,7 +210,7 @@ export default function SignUp() {
                 </div >
                 :
                 <form onSubmit={handleSubmit((data) => getSubmitFunction(data as FormData))}>
-                    <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10">
+                    <div className="flex flex-col max-w-3xl m-auto shadow-lg px-14 md:px-24 pb-24 pt-10">
                         <div className="mb-6">
                             <h3 className=" text-xl font-semibold mb-3">
                                 {!user ? `Please enter your details:` : `Update user details:`}
@@ -245,8 +245,8 @@ export default function SignUp() {
                                 </div>}
                         </div>
 
-                        {!user && <div className="flex gap-3 mt-7 w-full mb-2">
-                            <div className="flex flex-col w-1/2">
+                        {!user && <div className="md:flex gap-3 mt-7 w-full mb-2">
+                            <div className="flex flex-col md:w-1/2">
                                 <label>Password</label>
                                 <input
                                     type="password"
@@ -255,7 +255,7 @@ export default function SignUp() {
                                 />
                                 {errors.password && <p className=" text-red-600">*{errors.password.message?.toString()}</p>}
                             </div>
-                            <div className="flex flex-col w-1/2">
+                            <div className="flex flex-col md:w-1/2">
                                 <label>Confirm Password</label>
                                 <input
                                     type="password"
@@ -334,8 +334,8 @@ export default function SignUp() {
                                 />
                             </div>
                         </div>
-                        <div className=" flex gap-3 mt-7 w-full mb-2">
-                            <div className="flex flex-col w-1/2 mt-4">
+                        <div className=" md:flex gap-3 mt-7 w-full mb-2">
+                            <div className="flex flex-col md:w-1/2 mt-4">
                                 <label>Suburb</label>
                                 <input
                                     type="text"
@@ -344,7 +344,7 @@ export default function SignUp() {
                                 />
                                 {errors.suburb && <p className=" text-red-600">*{errors.suburb.message?.toString()}</p>}
                             </div>
-                            <div className="flex flex-col w-1/2 mt-4">
+                            <div className="flex flex-col md:w-1/2 mt-4">
                                 <div className="flex justify-between">
                                     <label>Alternative suburb</label>
                                     <Toggle>
@@ -372,8 +372,6 @@ export default function SignUp() {
 
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
-                            // conditionally render disabled button
-                            //if 
                             <button className="btn btn-primary mt-7 w-full">Submit</button>
                         }
 

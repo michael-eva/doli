@@ -91,7 +91,7 @@ export default function Login({ title }: LoginProps) {
     }
 
     return (
-        <div className="shadow-2xl max-w-xl px-24 pb-20 pt-12 m-auto mt-24 rounded-lg">
+        <div className="shadow-2xl max-w-xl px-14 md:px-24 pb-20 pt-12 m-auto md:mt-24 rounded-lg">
             {location.state && (
                 <p className=" mb-5 text-red-600 italic">*{location.state.message}</p>
             )}
@@ -99,7 +99,7 @@ export default function Login({ title }: LoginProps) {
                 <div className="  gap-9 flex flex-col ">
                     <p className=" text-lg font-semibold pb-5">{`${title ? title : "Please enter your login details:"}`}</p>
                     {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
-                    <div className="flex">
+                    <div className="md:flex">
                         <label className="label">
                             <span className="label-text w-24">Email</span>
                         </label>
@@ -113,7 +113,7 @@ export default function Login({ title }: LoginProps) {
                     </div>
                     {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
                     {isUser.length > 0 && <p className=" text-red-600 italic">Password is incorrect</p>}
-                    <div className="flex">
+                    <div className="md:flex">
                         <label className="label">
                             <span className="label-text w-24">Password</span>
                         </label>
