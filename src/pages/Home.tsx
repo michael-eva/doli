@@ -50,12 +50,11 @@ export default function Home() {
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState('')
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageSize = 4
+    const pageSize = 1
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
-    console.log(typeof (typeFilter));
 
     useEffect(() => {
         setIsLoading(true); // Set loading to true when fetching data
@@ -217,6 +216,13 @@ export default function Home() {
         setCurrentPage(page);
     };
 
+    const searchItemLength = () => {
+        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter) {
+            return filterOrders().length
+        }
+        return posts.length
+    }
+
     return (
         <>
             <div className=" max-w-7xl m-auto mb-10">
@@ -295,6 +301,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+
                         {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
                             <label htmlFor="">Select Delivery Method:</label>
                             <select
@@ -320,6 +327,7 @@ export default function Home() {
                             />
                         </div> */}
                     </div >}
+                {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
                 <div className={`flex ${isMobile ? 'flex flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
@@ -343,8 +351,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
-                <Pagination totalItems={searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />
-                {/* <Pagination totalItems={posts.length} pageSize="4" currentPage={currentPage} onPageChange={handlePageChange} /> */}
+                {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div>
         </>
     );
