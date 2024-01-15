@@ -1,215 +1,151 @@
-// import React, { useState } from 'react';
+import usePlacesAutocomplete, {
+    getGeocode,
+    getLatLng,
+} from "use-places-autocomplete";
+import { useEffect, useState } from "react";
+import useOnclickOutside from "react-cool-onclickoutside";
 
-// interface SuburbAutofillProps {
-//     // Additional props can be added here based on your requirements
-// }
-
-// const SuburbAutofill: React.FC<SuburbAutofillProps> = () => {
-//     const [suburbInput, setSuburbInput] = useState<string>('');
-//     const [suggestedSuburbs, setSuggestedSuburbs] = useState<string[]>([]);
-//     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-
-//     const fetchSuburbs = async (input: string) => {
-//         if (input.trim() !== '') {
-//             try {
-//                 const response = await fetch(
-//                     // `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-//                     //     input
-//                     // )}&key=cf811112d4a54108b5e64e8c4f2b33a3&countrycode=au&limit=5&no_annotations=1`
-//                     `https://api.opencagedata.com/geocode/v1/json?q=${searchTerm}&key=ae0f6e814d2445cf8b497c690eb9a37f&countrycode=au&language=en&pretty=1`
-//                 );
-
-
-//                 if (response.ok) {
-//                     const data = await response.json();
-//                     console.log(data);
-
-//                     if (data.results) {
-//                         const suburbs = data.results.map(
-//                             (result: any) => result.components.suburb
-//                         );
-//                         setSuggestedSuburbs(suburbs);
-//                         setShowSuggestions(true); // Show suggestions when available
-//                     }
-//                 }
-//             } catch (error) {
-//                 console.error('Error fetching suburbs:', error);
-//             }
-//         } else {
-//             setSuggestedSuburbs([]);
-//             setShowSuggestions(false);
-//         }
-//     };
-
-//     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//         const userInput = e.target.value;
-//         setSuburbInput(userInput);
-//         fetchSuburbs(userInput);
-//     };
-
-//     const handleSuggestionClick = (suburb: string) => {
-//         setSuburbInput(suburb);
-//         setShowSuggestions(false);
-//     };
-
-//     return (
-//         <div>
-//             <input
-//                 type="text"
-//                 value={suburbInput}
-//                 onChange={handleInputChange}
-//                 placeholder="Type a suburb..."
-//             />
-//             {showSuggestions && (
-//                 <ul>
-//                     {suggestedSuburbs.map((suburb, index) => (
-//                         <li key={index} onClick={() => handleSuggestionClick(suburb)}>
-//                             {suburb}
-//                         </li>
-//                     ))}
-//                 </ul>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default SuburbAutofill;
-
-import { ChangeEvent, ReactNode, useState, useEffect } from "react";
-
-type Location = {
-    id: number;
-    placeName: string;
-    postalCode: string;
-    adminCode1: string;
-};
-
-export default function LocationSearch(): ReactNode {
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [filteredSuggestions, setFilteredSuggestions] = useState<Location[]>([]);
-    const debounce = (func: Function, delay: number) => {
-        let timeoutId: NodeJS.Timeout;
-        return (...args: any) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                func.apply(null, args);
-            }, delay);
-        };
-    };
-
-    const fetchSuburbs = async (input: string) => {
-        if (input.trim() !== '') {
-            try {
-                const response = await fetch(
-                    `https://api.opencagedata.com/geocode/v1/json?q=suburb:${input},au&language=en&key=ae0f6e814d2445cf8b497c690eb9a37f&no_annotations=1&no_dedupe=1&no_record=20`
-                );
-
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data.results);
-
-                    if (data.results) {
-                        const suburbs: Location[] = data.results.map((result: any, index: number) => ({
-                            id: index,
-                            placeName: result.components.suburb || '',
-                            postalCode: result.components.postcode || '',
-                            adminCode1: result.components.state_code || '',
-                        }));
-                        setFilteredSuggestions(suburbs);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching suburbs:', error);
-            }
-        } else {
-            setFilteredSuggestions([]);
-        }
-    };
-
+export default function LocationSearch({ onSelect, postData }) {
+    const [userLocation, setUserLocation] = useState(null);
+    const [postcode, setPostcode] = useState("")
+    const [locality, setLocality] = useState("")
+    const [state, setState] = useState("")
+    const [country, setCountry] = useState("")
 
     useEffect(() => {
-        const delayedFetch = debounce(fetchSuburbs, 500);
-        delayedFetch(searchTerm);
-    }, [searchTerm]);
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ latitude, longitude });
+                },
+                (error) => {
+                    console.error('Error getting user location:', error.message);
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by your browser.');
+        }
+    }, []);
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const userInput = e.target.value.toLowerCase();
-        setSearchTerm(userInput);
+    const {
+        ready,
+        value,
+        suggestions: { status, data },
+        setValue,
+        clearSuggestions,
+    } = usePlacesAutocomplete({
+        callbackName: "YOUR_CALLBACK_NAME",
+        requestOptions: {
+            /* Define search scope here */
+            locationBias: new google.maps.Circle({
+                center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
+                radius: 2000
+            }),
+            types: ['address']
+        },
+        debounce: 300,
+    });
+    const ref = useOnclickOutside(() => {
+        clearSuggestions();
+    });
+
+    const handleInput = (e) => {
+        setLocality("")
+        setPostcode("")
+        setCountry("")
+        setValue(e.target.value);
     };
 
+    const extractStreetAddress = (input: string) => {
+        const parts = input.split(','); // Split the string using commas
+        const result = parts[0].trim(); // Get the first part and remove leading/trailing whitespaces
+        return result;
+    }
+    const handleSelect =
+        ({ description }) =>
+            () => {
+                setValue(description, false);
+                clearSuggestions();
+
+                getGeocode({ address: description }).then((results) => {
+                    const postalCodeComponent = results[0].address_components.find(
+                        (component) => component.types.includes('postal_code')
+                    );
+                    const localityComponent = results[0].address_components.find(
+                        (component) => component.types.includes('locality')
+                    );
+                    const stateComponent = results[0].address_components.find(
+                        (component) => component.types.includes('administrative_area_level_1')
+                    );
+                    const countryComponent = results[0].address_components.find(
+                        (component) => component.types.includes('country')
+                    );
+                    setLocality(localityComponent?.long_name)
+                    setPostcode(postalCodeComponent?.long_name)
+                    setState(stateComponent?.short_name)
+                    setCountry(countryComponent?.long_name)
+                    onSelect(extractStreetAddress(description), postalCodeComponent ? postalCodeComponent.long_name : '', localityComponent ? localityComponent.long_name : "", stateComponent?.short_name, countryComponent?.long_name);
+                    const { lat, lng } = getLatLng(results[0]);
+                    console.log("📍 Coordinates: ", { lat, lng });
+                });
+            };
+    const renderSuggestions = () =>
+        data.map((suggestion) => {
+            const {
+                place_id,
+                structured_formatting: { main_text, secondary_text },
+            } = suggestion;
+
+            return (
+                <li key={place_id} onClick={handleSelect(suggestion)}>
+                    <strong>{main_text}</strong> <small>{secondary_text}</small>
+                </li>
+            );
+        });
+    useEffect(() => {
+        setValue(postData?.address)
+        setPostcode(postData?.postcode)
+        setState(postData?.state)
+        setCountry(postData?.country)
+        setLocality(postData?.locality)
+    }, [postData])
+
     return (
-        <div className="flex flex-col">
-            <label htmlFor="locationInput" className="label">
-                Start typing in a suburb:
-            </label>
-            <div className="relative">
+        <div ref={ref} className="flex flex-col gap-5">
+            <div className=" flex flex-col w-full">
+                <label htmlFor="">Address</label>
                 <input
-                    type="text"
-                    id="locationInput"
-                    value={searchTerm}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-96"
+                    value={value}
+                    onChange={handleInput}
+                    disabled={!ready}
+                    placeholder="Start typing in your address"
+                    className="input input-bordered "
+                    required
                 />
-                <div
-                    className={`absolute left-0 right-0 mt-1 bg-base-100 border border-base-200 shadow-md z-10 ${filteredSuggestions.length > 0 ? "block" : "hidden"
-                        }`}
-                >
-                    {filteredSuggestions.map((location) => (
-                        <div
-                            key={location.id}
-                            className="p-2 hover:bg-base-200 cursor-pointer"
-                            onClick={() =>
-                                setSearchTerm(`${location.placeName}, ${location.postalCode}, ${location.adminCode1}`)
-                            }
-                        >
-                            {location.placeName}, {location.postalCode}, {location.adminCode1}
-                        </div>
-                    ))}
+            </div>
+            {status === "OK" && <ul>{renderSuggestions()}</ul>}
+            <div className="flex gap-2">
+                <div className="flex flex-col w-1/2">
+                    <label htmlFor="">Suburb</label>
+                    <div className={`input input-bordered cursor-not-allowed flex items-center ${!locality ? "text-gray-400" : ""}`}>
+                        {locality ? locality : "Suburb"}
+                    </div>
+                </div>
+                <div className="flex flex-col w-1/2">
+                    <label htmlFor="">Postcode</label>
+                    <div className={`input input-bordered cursor-not-allowed flex items-center ${!postcode ? "text-gray-400" : ""}`}>
+                        {postcode ? postcode : "Postcode"}
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-col w-2/3">
+                <label htmlFor="">Country</label>
+                <div className={`input input-bordered cursor-not-allowed flex items-center ${!country ? "text-gray-400" : ""}`}>
+                    {country ? country : "Country"}
                 </div>
             </div>
         </div>
     );
 }
-
-
-// export default function LocationSearch() {
-//     const suburb = 'Bondi'; // Replace with user input or desired suburb name
-//     const postcode = '1234'; // Replace with user input or desired postcode
-//     const [data, setData] = useState()
-
-//     const query = `[out:json];
-//     area[name="Australia"]->.searchArea;
-//     (
-//       node["place"="${suburb}"](area.searchArea);
-//       way["place"="${suburb}"](area.searchArea);
-//       relation["place"="${suburb}"](area.searchArea);
-//     );
-//     out body;
-//     >;
-//     out skel qt;
-//     `;
-
-//     const apiUrl = 'https://overpass-api.de/api/interpreter';
-//     const options = {
-//         method: 'POST',
-//         body: query,
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         }
-//     };
-
-//     fetch(apiUrl, options)
-//         .then(response => response.json())
-//         .then(data => {
-//             // Handle the data received from the Overpass API
-//             console.log(data);
-//             setData(data)
-//         })
-//         .catch(error => {
-//             // Handle any errors that occurred during the fetch
-//             console.error('Error fetching data:', error);
-//         });
-
-// }
 

@@ -17,7 +17,7 @@ type CardProps = {
     id: string,
     imgUrl: string | null,
     name: string,
-    suburb: string,
+    locality: string,
     state: string,
     postcode: string,
     address: string,
@@ -43,7 +43,7 @@ type CardProps = {
     isVerified?: boolean,
 }
 
-export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locality, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
@@ -80,7 +80,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 {isManageListingsPage && badgePicker()}
 
                 <h2 className="card-title">{name}</h2>
-                <h2 className="text-blue-600 font-semibold">{suburb}, {state} {postcode}</h2>
+                <h2 className="text-blue-600 font-semibold">{locality}, {state} {postcode}</h2>
                 <h3 className="font-light">{address}</h3>
 
 

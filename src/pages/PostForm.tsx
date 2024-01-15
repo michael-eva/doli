@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import OpeningHours from "../components/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
+import LocationSearch from "../components/LocationSearch.tsx";
 
 
 
@@ -58,6 +59,14 @@ type PostData = {
     postId: string
 }
 
+type LocationData = {
+    address: string,
+    postcode: string,
+    locality: string,
+    state: string,
+    country: string
+}
+
 export default function PostForm({ postData }: { postData: PostData | undefined }) {
     const navigate = useNavigate()
     const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues, setError, clearErrors } = useForm();
@@ -67,10 +76,27 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
+    const [selectedLocation, setSelectedLocation] = useState<LocationData>({
+        address: "",
+        postcode: "",
+        locality: "",
+        state: "",
+        country: ""
+    })
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
+    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string) => {
+        setSelectedLocation({
+            address: address,
+            postcode: postcode,
+            locality: locality,
+            state: state,
+            country: country
+        });
+    };
+    console.log(selectedLocation);
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -169,7 +195,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, locality: selectedLocation.locality, state: selectedLocation.state, country: selectedLocation.country })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -203,6 +229,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         formCleanup(shouldSetVerifiedFalse)
     }
     const handleNewFormSubmit = async (formData: FormData) => {
+        console.log(formData);
+
         const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
             return {
                 day,
@@ -219,7 +247,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, locality: selectedLocation.locality, state: selectedLocation.state, country: selectedLocation.country })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -262,13 +290,20 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             return handleNewFormSubmit(formData)
         }
     }
+    //fetching data from db and setting the value to display when editing form
     useEffect(() => {
         if (postData) {
             setValue('name', postData.name)
-            setValue('suburb', postData.suburb)
-            setValue('address', postData.address)
-            setValue('postcode', postData.postcode)
-            setValue('state', postData.state)
+            setSelectedLocation({
+                address: postData.address,
+                locality: postData.locality,
+                state: postData.state,
+                country: postData.country,
+                postcode: postData.postcode
+            })
+            // setValue('suburb', postData.suburb)
+            // setValue('postcode', postData.postcode)
+            // setValue('state', postData.state)
             setValue('type', postData.type)
             setValue('description', postData.description || null)
             setValue('pickUp', postData.pickUp);
@@ -284,10 +319,10 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     }, [postData]);
 
     return (
-        <div className="flex justify-center">
+        <div className="md:flex justify-center">
             <div>
                 <form onSubmit={handleSubmit((data) => submitChooser(data as FormData))}>
-                    <div className="md:max-w-3xl mr-10 shadow-lg md:px-24 pb-24 pt-10">
+                    <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-24 pb-24 pt-10">
                         <header className="mb-7">
                             <h1 className=" text-xl font-bold ">Profile</h1>
                             <p>This information will be displayed publicly.</p>
@@ -381,7 +416,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         />
                         <div className="flex mt-7 gap-4">
                             <div className="flex flex-col w-1/2">
-                                <label>Website (recommended)</label>
+                                <label>Website <small>(Optional)</small></label>
                                 <input
                                     type="website"
                                     className="input input-bordered "
@@ -389,7 +424,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                                 />
                             </div>
                             <div className="flex flex-col w-1/2">
-                                <label>Contact Number (recommended)</label>
+                                <label>Contact Number <small>(Optional)</small></label>
                                 <input
                                     type="text"
                                     className="input input-bordered"
@@ -482,42 +517,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         }
 
                         <div className="divider"></div>
-                        <h2>Street Address</h2>
-                        {errors.address && <p className=" text-red-600">*{errors.address.message?.toString()}</p>}
-                        <input
-                            type="text"
-                            className="input input-bordered w-full"
-                            {...register("address", { required: "Address is required" })}
-                        />
-                        <div className="container flex gap-2 mt-7">
-                            <div className="flex flex-col">
-                                <label>Suburb</label>
-                                {errors.suburb && <p className=" text-red-600">*{errors.suburb.message?.toString()}</p>}
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("suburb", { required: "Suburb is required" })}
-                                />
-                            </div>
-                            <div className="flex flex-col">
-                                <label>State</label>
-                                {errors.state && <p className=" text-red-600">*{errors.state.message?.toString()}</p>}
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("state", { required: "State is required" })}
-                                />
-                            </div>
-                            <div className="flex flex-col">
-                                <label>Postcode</label>
-                                {errors.postcode && <p className=" text-red-600">*{errors.postcode.message?.toString()}</p>}
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("postcode", { required: "Postcode is required" })}
-                                />
-                            </div>
-                        </div>
+                        <LocationSearch onSelect={handleLocationSelect} postData={postData} />
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
@@ -555,10 +555,10 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <PreviewCard
                             imgUrl={previewUrl}
                             name={watch().name}
-                            suburb={watch().suburb}
-                            state={watch().state}
-                            postcode={watch().postcode}
-                            address={watch().address}
+                            suburb={selectedLocation.locality}
+                            state={selectedLocation.state}
+                            postcode={selectedLocation.postcode}
+                            address={selectedLocation.address}
                             type={watch().type}
                             products={selectedTags.map(tag => tag?.label).join(', ')}
                             description={watch().description}

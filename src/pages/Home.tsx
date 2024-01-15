@@ -1,6 +1,6 @@
 import { Card } from "../components/Card";
 import businessType from "../data/businessTypes.json"
-// import LocationSearch from "../components/LocationSearch";
+import LocationSearch from "../components/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
@@ -162,12 +162,6 @@ export default function Home() {
             filterPosts = filterPosts.filter((post) => post.type === typeFilter);
         }
 
-        // if (deliveryFilter && deliveryFilter !== "all") {
-        //     filterPosts = filterPosts.filter(
-        //         (post) => post[deliveryFilter as keyof CardProps] === true
-        //     );
-        // }
-
         if (locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
@@ -219,6 +213,7 @@ export default function Home() {
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
 
+    console.log("filter Orders:", filterOrders());
 
 
     return (
