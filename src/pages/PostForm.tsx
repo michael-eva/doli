@@ -11,7 +11,7 @@ import { nanoid } from "nanoid";
 import OpeningHours from "../components/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
-import LocationSearch from "../components/LocationSearch.tsx";
+import LocationSearch from "../components/Location/LocationSearch.tsx";
 
 
 
@@ -96,8 +96,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             country: country
         });
     };
-    console.log(selectedLocation);
-
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
@@ -317,6 +315,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
+    console.log(watch().address);
 
     return (
         <div className="md:flex justify-center">

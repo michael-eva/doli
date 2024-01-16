@@ -37,7 +37,6 @@ export default function LocationSearch({ onSelect, postData }) {
     } = usePlacesAutocomplete({
         callbackName: "YOUR_CALLBACK_NAME",
         requestOptions: {
-            /* Define search scope here */
             locationBias: new google.maps.Circle({
                 center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
                 radius: 2000
@@ -55,43 +54,51 @@ export default function LocationSearch({ onSelect, postData }) {
         setPostcode("")
         setCountry("")
         setValue(e.target.value);
-    };
 
+    };
     const extractStreetAddress = (input: string) => {
         const parts = input.split(','); // Split the string using commas
         const result = parts[0].trim(); // Get the first part and remove leading/trailing whitespaces
         return result;
     }
-    const handleSelect =
-        ({ description }) =>
-            () => {
-                setValue(description, false);
-                clearSuggestions();
+    const handleSelect = ({ description }) =>
+        () => {
+            setValue(description, false);
+            clearSuggestions();
+            onSelect(extractStreetAddress(description))
+            getGeocode({ address: description }).then((results) => {
 
-                getGeocode({ address: description }).then((results) => {
-                    const postalCodeComponent = results[0].address_components.find(
-                        (component) => component.types.includes('postal_code')
-                    );
-                    const localityComponent = results[0].address_components.find(
-                        (component) => component.types.includes('locality')
-                    );
-                    const stateComponent = results[0].address_components.find(
-                        (component) => component.types.includes('administrative_area_level_1')
-                    );
-                    const countryComponent = results[0].address_components.find(
-                        (component) => component.types.includes('country')
-                    );
-                    setLocality(localityComponent?.long_name)
-                    setPostcode(postalCodeComponent?.long_name)
-                    setState(stateComponent?.short_name)
-                    setCountry(countryComponent?.long_name)
-                    onSelect(extractStreetAddress(description), postalCodeComponent ? postalCodeComponent.long_name : '', localityComponent ? localityComponent.long_name : "", stateComponent?.short_name, countryComponent?.long_name);
-                    const { lat, lng } = getLatLng(results[0]);
-                    console.log("📍 Coordinates: ", { lat, lng });
-                });
-            };
+                const postalCodeComponent = results[0].address_components.find(
+                    (component) => component.types.includes('postal_code')
+                );
+                setPostcode(postalCodeComponent?.long_name)
+
+
+                const localityComponent = results[0].address_components.find(
+                    (component) => component.types.includes('locality')
+                );
+                setLocality(localityComponent?.long_name)
+
+                const stateComponent = results[0].address_components.find(
+                    (component) => component.types.includes('administrative_area_level_1')
+                );
+                setState(stateComponent?.short_name)
+                const countryComponent = results[0].address_components.find(
+                    (component) => component.types.includes('country')
+                );
+                setCountry(countryComponent?.long_name)
+
+                onSelect(extractStreetAddress(description), postalCodeComponent ? postalCodeComponent.long_name : '', localityComponent ? localityComponent.long_name : "", stateComponent?.short_name, countryComponent?.long_name);
+                const { lat, lng } = getLatLng(results[0]);
+                console.log("📍 Coordinates: ", { lat, lng });
+            });
+
+        };
+
     const renderSuggestions = () =>
         data.map((suggestion) => {
+            console.log(suggestion);
+
             const {
                 place_id,
                 structured_formatting: { main_text, secondary_text },
@@ -121,7 +128,6 @@ export default function LocationSearch({ onSelect, postData }) {
                     disabled={!ready}
                     placeholder="Start typing in your address"
                     className="input input-bordered "
-                    required
                 />
             </div>
             {status === "OK" && <ul>{renderSuggestions()}</ul>}

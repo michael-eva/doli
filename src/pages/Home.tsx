@@ -1,6 +1,6 @@
 import { Card } from "../components/Card";
 import businessType from "../data/businessTypes.json"
-import LocationSearch from "../components/LocationSearch";
+import LocationSearch from "../components/Location/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
@@ -9,6 +9,7 @@ import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
+import LocalitySearch from "../components/Location/LocalitySearch";
 
 type CardProps = {
     id: string,
@@ -115,42 +116,6 @@ export default function Home() {
         }
         setSearchParams(`?${sp.toString()}`)
     }
-    // function LocationSearch() {
-
-    //     useEffect(() => {
-    //         const fetchData = async () => {
-    //             const username = 'galactic_shark';
-    //             const suburb = 'seven hills'; // Replace with the suburb you want to search for
-    //             const countryCode = 'AU'; // Country code for Australia
-    //             const maxRows = 20; // Maximum number of rows to retrieve
-
-    //             const searchUrl = `http://api.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(suburb)}&country=${countryCode}&maxRows=${maxRows}&username=${username}`;
-
-    //             try {
-    //                 const response = await fetch(searchUrl);
-    //                 const responseData = await response.json();
-    //                 console.log(responseData);
-
-    //                 responseData.postalCodes.map(item => (
-    //                     console.log(item.postalCode, item.adminCode1, item.placeName)
-
-    //                 ));
-
-
-
-    //             } catch (error) {
-    //                 console.error('Error fetching data:', error);
-    //             }
-    //         };
-
-    //         fetchData();
-    //     }, []);
-
-
-    //     // Add your rendering logic here to display the fetched data
-    // }
-    // LocationSearch()
-
 
     const containsSearchText = (text: string, searchTerm: string) =>
         text.toLowerCase().includes(searchTerm.toLowerCase());
@@ -165,7 +130,7 @@ export default function Home() {
         if (locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
-                const lowercaseSuburb = post.suburb.toLowerCase();
+                const lowercaseSuburb = post.locality.toLowerCase();
                 return lowercaseSuburb.includes(lowercaseLocationFilter);
             });
         }
@@ -212,10 +177,6 @@ export default function Home() {
     }
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
-
-    console.log("filter Orders:", filterOrders());
-
-
     return (
         <>
             <div className=" max-w-7xl m-auto mb-10">
@@ -232,15 +193,19 @@ export default function Home() {
                         <div className="flex flex-col justify-around">
                             <div className="flex gap-10">
                                 <div className="flex flex-col">
+                                    {/*  When user starts typing location, I want to autosuggest localitities */}
+                                    {/* When a locality is selected, I want to genNewSearchParams("location", e.target.value) */}
+
                                     <div className="flex flex-col mt-4">
-                                        <label htmlFor="">Location:</label>
+                                        {/* <label htmlFor="">Location:</label>
                                         <input type="text"
                                             className="input input-bordered w-72"
                                             placeholder='Fremantle'
                                             {...register("location")}
                                             onChange={(e) => genNewSearchParams("location", e.target.value)}
                                             value={locationFilter || ""}
-                                        />
+                                        /> */}
+                                        <LocalitySearch />
                                     </div>
                                     <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                         <input
@@ -320,7 +285,6 @@ export default function Home() {
                             />
                         </div> */}
                     </div >}
-                {/* {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />} */}
                 <p>
                     {startIndex} - {endIndex} of {searchItemLength()} results
                 </p>
