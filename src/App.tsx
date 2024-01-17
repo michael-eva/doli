@@ -18,7 +18,6 @@ import Wholesale from "./pages/Wholesale"
 
 
 function App() {
-
   return (
     <>
       <NavBar />

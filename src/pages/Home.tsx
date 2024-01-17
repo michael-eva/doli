@@ -9,14 +9,13 @@ import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
-import LocalitySearch from "../components/Location/LocalitySearch";
 
 type CardProps = {
     id: string,
     postId: string,
     imgUrl: string | null,
     name: string,
-    suburb: string,
+    locality: string,
     state: string,
     postcode: string,
     address: string,
@@ -38,6 +37,13 @@ type CardProps = {
     contact: string,
     website: string,
 }
+type LocationData = {
+    address: string,
+    postcode: string,
+    locality: string,
+    state: string,
+    country: string
+}
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
     const [posts, setPosts] = useState<CardProps[]>([])
@@ -52,6 +58,14 @@ export default function Home() {
     const [members, setMembers] = useState('')
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
+    const [selectedLocation, setSelectedLocation] = useState<LocationData>({
+        address: "",
+        postcode: "",
+        locality: "",
+        state: "",
+        country: ""
+    })
+    const [inputClear, setInputClear] = useState<boolean>(false)
 
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
@@ -130,7 +144,7 @@ export default function Home() {
         if (locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
-                const lowercaseSuburb = post.locality.toLowerCase();
+                const lowercaseSuburb = post.postcode;
                 return lowercaseSuburb.includes(lowercaseLocationFilter);
             });
         }
@@ -177,6 +191,22 @@ export default function Home() {
     }
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
+    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string) => {
+        setSelectedLocation({
+            address: address,
+            postcode: postcode,
+            locality: locality,
+            state: state,
+            country: country
+        });
+        genNewSearchParams('location', postcode)
+    };
+    const clearFilters = () => {
+        setSearchParams("")
+        setInputClear(true)
+    }
+
+
     return (
         <>
             <div className=" max-w-7xl m-auto mb-10">
@@ -193,19 +223,9 @@ export default function Home() {
                         <div className="flex flex-col justify-around">
                             <div className="flex gap-10">
                                 <div className="flex flex-col">
-                                    {/*  When user starts typing location, I want to autosuggest localitities */}
-                                    {/* When a locality is selected, I want to genNewSearchParams("location", e.target.value) */}
-
                                     <div className="flex flex-col mt-4">
-                                        {/* <label htmlFor="">Location:</label>
-                                        <input type="text"
-                                            className="input input-bordered w-72"
-                                            placeholder='Fremantle'
-                                            {...register("location")}
-                                            onChange={(e) => genNewSearchParams("location", e.target.value)}
-                                            value={locationFilter || ""}
-                                        /> */}
-                                        <LocalitySearch />
+                                        <label htmlFor="">Suburb</label>
+                                        <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" />
                                     </div>
                                     <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                         <input
@@ -229,7 +249,6 @@ export default function Home() {
                                         </span>
                                     </label>
                                 </div>
-                                {/* <LocationSearch /> */}
                                 <div className="flex flex-col mt-4 dropdown-bottom w-72">
                                     <label> Select Type:</label>
                                     <select
@@ -247,6 +266,7 @@ export default function Home() {
                                     </select>
                                 </div>
                             </div>
+                            {searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
                             <div className="divider "></div>
                             <div className="flex justify-center gap-10">
                                 <div className="flex flex-col w-72">
@@ -292,8 +312,8 @@ export default function Home() {
                     {isLoading ?
                         <>
                             {
-                                Array.from({ length: 2 }, (_) => (
-                                    <CardSkeleton />
+                                Array.from({ length: 2 }, (_, index) => (
+                                    <CardSkeleton key={index} />
                                 ))
                             }
                         </>

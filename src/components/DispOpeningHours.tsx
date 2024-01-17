@@ -17,7 +17,7 @@ export default function DispOpeningHours({ openingHours }) {
                     <table className="min-w-full divide-y divide-gray-300">
                         <tbody className="bg-white">
                             {openingHours?.map((item: OpeningHours, index: number) => (
-                                <tr key={item.id} className={index % 2 === 0 ? undefined : ' bg-amber-50'}>
+                                <tr key={index} className={index % 2 === 0 ? undefined : ' bg-amber-50'}>
                                     <td
                                         className="whitespace-nowrap py-1  pr-3 text-xs font-medium text-gray-900 pl-6"
                                     >

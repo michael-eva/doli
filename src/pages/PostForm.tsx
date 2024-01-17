@@ -83,6 +83,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         state: "",
         country: ""
     })
+    console.log(selectedLocation);
+
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
@@ -315,7 +317,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
-    console.log(watch().address);
 
     return (
         <div className="md:flex justify-center">
@@ -516,7 +517,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         }
 
                         <div className="divider"></div>
-                        <LocationSearch onSelect={handleLocationSelect} postData={postData} />
+                        <label htmlFor="">Address</label>
+                        <LocationSearch onSelect={handleLocationSelect} postData={postData} fullAddress={true} types={['address']} placeholder="Start typing in an address" />
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :

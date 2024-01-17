@@ -13,6 +13,7 @@ import ToggleButton from "../components/Toggle/ToggleButton"
 import ForgotPassword from "../components/ForgotPassword"
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form"
+import LocationSearch from "./Location/LocationSearch"
 
 
 type FormData = {
@@ -26,17 +27,6 @@ type FormData = {
     altSuburb: string
     country: string
 }
-// const initialFormState = {
-//     gender: "",
-//     email: "",
-//     password: "",
-//     confirmPassword: "",
-//     birthMonth: "",
-//     birthYear: "",
-//     suburb: "",
-//     altSuburb: "",
-//     country: ""
-// };
 
 export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -46,6 +36,21 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+    const [primaryLocation, setPrimaryLocation] = useState({
+        address: "",
+        postcode: "",
+        locality: "",
+        state: "",
+        country: "",
+    });
+
+    const [secondaryLocation, setSecondaryLocation] = useState({
+        address: "",
+        postcode: "",
+        locality: "",
+        state: "",
+        country: "",
+    });
 
     const signUpAndInsertData = async (data: FormData) => {
         setIsSubmitting(true)
@@ -85,6 +90,8 @@ export default function SignUp() {
 
     }
     const handleNewSubmit = async (data: FormData) => {
+        console.log(data);
+
         const signUpResponse = await signUpAndInsertData(data);
 
 
@@ -97,9 +104,13 @@ export default function SignUp() {
                     email: data.email,
                     birthMonth: data.birthMonth,
                     birthYear: data.birthYear,
-                    suburb: data.suburb,
-                    altSuburb: data.altSuburb,
+                    suburb: primaryLocation.locality,
+                    postcode: primaryLocation.postcode,
+                    altSuburb: secondaryLocation.locality,
+                    altPostcode: secondaryLocation.postcode,
+                    country: primaryLocation.country,
                     isJod: false
+
                 })
                 .single()
                 .then(
@@ -117,7 +128,6 @@ export default function SignUp() {
     }
 
     const existingEmail = errors.email?.message === "Email already exists in the system"
-    // console.log(watch());
 
     const getMembers = async () => {
         try {
@@ -132,6 +142,11 @@ export default function SignUp() {
             }
             if (data) {
                 setValue('email', data.email)
+                // suburb will have to change to something like:
+                // setPrimaryLocation({
+                //     address: data.suburb,
+                //     postcode: data.postcode
+                // })
                 setValue('suburb', data.suburb)
                 setValue('altSuburb', data.altSuburb)
                 setValue('gender', data.gender)
@@ -193,6 +208,8 @@ export default function SignUp() {
             });
         }
     }
+    console.log("Primary Location", primaryLocation);
+    console.log("Secondary Location", secondaryLocation);
 
     return (
         <>
@@ -335,7 +352,54 @@ export default function SignUp() {
                             </div>
                         </div>
                         <div className=" md:flex gap-3 mt-7 w-full mb-2">
-                            <div className="flex flex-col md:w-1/2 mt-4">
+                            <div className="flex flex-col md:w-1/2">
+                                <label>Primary Suburb</label>
+                                <LocationSearch
+                                    types={['locality']}
+                                    label="Suburb"
+                                    placeholder="Start typing in a suburb"
+                                    onSelect={(address, postcode, locality, state, country) => {
+                                        setPrimaryLocation({
+                                            address,
+                                            postcode,
+                                            locality,
+                                            state,
+                                            country,
+                                        });
+                                    }}
+                                    suburbAndPostcode={true}
+                                />
+
+                            </div>
+                            <div className="flex flex-col md:w-1/2">
+                                <div className="flex justify-between">
+                                    <label>Secondary Suburb</label>
+                                    <Toggle>
+                                        <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                        <ToggleOn>
+                                            <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
+                                        </ToggleOn>
+                                    </Toggle>
+                                </div>
+                                <LocationSearch
+                                    types={['locality']}
+                                    label="Suburb"
+                                    placeholder="Start typing in a suburb"
+                                    onSelect={(address, postcode, locality, state, country) => {
+                                        setSecondaryLocation({
+                                            address,
+                                            postcode,
+                                            locality,
+                                            state,
+                                            country,
+                                        });
+                                    }}
+                                    suburbAndPostcode={true}
+                                />
+
+
+                            </div>
+                            {/* <div className="flex flex-col md:w-1/2 mt-4">
                                 <label>Suburb</label>
                                 <input
                                     type="text"
@@ -359,7 +423,7 @@ export default function SignUp() {
                                     className="input input-bordered "
                                     {...register('altSuburb')}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                         <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
