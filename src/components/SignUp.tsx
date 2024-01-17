@@ -39,7 +39,7 @@ export default function SignUp() {
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
-        locality: "",
+        suburb: "",
         state: "",
         country: "",
     });
@@ -47,7 +47,7 @@ export default function SignUp() {
     const [secondaryLocation, setSecondaryLocation] = useState({
         address: "",
         postcode: "",
-        locality: "",
+        suburb: "",
         state: "",
         country: "",
     });
@@ -104,9 +104,9 @@ export default function SignUp() {
                     email: data.email,
                     birthMonth: data.birthMonth,
                     birthYear: data.birthYear,
-                    suburb: primaryLocation.locality,
+                    suburb: primaryLocation.suburb,
                     postcode: primaryLocation.postcode,
-                    altSuburb: secondaryLocation.locality,
+                    altSuburb: secondaryLocation.suburb,
                     altPostcode: secondaryLocation.postcode,
                     country: primaryLocation.country,
                     isJod: false
@@ -142,13 +142,29 @@ export default function SignUp() {
             }
             if (data) {
                 setValue('email', data.email)
-                // suburb will have to change to something like:
-                // setPrimaryLocation({
-                //     address: data.suburb,
-                //     postcode: data.postcode
-                // })
-                setValue('suburb', data.suburb)
-                setValue('altSuburb', data.altSuburb)
+                // // suburb will have to change to something like:
+                // // setPrimaryLocation({
+                // //     address: data.suburb,
+                // //     postcode: data.postcode
+                // // })
+                // setValue('suburb', data.suburb)
+                // setValue('altSuburb', data.altSuburb)
+                console.log(data);
+
+                setPrimaryLocation({
+                    address: data?.suburb,
+                    suburb: data?.suburb,
+                    state: data.state,
+                    country: data.country,
+                    postcode: data?.postcode
+                })
+                setSecondaryLocation({
+                    address: data?.altSuburb,
+                    suburb: data?.altSuburb,
+                    state: data?.state,
+                    country: "",
+                    postcode: data?.altPostcode
+                })
                 setValue('gender', data.gender)
                 setValue('birthMonth', data.birthMonth)
                 setValue('birthYear', data.birthYear)
@@ -157,6 +173,7 @@ export default function SignUp() {
             console.error('Error:', error.message);
         }
     };
+
     useEffect(() => {
         if (user?.id) {
             getMembers();
@@ -358,16 +375,17 @@ export default function SignUp() {
                                     types={['locality']}
                                     label="Suburb"
                                     placeholder="Start typing in a suburb"
-                                    onSelect={(address, postcode, locality, state, country) => {
+                                    onSelect={(address, postcode, suburb, state, country) => {
                                         setPrimaryLocation({
                                             address,
                                             postcode,
-                                            locality,
+                                            suburb,
                                             state,
                                             country,
                                         });
                                     }}
                                     suburbAndPostcode={true}
+                                    postData={primaryLocation}
                                 />
 
                             </div>
@@ -385,16 +403,17 @@ export default function SignUp() {
                                     types={['locality']}
                                     label="Suburb"
                                     placeholder="Start typing in a suburb"
-                                    onSelect={(address, postcode, locality, state, country) => {
+                                    onSelect={(address, postcode, suburb, state, country) => {
                                         setSecondaryLocation({
                                             address,
                                             postcode,
-                                            locality,
+                                            suburb,
                                             state,
                                             country,
                                         });
                                     }}
                                     suburbAndPostcode={true}
+                                    postData={secondaryLocation}
                                 />
 
 

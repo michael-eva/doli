@@ -44,6 +44,7 @@ type PostData = {
     name: string,
     suburb: string,
     state: string,
+    country: string
     postcode: string,
     address: string,
     type: string,
@@ -62,7 +63,7 @@ type PostData = {
 type LocationData = {
     address: string,
     postcode: string,
-    locality: string,
+    suburb: string,
     state: string,
     country: string
 }
@@ -79,7 +80,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
         address: "",
         postcode: "",
-        locality: "",
+        suburb: "",
         state: "",
         country: ""
     })
@@ -89,11 +90,11 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
-    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string) => {
+    const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string) => {
         setSelectedLocation({
             address: address,
             postcode: postcode,
-            locality: locality,
+            suburb: suburb,
             state: state,
             country: country
         });
@@ -195,7 +196,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, locality: selectedLocation.locality, state: selectedLocation.state, country: selectedLocation.country })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -247,7 +248,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, locality: selectedLocation.locality, state: selectedLocation.state, country: selectedLocation.country })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -296,7 +297,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setValue('name', postData.name)
             setSelectedLocation({
                 address: postData.address,
-                locality: postData.locality,
+                suburb: postData.suburb,
                 state: postData.state,
                 country: postData.country,
                 postcode: postData.postcode
@@ -556,7 +557,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         <PreviewCard
                             imgUrl={previewUrl}
                             name={watch().name}
-                            suburb={selectedLocation.locality}
+                            suburb={selectedLocation.suburb}
                             state={selectedLocation.state}
                             postcode={selectedLocation.postcode}
                             address={selectedLocation.address}

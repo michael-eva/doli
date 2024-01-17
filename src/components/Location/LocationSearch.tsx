@@ -211,7 +211,7 @@ import { LatLngLiteral } from "leaflet";
 type PostData = {
     imgUrl: string;
     name: string;
-    locality: string;
+    suburb: string;
     country: string,
     state: string;
     postcode: string;
@@ -244,7 +244,7 @@ type LocationSearchProps = {
     onSelect?: (
         address: string,
         postcode: string,
-        locality: string,
+        suburb: string,
         state: string,
         country: string
     ) => void;
@@ -274,7 +274,7 @@ export default function LocationSearch({
         longitude: 0,
     });
     const [postcode, setPostcode] = useState<string>("");
-    const [locality, setLocality] = useState<string>("");
+    const [suburb, setSuburb] = useState<string>("");
     const [state, setState] = useState<string>("");
     const [country, setCountry] = useState<string>("");
     useEffect(() => {
@@ -318,11 +318,13 @@ export default function LocationSearch({
     });
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLocality("");
+        setSuburb("");
         setPostcode("");
         setCountry("");
         setValue(e.target.value);
     };
+    console.log(postData);
+
 
     useEffect(() => {
         if (inputClear) {
@@ -352,10 +354,10 @@ export default function LocationSearch({
             );
             setPostcode(postalCodeComponent?.long_name || "");
 
-            const localityComponent = addressComponents.find(
+            const suburbComponent = addressComponents.find(
                 (component: AddressComponent) => component.types.includes("locality")
             );
-            setLocality(localityComponent?.long_name || "");
+            setSuburb(suburbComponent?.long_name || "");
 
             const stateComponent = addressComponents.find(
                 (component: AddressComponent) =>
@@ -371,7 +373,7 @@ export default function LocationSearch({
             onSelect(
                 extractStreetAddress(suggestion.description),
                 postalCodeComponent ? postalCodeComponent.long_name : '',
-                localityComponent ? localityComponent.long_name : "",
+                suburbComponent ? suburbComponent.long_name : "",
                 stateComponent ? stateComponent?.short_name : "",
                 countryComponent ? countryComponent?.long_name : "",
             );
@@ -391,7 +393,7 @@ export default function LocationSearch({
         setPostcode(postData?.postcode || "");
         setState(postData?.state || "");
         setCountry(postData?.country || "");
-        setLocality(postData?.locality || "");
+        setSuburb(postData?.suburb || "");
     }, [postData]);
 
     return (
@@ -423,10 +425,10 @@ export default function LocationSearch({
                         <div className="flex flex-col w-1/2">
                             <label htmlFor="">Suburb</label>
                             <div
-                                className={`input input-bordered cursor-not-allowed flex items-center ${!locality ? "text-gray-400" : ""
+                                className={`input input-bordered cursor-not-allowed flex items-center ${!suburb ? "text-gray-400" : ""
                                     }`}
                             >
-                                {locality ? locality : "Suburb"}
+                                {suburb ? suburb : "Suburb"}
                             </div>
                         </div>
                         <div className="flex flex-col w-1/2">

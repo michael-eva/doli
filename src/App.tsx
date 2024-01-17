@@ -38,7 +38,6 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
         <Route path="wholesale" element={<Wholesale />} />
-        < Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
