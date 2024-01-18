@@ -129,6 +129,7 @@ export default function Home() {
             sp.set(key, value)
         }
         setSearchParams(`?${sp.toString()}`)
+        setCurrentPage(1)
     }
 
     const containsSearchText = (text: string, searchTerm: string) =>
@@ -151,7 +152,11 @@ export default function Home() {
 
         if (searchFilter && searchFilter.trim() !== "") {
             filterPosts = filterPosts.filter((post) => {
-                return Object.values(post).some((value) => {
+                const columnsToSearch = ["description", "selectedTags", "type", "state", "suburb", "name"];
+
+                return columnsToSearch.some((column) => {
+                    const value = post[column];
+
                     if (Array.isArray(value)) {
                         return value.some(
                             (tag: any) =>
@@ -159,19 +164,25 @@ export default function Home() {
                                 containsSearchText(tag.label, searchFilter)
                         );
                     }
+
                     return typeof value === "string" && containsSearchText(value, searchFilter);
                 });
             });
         }
 
+        return paginatePage(currentPage, pageSize, filterPosts);
+    };
+
+    const paginatePage = (currentPage, pageSize, filterPosts) => {
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
-
-        filterPosts = filterPosts.slice(startIndex, endIndex);
-
-
-        return filterPosts;
+        const paginatePage = filterPosts.slice(startIndex, endIndex);
+        return paginatePage;
     };
+
+
+
+    console.log(filterOrders());
 
     const isFilter = () => {
         if (typeFilter || searchFilter) {
