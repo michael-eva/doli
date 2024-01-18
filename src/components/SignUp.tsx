@@ -75,8 +75,11 @@ export default function SignUp() {
                 email: data.email,
                 birthMonth: data.birthMonth,
                 birthYear: data.birthYear,
-                suburb: data.suburb,
-                altSuburb: data.altSuburb,
+                suburb: primaryLocation.suburb,
+                postcode: primaryLocation.postcode,
+                altSuburb: secondaryLocation.suburb,
+                altPostcode: secondaryLocation.postcode,
+                country: primaryLocation.country,
             })
             .eq('id', user?.id)
 
@@ -149,8 +152,6 @@ export default function SignUp() {
                 // // })
                 // setValue('suburb', data.suburb)
                 // setValue('altSuburb', data.altSuburb)
-                console.log(data);
-
                 setPrimaryLocation({
                     address: data?.suburb,
                     suburb: data?.suburb,
@@ -225,8 +226,6 @@ export default function SignUp() {
             });
         }
     }
-    console.log("Primary Location", primaryLocation);
-    console.log("Secondary Location", secondaryLocation);
 
     return (
         <>
