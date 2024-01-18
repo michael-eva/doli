@@ -2,7 +2,7 @@ export default function CardSkeleton() {
 
 
     return (
-        <div className="max-w-sm rounded overflow-hidden shadow-lg m-4 mt-10 animate-pulse">
+        <div className="max-w-sm rounded overflow-hidden shadow-lg m-4 mt-10 animate-pulse w-72">
 
             <div className=" h-56 w-full bg-gray-300"></div>
             <div className="px-6 py-4">
