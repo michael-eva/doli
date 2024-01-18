@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import OpeningHours from "./OpeningHours";
+import DispOpeningHours from "./DispOpeningHours";
 
 type CardProps = {
     imgUrl: string | null,
@@ -53,14 +54,6 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
                 )}
             </>)
     }
-    const openingHoursArray = openingHours
-        ? Object.entries(openingHours).map(([day, data]) => ({
-            day,
-            ...data,
-        }))
-        : [];
-
-    const openDays = openingHoursArray.filter(item => item.isOpen === 'open')
 
     return (
 
@@ -82,16 +75,10 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
                         </p>
                         {buttonEl()}
                     </>
-                ) : <p className="mb-4">Description of your business</p>}
+                ) : <p>Description of your business</p>}
 
 
-                {openDays.map((item) => (
-                    <div key={item.day} className="flex">
-                        <p className="mb-4 italic">{item.day}</p>
-                        {item.fromTime && <p className="mb-4 italic">{item.fromTime}</p>}
-                        {item.toTime && <p className="mb-4 italic">{item.toTime}</p>}
-                    </div>
-                ))}
+                <DispOpeningHours openingHours={openingHours} />
                 {!deliveryMethod ? <p >Delivery methods</p>
                     :
                     <p>{[pickUp && "Pick-Up", delivery && "Delivery", dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>

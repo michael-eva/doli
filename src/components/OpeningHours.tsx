@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function OpeningHours({ register, errors, setError, clearErrors, watch, postData }: any) {
+export default function OpeningHours({ register, errors, setError, clearErrors, watch, postData, setValue }: any) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -32,6 +32,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
 
         return toTotalMinutes > fromTotalMinutes;
     };
+    console.log(isTimeAfter("06:25", "05:15"));
 
     useEffect(() => {
         if (postData) {
@@ -62,9 +63,9 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                             </select>
                         </td>
                         {watch(`openingHours[${index}].isOpen`) === 'open' ? (
-                            < td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {errors && errors[item.day]?.toTime && (
-                                    <p className=" text-red-500">*{errors[item.day].toTime.message}</p>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {errors && errors?.openingHours && errors?.openingHours[index] && errors?.openingHours[index]?.toTime && (
+                                    <p className="text-red-500">*{errors?.openingHours[index]?.toTime.message}</p>
                                 )}
                                 <div className="flex items-center gap-2">
                                     <p>From</p>
@@ -84,14 +85,18 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                                         className="input input-bordered w-1/2"
                                         {...register(`openingHours.${index}.toTime`)}
                                         defaultValue={initialOpeningHours[index].toTime || ""}
-                                        onBlur={(e) => {
+                                        onChange={(e) => {
                                             const toTimeValue = e.target.value;
                                             const fromTimeValue = watch(`openingHours.${index}.fromTime`);
+                                            console.log("To time:", toTimeValue);
+                                            console.log("From time:", fromTimeValue);
                                             if (!isTimeAfter(fromTimeValue, toTimeValue)) {
                                                 setError(`openingHours.${index}.toTime`, {
                                                     type: 'manual',
                                                     message: 'Closing time needs to be after opening time'
                                                 });
+                                                setValue(`openingHours.${index}.fromTime`, "");
+                                                setValue(`openingHours.${index}.toTime`, "");
                                             } else {
                                                 clearErrors(`openingHours.${index}.toTime`);
                                             }
@@ -103,6 +108,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                                     </select>
                                 </div>
                             </td>
+
                         ) : (
                             <td>
                                 <div className="flex justify-center">
@@ -117,6 +123,9 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         );
 
     }
+
+    console.log(errors.openingHours);
+
     return (
         <div className="">
             <div className="mt-5 flex flex-col">

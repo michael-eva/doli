@@ -217,70 +217,71 @@ export default function Home() {
                 }
                 {!isMobile &&
                     <div className="flex">
-                        <div className="flex w-1/3">
-                            <img src="images/doli_logo.PNG" alt="" width={300} />
+                        <div className="w-1/3">
+                            <img src="images/doli_logo.PNG" alt="" width={300} style={{ minHeight: "200px", minWidth: '200px' }} height={300} />
                         </div>
-                        <div className="flex flex-col justify-around">
-                            <div className="flex gap-10">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-col mt-4">
-                                        <label htmlFor="">Suburb</label>
-                                        <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" />
-                                    </div>
-                                    <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
-                                        <input
-                                            type='checkbox'
-                                            name='autoSaver'
-                                            className='sr-only'
-                                            checked={isChecked}
-                                            onChange={handleCheckboxChange}
-                                        />
-                                        <span
-                                            className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
-                                                }`}
-                                        >
+                        <div className="flex w-2/3">
+                            <div className="flex flex-col justify-around">
+                                <div className="flex gap-10">
+                                    <div className="flex flex-col">
+                                        <div className=" mt-4">
+                                            <label htmlFor="">Suburb</label>
+                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" />
+                                        </div>
+                                        <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+                                            <input
+                                                type='checkbox'
+                                                name='autoSaver'
+                                                className='sr-only'
+                                                checked={isChecked}
+                                                onChange={handleCheckboxChange}
+                                            />
                                             <span
-                                                className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
+                                                className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
                                                     }`}
-                                            ></span>
-                                        </span>
-                                        <span className='label flex items-center text-sm font-medium text-black'>
-                                            Include Nearby Locations
-                                        </span>
-                                    </label>
+                                            >
+                                                <span
+                                                    className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
+                                                        }`}
+                                                ></span>
+                                            </span>
+                                            <span className='label flex items-center text-sm font-medium text-black'>
+                                                Include Nearby Locations
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div className="flex flex-col mt-4 dropdown-bottom w-72">
+                                        <label> Select Type:</label>
+                                        <select
+                                            {...register('type')}
+                                            className="select select-bordered"
+                                            onChange={(e) => genNewSearchParams('type', e.target.value)}
+                                            value={typeFilter || ""}
+                                        >
+                                            <option value="all" selected>All Types</option>
+                                            {businessType.map(item => (
+                                                <option
+                                                    key={item}
+                                                    value={item}>{item}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col mt-4 dropdown-bottom w-72">
-                                    <label> Select Type:</label>
-                                    <select
-                                        {...register('type')}
-                                        className="select select-bordered"
-                                        onChange={(e) => genNewSearchParams('type', e.target.value)}
-                                        value={typeFilter || ""}
-                                    >
-                                        <option value="all" selected>All Types</option>
-                                        {businessType.map(item => (
-                                            <option
-                                                key={item}
-                                                value={item}>{item}</option>
-                                        ))}
-                                    </select>
+                                {searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
+                                <div className="divider "></div>
+                                <div className="flex justify-center gap-10">
+                                    <div className="flex flex-col w-72">
+                                        <p className="text-xl" >Search Results:</p>
+                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <p className="text-xl" >Active Members:</p>
+                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{members.length} <span>Users</span></p>
+                                    </div>
                                 </div>
                             </div>
-                            {searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
-                            <div className="divider "></div>
-                            <div className="flex justify-center gap-10">
-                                <div className="flex flex-col w-72">
-                                    <p className="text-xl" >Search Results:</p>
-                                    <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
-                                </div>
-                                <div className="flex flex-col">
-                                    <p className="text-xl" >Active Members:</p>
-                                    <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{members.length} <span>Users</span></p>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                            {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
                             <label htmlFor="">Select Delivery Method:</label>
                             <select
                                 name="deliveryMethod"
@@ -294,7 +295,7 @@ export default function Home() {
                                 <option value="pickUp" >Pick-Up</option>
                             </select>
                         </div> */}
-                        {/* <div className="flex flex-col mt-4">
+                            {/* <div className="flex flex-col mt-4">
                             <label htmlFor="">Enter Search Term:</label>
                             <input type="text"
                                 className="input input-bordered w-72"
@@ -304,7 +305,8 @@ export default function Home() {
                                 value={searchFilter || ""}
                             />
                         </div> */}
-                    </div >}
+                        </div >
+                    </div>}
                 <p>
                     {startIndex} - {endIndex} of {searchItemLength()} results
                 </p>

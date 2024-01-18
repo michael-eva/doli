@@ -100,7 +100,7 @@ export default function NavBar() {
     }, [user?.id]);
 
     return (
-        <div className="navbar bg-base-100 shadow-md md:mb-10">
+        <div className="navbar bg-base-100 shadow-md md:mb-10 z-[3]">
 
             <div className="navbar-start">
                 <NavLink to='/'>

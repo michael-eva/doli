@@ -403,8 +403,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            {errors.openingHours && <p className=" text-red-600">*{errors.openingHours.message?.toString()}</p>}
-                            <OpeningHours register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
+                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>
