@@ -189,11 +189,13 @@ export default function LocationSearch({
         ));
 
     useEffect(() => {
-        setValue(postData?.address || "");
-        setPostcode(postData?.postcode || "");
-        setState(postData?.state || "");
-        setCountry(postData?.country || "");
-        setSuburb(postData?.suburb || "");
+        if (postData) {
+            setValue(postData?.address || "");
+            setPostcode(postData?.postcode || "");
+            setState(postData?.state || "");
+            setCountry(postData?.country || "");
+            setSuburb(postData?.suburb || "");
+        }
     }, [postData]);
 
     return (
