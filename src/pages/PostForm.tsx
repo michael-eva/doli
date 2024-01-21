@@ -46,7 +46,8 @@ type PostData = {
     state: string,
     country: string
     postcode: string,
-    address: string,
+    streetAddress: string,
+    formatted_address: string,
     type: string,
     selectedTags: string[],
     description: string,
@@ -68,7 +69,7 @@ type LocationData = {
     country: string
 }
 
-export default function PostForm({ postData }: { postData: PostData | undefined }) {
+export default function PostForm({ postData, }: { postData: PostData | undefined }) {
     const navigate = useNavigate()
     const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues, setError, clearErrors } = useForm();
     const user = useUser();
@@ -84,7 +85,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         state: "",
         country: ""
     })
-    console.log(selectedLocation);
+    console.log("Post data from edit post", postData);
 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -177,7 +178,6 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
     };
     const handleEditFormSubmit = async (formData: FormData) => {
-        console.log(formData.imgUrl);
 
         const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
             return {
@@ -196,7 +196,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -222,6 +222,24 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     return;
                 }
             }
+            const { error: locationError } = await supabase
+                .from("locations")
+                .update({
+                    country: selectedLocation.country,
+                    state: selectedLocation.state,
+                    suburb: selectedLocation.suburb,
+                    postcode: selectedLocation.postcode,
+                    streetAddress: selectedLocation.address,
+                    formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
+                    postId: postData?.postId
+                })
+                .eq("postId", postData?.postId)
+            if (locationError) {
+                console.error("Error updating location", locationError);
+
+            }
+
+
             console.log('Post details updated successfully!');
         } catch (error) {
             console.error('Error handling submit:', error);
@@ -248,7 +266,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
+            // .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -277,6 +296,23 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                     return;
                 }
 
+                const { error: locationError } = await supabase
+                    .from('locations')
+                    .insert({
+                        country: selectedLocation.country,
+                        state: selectedLocation.state,
+                        suburb: selectedLocation.suburb,
+                        postcode: selectedLocation.postcode,
+                        streetAddress: selectedLocation.address,
+                        formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
+                        postId: postId
+                    })
+                if (locationError) {
+                    console.error("Error updating location table", locationError);
+                    return
+
+                }
+
             }
 
         } catch (error) {
@@ -284,6 +320,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         }
         formCleanup()
     }
+    console.log(selectedLocation);
+
     const submitChooser = (formData: FormData) => {
         if (postData) {
             return handleEditFormSubmit(formData)
@@ -296,7 +334,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
         if (postData) {
             setValue('name', postData.name)
             setSelectedLocation({
-                address: postData.address,
+                address: postData.formatted_address,
                 suburb: postData.suburb,
                 state: postData.state,
                 country: postData.country,
@@ -318,6 +356,8 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
             setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
         }
     }, [postData]);
+    console.log("selected location", selectedLocation);
+
 
     return (
         <div className="md:flex justify-center">
@@ -518,7 +558,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
 
                         <div className="divider"></div>
                         <label htmlFor="">Address</label>
-                        <LocationSearch onSelect={handleLocationSelect} postData={postData} fullAddress={true} types={['address']} placeholder="Start typing in an address" />
+                        <LocationSearch onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
@@ -561,7 +601,7 @@ export default function PostForm({ postData }: { postData: PostData | undefined 
                             postcode={selectedLocation.postcode}
                             address={selectedLocation.address}
                             type={watch().type}
-                            products={selectedTags.map(tag => tag?.label).join(', ')}
+                            products={selectedTags?.map(tag => tag?.label).join(', ')}
                             description={watch().description}
                             openingHours={watch().openingHours}
                             contact={watch().contact}

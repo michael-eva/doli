@@ -80,6 +80,10 @@ export default function SignUp() {
                 altSuburb: secondaryLocation.suburb,
                 altPostcode: secondaryLocation.postcode,
                 country: primaryLocation.country,
+                state: primaryLocation.state,
+                altState: secondaryLocation.state,
+                address: primaryLocation.address,
+                altAddress: secondaryLocation.address,
             })
             .eq('id', user?.id)
 
@@ -92,6 +96,8 @@ export default function SignUp() {
         navigate("/")
 
     }
+    console.log("Secondary Location:", secondaryLocation.address);
+
     const handleNewSubmit = async (data: FormData) => {
         console.log(data);
 
@@ -112,7 +118,9 @@ export default function SignUp() {
                     altSuburb: secondaryLocation.suburb,
                     altPostcode: secondaryLocation.postcode,
                     country: primaryLocation.country,
-                    isJod: false
+                    altCountry: secondaryLocation.country,
+                    isJod: false,
+                    state: primaryLocation.state
 
                 })
                 .single()
@@ -145,30 +153,23 @@ export default function SignUp() {
             }
             if (data) {
                 setValue('email', data.email)
-                // // suburb will have to change to something like:
-                // // setPrimaryLocation({
-                // //     address: data.suburb,
-                // //     postcode: data.postcode
-                // // })
-                // setValue('suburb', data.suburb)
-                // setValue('altSuburb', data.altSuburb)
+                setValue('gender', data.gender)
+                setValue('birthMonth', data.birthMonth)
+                setValue('birthYear', data.birthYear)
                 setPrimaryLocation({
-                    address: data?.suburb,
+                    address: data?.address + "," + " " + data?.country,
                     suburb: data?.suburb,
                     state: data.state,
                     country: data.country,
                     postcode: data?.postcode
                 })
                 setSecondaryLocation({
-                    address: data?.altSuburb,
+                    address: data?.altAddress,
                     suburb: data?.altSuburb,
-                    state: data?.state,
-                    country: "",
+                    state: data.altState,
+                    country: data.altCountry,
                     postcode: data?.altPostcode
                 })
-                setValue('gender', data.gender)
-                setValue('birthMonth', data.birthMonth)
-                setValue('birthYear', data.birthYear)
             }
         } catch (error: any) {
             console.error('Error:', error.message);

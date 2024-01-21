@@ -32,32 +32,76 @@ export default function ManageListings() {
     useEffect(() => {
         setIsLoading(true)
         if (user?.id) {
-            getPosts()
+            // getPosts()
+            getCombinedData()
             setIsLoading(false)
         }
     }, [user?.id])
-    const getPosts = async () => {
-        const { error, data } = await supabase
-            .from("posts")
-            .select("*")
-            .eq("id", user?.id)
+    // const getPosts = async () => {
+    //     const { error, data } = await supabase
+    //         .from("posts")
+    //         .select("*")
+    //         .eq("id", user?.id)
 
-        if (error) {
-            return console.error(error);
+    //     if (error) {
+    //         return console.error(error);
+    //     }
+    //     const parsedData = data?.map((post) => {
+
+    //         return {
+    //             ...post,
+    //             selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+    //             openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
+    //         };
+    //     });
+
+
+    //     setPosts(parsedData);
+
+    // }
+    const getCombinedData = async () => {
+        try {
+            // Fetch posts data
+            const { data: postsData, error: postsError } = await supabase
+                .from("posts")
+                .select("*")
+
+            if (postsError) {
+                console.error("Error fetching posts data:", postsError);
+            }
+
+            if (postsData) {
+                // Process posts data
+                const parsedPostsData = postsData.map((post) => ({
+                    ...post,
+                    selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+                    openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
+                }));
+
+                // Fetch locations data
+                const { data: locationsData, error: locationsError } = await supabase
+                    .from("locations")
+                    .select("*");
+
+                if (locationsError) {
+                    console.error("Error fetching locations data:", locationsError);
+                }
+
+                if (locationsData) {
+                    // Merge postsData and locationsData based on postId
+                    const mergedData = parsedPostsData.map((post) => ({
+                        ...post,
+                        locationData: locationsData.find((location) => location.postId === post.postId),
+                    }));
+
+                    // Set the merged data in the posts state
+                    setPosts(mergedData);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching combined data:", error);
         }
-        const parsedData = data?.map((post) => {
-
-            return {
-                ...post,
-                selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-                openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
-            };
-        });
-
-
-        setPosts(parsedData);
-
-    }
+    };
     const deletePost = async (postId: string) => {
         const { error } = await supabase
             .from("posts")
@@ -66,7 +110,8 @@ export default function ManageListings() {
         if (error) {
             console.error(error);
         }
-        getPosts()
+        // getPosts()
+        getCombinedData()
     }
 
     const cardsEl = () => {

@@ -74,7 +74,9 @@ export default function Home() {
     useEffect(() => {
         setIsLoading(true); // Set loading to true when fetching data
         getMembers()
-        getPosts()
+        // getLocations()
+        // getPosts()
+        getCombinedData()
             .then(() => setIsLoading(false)) // Set loading to false once data is fetched
             .catch((error) => {
                 console.error(error);
@@ -84,23 +86,84 @@ export default function Home() {
     }, [typeFilter, locationFilter, searchFilter]);
 
 
-    const getPosts = async () => {
-        const { error, data } = await supabase
-            .from("posts")
-            .select("*")
-            .eq("isVerified", true)
+    // const getPosts = async () => {
+    //     const { error, data } = await supabase
+    //         .from("posts")
+    //         .select("*")
+    //         .eq("isVerified", true)
 
-        if (error) {
-            return console.error(error);
+    //     if (error) {
+    //         return console.error(error);
+    //     }
+    //     const parsedData = data.map((post) => ({
+    //         ...post,
+    //         selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+    //         openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
+    //     }));
+
+    //     setPosts(parsedData);
+    // }
+    // const getLocations = async () => {
+    //     const { data, error } = await supabase
+    //         .from("locations")
+    //         .select("*")
+    //     if (error) {
+    //         console.error("Error retrieving locations", error);
+
+    //     }
+    //     if (data) {
+    //         // setPosts(prevPost => ({ ...prevPost, ...data}));
+    //         console.log(data);
+
+    //     }
+
+    // }
+    const getCombinedData = async () => {
+        try {
+            // Fetch posts data
+            const { data: postsData, error: postsError } = await supabase
+                .from("posts")
+                .select("*")
+                .eq("isVerified", true);
+
+            if (postsError) {
+                console.error("Error fetching posts data:", postsError);
+            }
+
+            if (postsData) {
+                // Process posts data
+                const parsedPostsData = postsData.map((post) => ({
+                    ...post,
+                    selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+                    openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
+                }));
+
+                // Fetch locations data
+                const { data: locationsData, error: locationsError } = await supabase
+                    .from("locations")
+                    .select("*");
+
+                if (locationsError) {
+                    console.error("Error fetching locations data:", locationsError);
+                }
+
+                if (locationsData) {
+                    // Merge postsData and locationsData based on postId
+                    const mergedData = parsedPostsData.map((post) => ({
+                        ...post,
+                        locationData: locationsData.find((location) => location.postId === post.postId),
+                    }));
+
+                    // Set the merged data in the posts state
+                    setPosts(mergedData);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching combined data:", error);
         }
-        const parsedData = data.map((post) => ({
-            ...post,
-            selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-            openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
-        }));
+    };
+    // console.log(posts);
 
-        setPosts(parsedData);
-    }
     const getMembers = async () => {
         const { error, data }: any = await supabase
             .from("members")
@@ -119,8 +182,9 @@ export default function Home() {
         if (error) {
             console.error(error);
         }
-        getPosts()
+        getCombinedData()
     }
+
     const genNewSearchParams = (key: string, value: string) => {
         const sp = new URLSearchParams(searchParams)
         if (value === null) {
@@ -137,6 +201,7 @@ export default function Home() {
 
     const filterOrders = () => {
         let filterPosts = [...posts];
+        console.log("Filter posts:", filterPosts);
 
         if (typeFilter && typeFilter !== "all") {
             filterPosts = filterPosts.filter((post) => post.type === typeFilter);
@@ -145,10 +210,11 @@ export default function Home() {
         if (locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
-                const lowercaseSuburb = post.postcode;
-                return lowercaseSuburb.includes(lowercaseLocationFilter);
+                const lowercaseSuburb = post?.locationData?.postcode?.toLowerCase();
+                return lowercaseSuburb && lowercaseSuburb.includes(lowercaseLocationFilter);
             });
         }
+
 
         if (searchFilter && searchFilter.trim() !== "") {
             filterPosts = filterPosts.filter((post) => {
@@ -182,7 +248,7 @@ export default function Home() {
 
 
 
-    console.log(filterOrders());
+    console.log("Filter orders", filterOrders());
 
     const isFilter = () => {
         if (typeFilter || searchFilter) {

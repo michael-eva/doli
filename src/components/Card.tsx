@@ -20,7 +20,7 @@ type CardProps = {
     suburb: string,
     state: string,
     postcode: string,
-    address: string,
+    formatted_address: string,
     type: string,
     selectedTags?: [{
         value: string,
@@ -43,7 +43,7 @@ type CardProps = {
     isVerified?: boolean,
 }
 
-export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, address, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
@@ -70,6 +70,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
         navigate(`/edit-post/${postId}`)
 
     }
+    console.log(locationData);
 
     return (
         <div className="card card-compact bg-base-100 shadow-xl " style={!isMobile ? { width: '300px' } : { width: "315px" }}>
@@ -80,8 +81,8 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
                 {isManageListingsPage && badgePicker()}
 
                 <h2 className="card-title">{name}</h2>
-                <h2 className="text-blue-600 font-semibold">{suburb}, {state} {postcode}</h2>
-                <h3 className="font-light">{address}</h3>
+                <h2 className="text-blue-600 font-semibold">{locationData?.suburb}, {locationData?.state} {locationData?.postcode}</h2>
+                <h3 className="font-light">{locationData?.streetAddress}</h3>
 
 
 

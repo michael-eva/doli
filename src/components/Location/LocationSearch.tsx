@@ -91,6 +91,7 @@ export default function LocationSearch({
             console.error("Geolocation is not supported by your browser.");
         }
     }, []);
+    console.log(postData);
 
     const {
         ready,
@@ -122,7 +123,7 @@ export default function LocationSearch({
         setCountry("");
         setValue(e.target.value);
     };
-    console.log(postData);
+    // console.log(postData);
 
 
     useEffect(() => {
@@ -180,22 +181,21 @@ export default function LocationSearch({
     };
 
     const renderSuggestions = () =>
-        data.map((suggestion) => (
-            <li key={suggestion.place_id} onClick={handleSelect(suggestion)} className="gap-2 flex items-center cursor-pointer hover:text-indigo-600 p-2 border-t border-gray-300 hover:bg-indigo-50">
+        data.map((suggestion) => {
+            return (<li key={suggestion.place_id} onClick={handleSelect(suggestion)} className="gap-2 flex items-center cursor-pointer hover:text-indigo-600 p-2 border-t border-gray-300 hover:bg-indigo-50" >
                 <IoLocationOutline />
                 <p className=" text-md font-bold">{suggestion.structured_formatting.main_text},</p>
                 <p className=" text-sm">{suggestion.structured_formatting.secondary_text}</p>
-            </li>
-        ));
+            </li >)
+        });
 
     useEffect(() => {
-        if (postData) {
-            setValue(postData?.address || "");
-            setPostcode(postData?.postcode || "");
-            setState(postData?.state || "");
-            setCountry(postData?.country || "");
-            setSuburb(postData?.suburb || "");
-        }
+        setValue(postData?.locationData?.formatted_address || "");
+        setPostcode(postData?.locationData?.postcode || "");
+        setState(postData?.state || "");
+        setCountry(postData?.country || "");
+        setSuburb(postData?.suburb || "");
+
     }, [postData]);
 
     return (
@@ -221,7 +221,7 @@ export default function LocationSearch({
                         {postcode ? postcode : "Postcode"}
                     </div>
                 </div>}
-            {fullAddress && (
+            {/* {fullAddress && (
                 <>
                     <div className="flex gap-2">
                         <div className="flex flex-col w-1/2">
@@ -253,7 +253,7 @@ export default function LocationSearch({
                         </div>
                     </div>
                 </>
-            )}
+            )} */}
         </div>
     );
 }
