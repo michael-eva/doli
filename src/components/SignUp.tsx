@@ -36,6 +36,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+    const [signUpResponse, setSignUpResponse] = useState("")
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
@@ -96,15 +97,11 @@ export default function SignUp() {
         navigate("/")
 
     }
-    console.log("Secondary Location:", secondaryLocation.address);
-
     const handleNewSubmit = async (data: FormData) => {
-        console.log(data);
+        const response = await signUpAndInsertData(data);
 
-        const signUpResponse = await signUpAndInsertData(data);
-
-
-        if (signUpResponse && !signUpResponse.error) {
+        if (response && !response.error) {
+            setSignUpResponse(response)
             supabase
                 .from("members")
                 .insert({
@@ -113,14 +110,14 @@ export default function SignUp() {
                     email: data.email,
                     birthMonth: data.birthMonth,
                     birthYear: data.birthYear,
-                    suburb: primaryLocation.suburb,
-                    postcode: primaryLocation.postcode,
-                    altSuburb: secondaryLocation.suburb,
-                    altPostcode: secondaryLocation.postcode,
-                    country: primaryLocation.country,
-                    altCountry: secondaryLocation.country,
+                    // suburb: primaryLocation.suburb,
+                    // postcode: primaryLocation.postcode,
+                    // altSuburb: secondaryLocation.suburb,
+                    // altPostcode: secondaryLocation.postcode,
+                    // country: primaryLocation.country,
+                    // altCountry: secondaryLocation.country,
                     isJod: false,
-                    state: primaryLocation.state
+                    // state: primaryLocation.state
 
                 })
                 .single()
@@ -133,9 +130,31 @@ export default function SignUp() {
                         reset()
                     },
                 )
+            insertLocationData()
             setHasSubmitted(true)
         };
 
+    }
+    const insertLocationData = async () => {
+        const { error } = await supabase
+            .from("locations")
+            .insert({
+                userId: signUpResponse?.data?.user?.id,
+                formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
+                altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
+                country: primaryLocation.country,
+                altCountry: secondaryLocation.country,
+                state: primaryLocation.state,
+                altState: secondaryLocation.state,
+                suburb: primaryLocation.suburb,
+                altSuburb: secondaryLocation.suburb,
+                postcode: primaryLocation.postcode,
+                altPostcode: secondaryLocation.postcode,
+            })
+        if (error) {
+            console.error("Error setting location data:", error);
+
+        }
     }
 
     const existingEmail = errors.email?.message === "Email already exists in the system"
@@ -216,7 +235,6 @@ export default function SignUp() {
             return
         }
     };
-
     const checkPasswordMatches = (value: string) => {
         if (value === watch().password) {
             clearErrors("confirmPassword");
