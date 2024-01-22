@@ -9,13 +9,6 @@ type OpeningHours = {
 }
 
 export default function DispOpeningHours({ openingHours }) {
-    // console.log("lowest el toTime: ", openingHours?.map((item) => (
-    // console.log(typeof (openingHours[0]?.toTime))
-    // )));
-
-    // console.log(openingHours);
-
-
 
     return (
         <div className="mt-5 flex flex-col">

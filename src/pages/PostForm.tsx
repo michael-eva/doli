@@ -85,7 +85,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         state: "",
         country: ""
     })
-    console.log("Post data from edit post", postData);
 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -239,8 +238,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
 
             }
 
-
-            console.log('Post details updated successfully!');
         } catch (error) {
             console.error('Error handling submit:', error);
         }
@@ -354,7 +351,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         }
     }, [postData]);
 
-    console.log(watch().toTime);
 
 
     return (

@@ -35,13 +35,8 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
     };
 
     function handleToTimeChange(e, index) {
-        // console.log(typeof (e.target.value));
-
         const toTimeValue = e.target.value;
         const fromTimeValue = watch(`openingHours.${index}.fromTime`);
-
-        console.log("from time:", fromTimeValue);
-        console.log("to time:", toTimeValue);
 
         if (!isTimeAfter(fromTimeValue, toTimeValue)) {
             setError(`openingHours.${index}.toTime`, {
