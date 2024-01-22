@@ -14,6 +14,7 @@ import ForgotPassword from "../components/ForgotPassword"
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form"
 import LocationSearch from "./Location/LocationSearch"
+import { log } from "console"
 
 
 type FormData = {
@@ -36,7 +37,6 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
-    const [signUpResponse, setSignUpResponse] = useState("")
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
@@ -44,7 +44,6 @@ export default function SignUp() {
         state: "",
         country: "",
     });
-
     const [secondaryLocation, setSecondaryLocation] = useState({
         address: "",
         postcode: "",
@@ -66,9 +65,53 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     };
+    const insertLocationData = async (response) => {
+        const { error } = await supabase
+            .from("locations")
+            .insert({
+                userId: response?.data?.user?.id,
+                formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
+                altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
+                country: primaryLocation.country,
+                altCountry: secondaryLocation.country,
+                state: primaryLocation.state,
+                altState: secondaryLocation.state,
+                suburb: primaryLocation.suburb,
+                altSuburb: secondaryLocation.suburb,
+                postcode: primaryLocation.postcode,
+                altPostcode: secondaryLocation.postcode,
+            })
+            .single()
+        if (error) {
+            console.error("Error setting location data:", error);
+
+        }
+    }
+    const updateLocationData = async () => {
+        const { error } = await supabase
+            .from("locations")
+            .update({
+                country: primaryLocation.country,
+                altCountry: secondaryLocation.country,
+                state: primaryLocation.state,
+                altState: secondaryLocation.state,
+                suburb: primaryLocation.suburb,
+                postcode: primaryLocation.postcode,
+                altSuburb: secondaryLocation.suburb,
+                altPostcode: secondaryLocation.postcode,
+                formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
+                altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
+            })
+            .eq('userId', user?.id)
+            .single()
+
+        if (error) {
+            console.error("Error updating location:", error);
+
+        }
+    }
     const handleUpdateDetailsSubmit = async (data: FormData) => {
         setIsSubmitting(true)
-
         const { error } = await supabase
             .from("members")
             .update({
@@ -76,22 +119,23 @@ export default function SignUp() {
                 email: data.email,
                 birthMonth: data.birthMonth,
                 birthYear: data.birthYear,
-                suburb: primaryLocation.suburb,
-                postcode: primaryLocation.postcode,
-                altSuburb: secondaryLocation.suburb,
-                altPostcode: secondaryLocation.postcode,
-                country: primaryLocation.country,
-                state: primaryLocation.state,
-                altState: secondaryLocation.state,
-                address: primaryLocation.address,
-                altAddress: secondaryLocation.address,
+                // suburb: primaryLocation.suburb,
+                // postcode: primaryLocation.postcode,
+                // altSuburb: secondaryLocation.suburb,
+                // altPostcode: secondaryLocation.postcode,
+                // country: primaryLocation.country,
+                // state: primaryLocation.state,
+                // altState: secondaryLocation.state,
+                // address: primaryLocation.address,
+                // altAddress: secondaryLocation.address,
             })
             .eq('id', user?.id)
 
         if (error) {
             console.error(error);
+            return
         }
-
+        updateLocationData()
         setIsSubmitting(false)
         toast.success("Details updated successfully")
         navigate("/")
@@ -99,9 +143,7 @@ export default function SignUp() {
     }
     const handleNewSubmit = async (data: FormData) => {
         const response = await signUpAndInsertData(data);
-
         if (response && !response.error) {
-            setSignUpResponse(response)
             supabase
                 .from("members")
                 .insert({
@@ -130,35 +172,28 @@ export default function SignUp() {
                         reset()
                     },
                 )
-            insertLocationData()
+            insertLocationData(response)
             setHasSubmitted(true)
         };
 
     }
-    const insertLocationData = async () => {
-        const { error } = await supabase
-            .from("locations")
-            .insert({
-                userId: signUpResponse?.data?.user?.id,
-                formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
-                altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
-                country: primaryLocation.country,
-                altCountry: secondaryLocation.country,
-                state: primaryLocation.state,
-                altState: secondaryLocation.state,
-                suburb: primaryLocation.suburb,
-                altSuburb: secondaryLocation.suburb,
-                postcode: primaryLocation.postcode,
-                altPostcode: secondaryLocation.postcode,
-            })
-        if (error) {
-            console.error("Error setting location data:", error);
-
-        }
-    }
-
     const existingEmail = errors.email?.message === "Email already exists in the system"
+    const getLocationData = async () => {
+        const { data, error } = await supabase
+            .from("locations")
+            .select("*")
+            .eq("userId", user?.id)
+            .single()
 
+        if (error) {
+            console.error("Error getting location data:", error);
+        }
+        if (data) {
+            return data
+        }
+
+
+    }
     const getMembers = async () => {
         try {
             const { data, error } = await supabase
@@ -171,30 +206,30 @@ export default function SignUp() {
                 return console.error(error);
             }
             if (data) {
+                const { formatted_address, altFormatted_address, postcode, altPostcode, country, altCountry, suburb, altSuburb, state, altState } = await getLocationData()
                 setValue('email', data.email)
                 setValue('gender', data.gender)
                 setValue('birthMonth', data.birthMonth)
                 setValue('birthYear', data.birthYear)
                 setPrimaryLocation({
-                    address: data?.address + "," + " " + data?.country,
-                    suburb: data?.suburb,
-                    state: data.state,
-                    country: data.country,
-                    postcode: data?.postcode
+                    address: formatted_address,
+                    suburb: suburb,
+                    state: state,
+                    country: country,
+                    postcode: postcode
                 })
                 setSecondaryLocation({
-                    address: data?.altAddress,
-                    suburb: data?.altSuburb,
-                    state: data.altState,
-                    country: data.altCountry,
-                    postcode: data?.altPostcode
+                    address: altFormatted_address,
+                    suburb: altSuburb,
+                    state: altState,
+                    country: altCountry,
+                    postcode: altPostcode
                 })
             }
         } catch (error: any) {
             console.error('Error:', error.message);
         }
     };
-
     useEffect(() => {
         if (user?.id) {
             getMembers();
@@ -245,6 +280,7 @@ export default function SignUp() {
             });
         }
     }
+    console.log("Primary Location:", primaryLocation);
 
     return (
         <>
@@ -403,7 +439,7 @@ export default function SignUp() {
                                         });
                                     }}
                                     suburbAndPostcode={true}
-                                    postData={primaryLocation}
+                                    signUpData={primaryLocation}
                                 />
 
                             </div>
@@ -431,7 +467,7 @@ export default function SignUp() {
                                         });
                                     }}
                                     suburbAndPostcode={true}
-                                    postData={secondaryLocation}
+                                    signUpData={secondaryLocation}
                                 />
 
 

@@ -70,7 +70,6 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
         navigate(`/edit-post/${postId}`)
 
     }
-    console.log(locationData);
 
     return (
         <div className="card card-compact bg-base-100 shadow-xl " style={!isMobile ? { width: '300px' } : { width: "315px" }}>

@@ -201,7 +201,6 @@ export default function Home() {
 
     const filterOrders = () => {
         let filterPosts = [...posts];
-        console.log("Filter posts:", filterPosts);
 
         if (typeFilter && typeFilter !== "all") {
             filterPosts = filterPosts.filter((post) => post.type === typeFilter);

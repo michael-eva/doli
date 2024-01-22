@@ -60,6 +60,7 @@ type LocationSearchProps = {
 
 export default function LocationSearch({
     onSelect,
+    signUpData,
     postData,
     fullAddress,
     types,
@@ -76,6 +77,7 @@ export default function LocationSearch({
     const [suburb, setSuburb] = useState<string>("");
     const [state, setState] = useState<string>("");
     const [country, setCountry] = useState<string>("");
+
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
@@ -91,7 +93,6 @@ export default function LocationSearch({
             console.error("Geolocation is not supported by your browser.");
         }
     }, []);
-    console.log(postData);
 
     const {
         ready,
@@ -123,7 +124,7 @@ export default function LocationSearch({
         setCountry("");
         setValue(e.target.value);
     };
-    // console.log(postData);
+    // console.log(signUpData);
 
 
     useEffect(() => {
@@ -190,13 +191,22 @@ export default function LocationSearch({
         });
 
     useEffect(() => {
-        setValue(postData?.locationData?.formatted_address || "");
-        setPostcode(postData?.locationData?.postcode || "");
-        setState(postData?.state || "");
-        setCountry(postData?.country || "");
-        setSuburb(postData?.suburb || "");
+        if (signUpData) {
+            setValue(signUpData?.address || "");
+            setPostcode(signUpData?.postcode || "");
+            setState(signUpData?.state || "");
+            setCountry(signUpData?.country || "");
+            setSuburb(signUpData?.suburb || "");
+        }
+        if (postData) {
+            setValue(postData.locationData?.formatted_address || "");
+            setPostcode(postData.locationData?.postcode || "");
+            setState(postData.locationData?.state || "");
+            setCountry(postData.locationData?.country || "");
+            setSuburb(postData.locationData?.suburb || "");
+        }
 
-    }, [postData]);
+    }, [signUpData, postData]);
 
     return (
         <div ref={ref} className="flex flex-col gap-5">
