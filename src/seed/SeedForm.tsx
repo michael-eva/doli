@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
@@ -88,7 +88,6 @@ export default function SeedForm() {
 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-    const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string) => {
         setSelectedLocation({
@@ -136,16 +135,16 @@ export default function SeedForm() {
             fileReader.readAsDataURL(file);
         }
     }
-    const uploadNewImage = async (postId) => {
-        const { data: imageData, error: imageError } = await supabase.storage
-            .from('cover_images')
-            .upload(user?.id + '/' + postId, selectedFile);
-        if (imageError) {
-            console.error('Error uploading image:', imageError);
-            return null;
-        }
-        return CDNUrl(imageData);
-    };
+    // const uploadNewImage = async (postId) => {
+    //     const { data: imageData, error: imageError } = await supabase.storage
+    //         .from('cover_images')
+    //         .upload(user?.id + '/' + postId, selectedFile);
+    //     if (imageError) {
+    //         console.error('Error uploading image:', imageError);
+    //         return null;
+    //     }
+    //     return CDNUrl(imageData);
+    // };
     const countChars = (name: string) => {
         const watchValue = getValues(name)
         const inputLength = watchValue?.length
