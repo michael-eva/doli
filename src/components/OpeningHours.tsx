@@ -24,6 +24,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
 
     const timeOptions = generateTimeOptions();
     const isTimeAfter = (fromTime: string, toTime: string) => {
+
         const [fromHour, fromMinute] = fromTime.split(':').map(Number);
         const [toHour, toMinute] = toTime.split(':').map(Number);
 
@@ -32,7 +33,27 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
 
         return toTotalMinutes > fromTotalMinutes;
     };
-    console.log(isTimeAfter("06:25", "05:15"));
+
+    function handleToTimeChange(e, index) {
+        // console.log(typeof (e.target.value));
+
+        const toTimeValue = e.target.value;
+        const fromTimeValue = watch(`openingHours.${index}.fromTime`);
+
+        console.log("from time:", fromTimeValue);
+        console.log("to time:", toTimeValue);
+
+        if (!isTimeAfter(fromTimeValue, toTimeValue)) {
+            setError(`openingHours.${index}.toTime`, {
+                type: 'manual',
+                message: 'Closing time needs to be after opening time'
+            });
+            setValue(`openingHours.${index}.fromTime`, "");
+            setValue(`openingHours.${index}.toTime`, "");
+        } else {
+            clearErrors(`openingHours.${index}.toTime`);
+        }
+    }
 
     useEffect(() => {
         if (postData) {
@@ -83,24 +104,10 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                                     <select
                                         id={`openingHours.${index}.toTime`}
                                         className="input input-bordered w-1/2"
-                                        {...register(`openingHours.${index}.toTime`)}
+                                        {...register(`openingHours.${index}.toTime`, {
+                                            onChange: (e) => handleToTimeChange(e, index, setValue, setError, clearErrors),
+                                        })}
                                         defaultValue={initialOpeningHours[index].toTime || ""}
-                                        onChange={(e) => {
-                                            const toTimeValue = e.target.value;
-                                            const fromTimeValue = watch(`openingHours.${index}.fromTime`);
-                                            console.log("To time:", toTimeValue);
-                                            console.log("From time:", fromTimeValue);
-                                            if (!isTimeAfter(fromTimeValue, toTimeValue)) {
-                                                setError(`openingHours.${index}.toTime`, {
-                                                    type: 'manual',
-                                                    message: 'Closing time needs to be after opening time'
-                                                });
-                                                setValue(`openingHours.${index}.fromTime`, "");
-                                                setValue(`openingHours.${index}.toTime`, "");
-                                            } else {
-                                                clearErrors(`openingHours.${index}.toTime`);
-                                            }
-                                        }}
                                     >
                                         {timeOptions.map((time, idx) => (
                                             <option key={idx}>{time}</option>
@@ -123,8 +130,6 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         );
 
     }
-
-    console.log(errors.openingHours);
 
     return (
         <div className="">

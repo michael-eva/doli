@@ -234,8 +234,7 @@ export default function LocationSearch({
         }
 
     }, [signUpData, postData]);
-    console.log("post data:", postData);
-    console.log("sign up data:", signUpData);
+
 
     return (
         <div ref={ref} className="flex flex-col gap-5">

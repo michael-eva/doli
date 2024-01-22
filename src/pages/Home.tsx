@@ -398,7 +398,7 @@ export default function Home() {
                         :
                         filterOrders()?.length > 0 ? (
                             filterOrders().map((item: CardProps) => (
-                                <div key={item.postId} className="mt-10">
+                                <div key={item.postId} className="mt-10 flex justify-center">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))

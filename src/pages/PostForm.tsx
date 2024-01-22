@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import supabase from "../config/supabaseClient.ts";
 import { PreviewCard } from "../components/PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";
@@ -248,8 +248,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         formCleanup(shouldSetVerifiedFalse)
     }
     const handleNewFormSubmit = async (formData: FormData) => {
-        console.log(formData);
-
         const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
             return {
                 day,
@@ -356,7 +354,8 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         }
     }, [postData]);
 
-    console.log("PostData:", postData);
+    console.log(watch().toTime);
+
 
     return (
         <div className="md:flex justify-center">
@@ -442,7 +441,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
+                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} useWatch={useWatch} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>
