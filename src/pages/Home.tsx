@@ -85,39 +85,6 @@ export default function Home() {
 
     }, [typeFilter, locationFilter, searchFilter]);
 
-
-    // const getPosts = async () => {
-    //     const { error, data } = await supabase
-    //         .from("posts")
-    //         .select("*")
-    //         .eq("isVerified", true)
-
-    //     if (error) {
-    //         return console.error(error);
-    //     }
-    //     const parsedData = data.map((post) => ({
-    //         ...post,
-    //         selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-    //         openingHours: JSON.parse(post.openingHours).map((tag: any) => tag)
-    //     }));
-
-    //     setPosts(parsedData);
-    // }
-    // const getLocations = async () => {
-    //     const { data, error } = await supabase
-    //         .from("locations")
-    //         .select("*")
-    //     if (error) {
-    //         console.error("Error retrieving locations", error);
-
-    //     }
-    //     if (data) {
-    //         // setPosts(prevPost => ({ ...prevPost, ...data}));
-    //         console.log(data);
-
-    //     }
-
-    // }
     const getCombinedData = async () => {
         try {
             // Fetch posts data
@@ -244,10 +211,6 @@ export default function Home() {
         const paginatePage = filterPosts.slice(startIndex, endIndex);
         return paginatePage;
     };
-
-
-
-    console.log("Filter orders", filterOrders());
 
     const isFilter = () => {
         if (typeFilter || searchFilter) {

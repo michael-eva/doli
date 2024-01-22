@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 
 type OpeningHours = {
     id: string;
@@ -33,7 +33,7 @@ export default function DispOpeningHours({ openingHours }) {
                                     <td
                                         className="whitespace-nowrap py-1  pr-3 text-xs font-medium text-green-500 pl-6"
                                     >
-                                        {item.toTime}
+                                        {item.isOpen === "open" ? item.toTime : ""}
                                     </td>
                                 </tr>
                             ))}

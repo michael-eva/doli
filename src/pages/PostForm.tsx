@@ -351,8 +351,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         }
     }, [postData]);
 
-
-
+    console.log(watch('openingHours'));
     return (
         <div className="md:flex justify-center">
             <div>
@@ -437,7 +436,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} useWatch={useWatch} />
+                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>

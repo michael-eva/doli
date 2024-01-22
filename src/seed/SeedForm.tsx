@@ -145,6 +145,9 @@ export default function SeedForm() {
     //     }
     //     return CDNUrl(imageData);
     // };
+
+
+
     const countChars = (name: string) => {
         const watchValue = getValues(name)
         const inputLength = watchValue?.length
@@ -231,7 +234,7 @@ export default function SeedForm() {
         formCleanup()
     }
 
-
+    console.log(watch('openingHours'));
     return (
         <div className="md:flex justify-center">
             <div>

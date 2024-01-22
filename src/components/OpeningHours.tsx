@@ -34,7 +34,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         return toTotalMinutes > fromTotalMinutes;
     };
 
-    function handleToTimeChange(e, index) {
+    function handleToTimeChange(e: any, index: string) {
         const toTimeValue = e.target.value;
         const fromTimeValue = watch(`openingHours.${index}.fromTime`);
 
@@ -50,11 +50,11 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         }
     }
 
-    useEffect(() => {
-        if (postData) {
-            setInitialOpeningHours(postData.openingHours)
-        }
-    }, [postData]);
+    // useEffect(() => {
+    //     if (postData) {
+    //         setInitialOpeningHours(postData.openingHours)
+    //     }
+    // }, [postData]);
 
     const editOpeningTimesEl = () => {
         return (
@@ -100,7 +100,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                                         id={`openingHours.${index}.toTime`}
                                         className="input input-bordered w-1/2"
                                         {...register(`openingHours.${index}.toTime`, {
-                                            onChange: (e) => handleToTimeChange(e, index, setValue, setError, clearErrors),
+                                            onChange: (e: string) => handleToTimeChange(e, index),
                                         })}
                                         defaultValue={initialOpeningHours[index].toTime || ""}
                                     >
