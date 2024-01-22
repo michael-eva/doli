@@ -10,11 +10,13 @@ import { IoLocationOutline } from "react-icons/io5";
 type PostData = {
     imgUrl: string;
     name: string;
-    suburb: string;
-    country: string,
-    state: string;
-    postcode: string;
-    address: string;
+    locationData: {
+        formatted_address: string,
+        postcode: string,
+        state: string,
+        country: string,
+        suburb: string,
+    }
     type: string;
     selectedTags: string[];
     description: string;
@@ -38,7 +40,13 @@ type AddressComponent = {
     short_name: string;
     types: string[];
 };
-
+type AddressData = {
+    address: string,
+    suburb: string,
+    postcode: string,
+    country: string,
+    state: string,
+}
 type LocationSearchProps = {
     onSelect?: (
         address: string,
@@ -56,13 +64,14 @@ type LocationSearchProps = {
     setInputClear?: any,
     infoModal?: any
     suburbAndPostcode: boolean
+    signUpData: AddressData
 };
 
 export default function LocationSearch({
     onSelect,
     signUpData,
     postData,
-    fullAddress,
+    // fullAddress,
     types,
     placeholder,
     inputClear,
@@ -74,9 +83,9 @@ export default function LocationSearch({
         longitude: 0,
     });
     const [postcode, setPostcode] = useState<string>("");
-    const [suburb, setSuburb] = useState<string>("");
-    const [state, setState] = useState<string>("");
-    const [country, setCountry] = useState<string>("");
+    // const [suburb, setSuburb] = useState<string>("");
+    // const [state, setState] = useState<string>("");
+    // const [country, setCountry] = useState<string>("");
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -119,14 +128,12 @@ export default function LocationSearch({
     });
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSuburb("");
-        setPostcode("");
-        setCountry("");
+
+        // setSuburb("");
+        // setPostcode("");
+        // setCountry("");
         setValue(e.target.value);
     };
-    // console.log(signUpData);
-
-
     useEffect(() => {
         if (inputClear) {
             setValue("")
@@ -134,13 +141,9 @@ export default function LocationSearch({
         }
     }, [inputClear])
 
-    const extractStreetAddress = (input: string): string => {
-        const parts = input.split(",");
-        const result = parts[0].trim();
-        return result;
-    };
-
     const handleSelect = (suggestion: Suggestion) => () => {
+        console.log("Handle select:", suggestion.description);
+
         setValue(suggestion.description, false);
         clearSuggestions();
 
@@ -158,28 +161,44 @@ export default function LocationSearch({
             const suburbComponent = addressComponents.find(
                 (component: AddressComponent) => component.types.includes("locality")
             );
-            setSuburb(suburbComponent?.long_name || "");
+            // setSuburb(suburbComponent?.long_name || "");
 
             const stateComponent = addressComponents.find(
                 (component: AddressComponent) =>
                     component.types.includes("administrative_area_level_1")
             );
-            setState(stateComponent?.short_name || "");
+            // setState(stateComponent?.short_name || "");
 
             const countryComponent = addressComponents.find(
                 (component: AddressComponent) => component.types.includes("country")
             );
-            setCountry(countryComponent?.long_name || "");
-            // onSelect(extractStreetAddress(description), postalCodeComponent ? postalCodeComponent.long_name : '', localityComponent ? localityComponent.long_name : "", stateComponent?.short_name, countryComponent?.long_name);
-            onSelect(
-                extractStreetAddress(suggestion.description),
-                postalCodeComponent ? postalCodeComponent.long_name : '',
-                suburbComponent ? suburbComponent.long_name : "",
-                stateComponent ? stateComponent?.short_name : "",
-                countryComponent ? countryComponent?.long_name : "",
-            );
+            // setCountry(countryComponent?.long_name || "");
+            if (onSelect) {
+                onSelect(
+                    suggestion.description,
+                    postalCodeComponent ? postalCodeComponent.long_name : '',
+                    suburbComponent ? suburbComponent.long_name : "",
+                    stateComponent ? stateComponent?.short_name : "",
+                    countryComponent ? countryComponent?.long_name : "",
+                );
+            }
         });
     };
+
+    const displaySuggestions = () => {
+        if (status === "OK") {
+            if (signUpData && signUpData.address != value) {
+                return (
+                    <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
+                )
+            }
+            if (postData && postData?.locationData?.formatted_address != value) {
+                return (
+                    <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
+                )
+            }
+        }
+    }
 
     const renderSuggestions = () =>
         data.map((suggestion) => {
@@ -188,25 +207,29 @@ export default function LocationSearch({
                 <p className=" text-md font-bold">{suggestion.structured_formatting.main_text},</p>
                 <p className=" text-sm">{suggestion.structured_formatting.secondary_text}</p>
             </li >)
-        });
+        })
+
 
     useEffect(() => {
         if (signUpData) {
             setValue(signUpData?.address || "");
             setPostcode(signUpData?.postcode || "");
-            setState(signUpData?.state || "");
-            setCountry(signUpData?.country || "");
-            setSuburb(signUpData?.suburb || "");
+            // setState(signUpData?.state || "");
+            // setCountry(signUpData?.country || "");
+            // setSuburb(signUpData?.suburb || "");
+            return
         }
         if (postData) {
             setValue(postData.locationData?.formatted_address || "");
             setPostcode(postData.locationData?.postcode || "");
-            setState(postData.locationData?.state || "");
-            setCountry(postData.locationData?.country || "");
-            setSuburb(postData.locationData?.suburb || "");
+            // setState(postData.locationData?.state || "");
+            // setCountry(postData.locationData?.country || "");
+            // setSuburb(postData.locationData?.suburb || "");
         }
 
     }, [signUpData, postData]);
+    console.log("post data:", postData);
+    console.log("sign up data:", signUpData);
 
     return (
         <div ref={ref} className="flex flex-col gap-5">
@@ -220,7 +243,9 @@ export default function LocationSearch({
                     className="input input-bordered"
                 />
             </div>
-            {status === "OK" && <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>}
+            {displaySuggestions()}
+            {/* {status === "OK" && (postData?.locationData?.formatted_address != value) && <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{displaySuggestions()}</ul>} */}
+            {/* {status === "OK" &&  <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{displaySuggestions()}</ul>} */}
             {suburbAndPostcode &&
                 <div className="flex flex-col w-1/2">
                     <label htmlFor="">Postcode</label>

@@ -230,7 +230,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                     suburb: selectedLocation.suburb,
                     postcode: selectedLocation.postcode,
                     streetAddress: selectedLocation.address,
-                    formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
+                    formatted_address: selectedLocation.address,
                     postId: postData?.postId
                 })
                 .eq("postId", postData?.postId)
@@ -320,7 +320,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         }
         formCleanup()
     }
-    console.log(selectedLocation);
 
     const submitChooser = (formData: FormData) => {
         if (postData) {
