@@ -14,6 +14,7 @@ import JodRequired from "./Jod/JodRequired"
 import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost"
 import Wholesale from "./pages/Wholesale"
+import SeedForm from "./seed/seedForm"
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path="specials" element={<Specials />} />
         <Route path="wholesale" element={<Wholesale />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="seed" element={<SeedForm />} />
       </Routes>
     </>
   )

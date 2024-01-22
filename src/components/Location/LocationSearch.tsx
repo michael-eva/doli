@@ -184,15 +184,22 @@ export default function LocationSearch({
             }
         });
     };
-
+    //This function is to stop the dropdown auto appearing when there is data in being pushed to the components.
     const displaySuggestions = () => {
         if (status === "OK") {
-            if (signUpData && signUpData.address != value) {
+            if (postData === undefined) {
+                if (!signUpData) {
+                    return (
+                        <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
+                    )
+                }
+            }
+            if (postData && postData?.locationData?.formatted_address != value) {
                 return (
                     <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
                 )
             }
-            if (postData && postData?.locationData?.formatted_address != value) {
+            if (signUpData && signUpData.address != value) {
                 return (
                     <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
                 )
@@ -209,7 +216,6 @@ export default function LocationSearch({
             </li >)
         })
 
-
     useEffect(() => {
         if (signUpData) {
             setValue(signUpData?.address || "");
@@ -220,8 +226,8 @@ export default function LocationSearch({
             return
         }
         if (postData) {
-            setValue(postData.locationData?.formatted_address || "");
-            setPostcode(postData.locationData?.postcode || "");
+            setValue(postData?.locationData?.formatted_address || "");
+            setPostcode(postData?.locationData?.postcode || "");
             // setState(postData.locationData?.state || "");
             // setCountry(postData.locationData?.country || "");
             // setSuburb(postData.locationData?.suburb || "");
@@ -244,8 +250,6 @@ export default function LocationSearch({
                 />
             </div>
             {displaySuggestions()}
-            {/* {status === "OK" && (postData?.locationData?.formatted_address != value) && <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{displaySuggestions()}</ul>} */}
-            {/* {status === "OK" &&  <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{displaySuggestions()}</ul>} */}
             {suburbAndPostcode &&
                 <div className="flex flex-col w-1/2">
                     <label htmlFor="">Postcode</label>

@@ -14,7 +14,6 @@ import ForgotPassword from "../components/ForgotPassword"
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form"
 import LocationSearch from "./Location/LocationSearch"
-import { log } from "console"
 
 
 type FormData = {
@@ -285,8 +284,9 @@ export default function SignUp() {
     return (
         <>
             {hasSubmitted ?
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center bg-green-500">
+                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center bg-green-100">
                     <div className="flex items-center flex-col gap-5">
+                        {/* <img src="images/doli_logo.PNG" alt="" width={80} /> */}
                         <div style={{ fontSize: "50px" }}>
 
                             <IoCheckmarkCircleOutline style={{ color: 'green' }} />

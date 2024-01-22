@@ -69,7 +69,7 @@ type LocationData = {
     country: string
 }
 
-export default function PostForm({ postData, }: { postData: PostData | undefined }) {
+export default function SeedForm() {
     const navigate = useNavigate()
     const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues, setError, clearErrors } = useForm();
     const user = useUser();
@@ -85,7 +85,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         state: "",
         country: ""
     })
-    console.log("Post data from edit post", postData);
 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -137,115 +136,20 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
             fileReader.readAsDataURL(file);
         }
     }
-    const deleteCurrentImage = async () => {
-        const currentImageName = user?.id + '/' + postData?.postId;
-        const { error: deleteError } = await supabase.storage
-            .from('cover_images')
-            .remove([currentImageName]);
-        if (deleteError) {
-            console.error('Error deleting current image:', deleteError);
-        }
-    };
-    const uploadNewImage = async () => {
+    const uploadNewImage = async (postId) => {
         const { data: imageData, error: imageError } = await supabase.storage
             .from('cover_images')
-            .upload(user?.id + '/' + postData?.postId, selectedFile);
+            .upload(user?.id + '/' + postId, selectedFile);
         if (imageError) {
             console.error('Error uploading image:', imageError);
             return null;
         }
         return CDNUrl(imageData);
     };
-    const updateImage = async (imageUrl: string) => {
-        const { error: updateError } = await supabase
-            .from('posts')
-            .update({ imgUrl: imageUrl })
-            .eq('id', user?.id)
-            .eq('postId', postData?.postId);
-        if (updateError) {
-            console.error('Error updating imgUrl:', updateError);
-        }
-    };
     const countChars = (name: string) => {
         const watchValue = getValues(name)
         const inputLength = watchValue?.length
         return inputLength
-    }
-    const determineVerificationStatus = (formData: FormData, postData?: PostData) => {
-        const isNameChanged = formData.name !== postData?.name;
-        const isDescriptionChanged = formData.description !== postData?.description;
-        const isImageChanged = formData.imgUrl.length > 0; // Assuming selectedFile is set when changing the image
-        return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
-    };
-    const handleEditFormSubmit = async (formData: FormData) => {
-
-        const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
-            return {
-                day,
-                ...data
-            };
-        });
-
-        if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
-            setDeliveryMethodError(true)
-            return
-        }
-        setIsSubmitting(true);
-
-        const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
-        try {
-            const { error: insertError } = await supabase
-                .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
-                .match({ postId: postData?.postId });
-
-            if (insertError) {
-                console.error('Error updating post details:', insertError);
-                return;
-            }
-
-            if (selectedFile) {
-                await deleteCurrentImage();
-                const imageUrl = await uploadNewImage();
-                if (imageUrl !== null) {
-                    await updateImage(imageUrl);
-                }
-
-                const { error: updateError } = await supabase
-                    .from('posts')
-                    .update({ imgUrl: imageUrl })
-                    .eq('id', user?.id)
-                    .eq('postId', postData?.postId);
-
-                if (updateError) {
-                    console.error('Error updating imgUrl:', updateError);
-                    return;
-                }
-            }
-            const { error: locationError } = await supabase
-                .from("locations")
-                .update({
-                    country: selectedLocation.country,
-                    state: selectedLocation.state,
-                    suburb: selectedLocation.suburb,
-                    postcode: selectedLocation.postcode,
-                    streetAddress: selectedLocation.address,
-                    formatted_address: selectedLocation.address,
-                    postId: postData?.postId
-                })
-                .eq("postId", postData?.postId)
-            if (locationError) {
-                console.error("Error updating location", locationError);
-
-            }
-
-
-            console.log('Post details updated successfully!');
-        } catch (error) {
-            console.error('Error handling submit:', error);
-        }
-        setIsSubmitting(false);
-        formCleanup(shouldSetVerifiedFalse)
     }
     const handleNewFormSubmit = async (formData: FormData) => {
         console.log(formData);
@@ -266,8 +170,15 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
-            // .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
+                .insert({
+                    ...formData,
+                    postId: postId,
+                    id: user?.id,
+                    selectedTags: selectedTags,
+                    isVerified: true,
+                    openingHours: openingHoursArray,
+                    hasOwner: false
+                })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -321,52 +232,26 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         formCleanup()
     }
 
-    const submitChooser = (formData: FormData) => {
-        if (postData) {
-            return handleEditFormSubmit(formData)
-        } else {
-            return handleNewFormSubmit(formData)
-        }
-    }
-    //fetching data from db and setting the value to display when editing form
-    useEffect(() => {
-        if (postData) {
-            setValue('name', postData.name)
-            setSelectedLocation({
-                address: postData.formatted_address,
-                suburb: postData.suburb,
-                state: postData.state,
-                country: postData.country,
-                postcode: postData.postcode
-            })
-            // setValue('suburb', postData.suburb)
-            // setValue('postcode', postData.postcode)
-            // setValue('state', postData.state)
-            setValue('type', postData.type)
-            setValue('description', postData.description || null)
-            setValue('pickUp', postData.pickUp);
-            setValue('delivery', postData.delivery);
-            setValue('openingHours', postData.openingHours);
-            setValue('dineIn', postData.dineIn);
-            setValue('contact', postData.contact);
-            setValue('website', postData.website);
-            setValue('selectedTags', postData.selectedTags)
-            setSelectedTags(postData?.selectedTags)
-            setPreviewUrl(`${postData.imgUrl}?${new Date().getTime()}`)
-        }
-    }, [postData]);
-
-    console.log("PostData:", postData);
 
     return (
         <div className="md:flex justify-center">
             <div>
-                <form onSubmit={handleSubmit((data) => submitChooser(data as FormData))}>
+                <p className=" text-lg text-red-500">This page is only for seeding the database</p>
+                <form onSubmit={handleSubmit((data) => handleNewFormSubmit(data as FormData))}>
                     <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-24 pb-24 pt-10">
                         <header className="mb-7">
                             <h1 className=" text-xl font-bold ">Profile</h1>
                             <p>This information will be displayed publicly.</p>
                         </header>
+                        <div className="flex flex-col mb-5">
+                            <label htmlFor="">Customer Email</label>
+                            {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
+                            <input
+                                type="text"
+                                className="input input-bordered w-full max-w-xs"
+                                {...register("email", { required: "Client email is required" })}
+                            />
+                        </div>
                         <div className="flex flex-col mb-5">
                             <label htmlFor="">Business Name</label>
                             {errors.name && <p className=" text-red-600">*{errors.name.message?.toString()}</p>}
@@ -442,7 +327,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} postData={postData} />
+                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>
@@ -471,93 +356,40 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                                 />
                             </div>
                         </div>
-                        {postData ?
-                            <>
-                                <div className="flex flex-col gap-5">
-                                    {!show ? <img
-                                        src={previewUrl}
-                                        alt="Cover"
-                                        style={{ height: '225px', width: '300px' }}
-                                        className=" mt-5 rounded-lg"
-                                    />
-                                        :
-                                        <>{previewUrl && <img
-                                            src={previewUrl}
-                                            alt="Cover"
-                                            style={{ height: '225px', width: '300px' }}
-                                            className=" mt-5 rounded-lg"
-                                        />}
-                                            <div className="cover-photo">
-                                                <h2 className="mt-1">Update Cover Photo</h2>
-                                                <p className="text-xs">Max image size of 300KB</p>
 
-                                                {errors.imgUrl && (
-                                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                                                )}
-                                                <input
-                                                    type="file"
-                                                    className="file-input file-input-bordered w-full"
-                                                    {...register("imgUrl", {
-                                                        required: "Cover photo is required",
-                                                        validate: {
-                                                            maxSize: (value) =>
-                                                                !value ||
-                                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                                "File size exceeds the limit of 300KB",
-                                                        },
-                                                    })}
-                                                    onChange={handleFileChange}
-                                                    accept="image/*"
-                                                />
+                        <div className="cover-photo">
+                            <h2 className="mt-7">Add Cover Photo</h2>
+                            <p className="text-xs">Max image size of 300KB</p>
+                            {errors.imgUrl && (
+                                <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
+                            )}
+                            <input
+                                type="file"
+                                className="file-input file-input-bordered w-full"
+                                {...register("imgUrl", {
+                                    required: "Cover photo is required",
+                                    validate: {
+                                        maxSize: (value) =>
+                                            !value ||
+                                            value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                            "File size exceeds the limit of 300KB",
+                                    },
+                                })}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                            />
+                            {previewUrl && <img
+                                src={previewUrl}
+                                alt="Cover"
+                                style={{ height: '225px', width: '300px' }}
+                                className=" mt-5 rounded-lg"
+                            />}
+                        </div>
 
-                                            </div>
-                                        </>
-                                    }
-                                    {!show ? <p onClick={() => setShow(!show)}
-                                        className="btn btn-primary w-"
-                                    >Update Cover Photo</p>
-                                        :
-                                        <p onClick={() => { setPreviewUrl(postData.imgUrl); setShow(!show) }}
-                                            className="btn btn-primary w-"
-                                        >Cancel</p>
-                                    }
-                                </div>
-                            </>
-
-                            :
-                            <div className="cover-photo">
-                                <h2 className="mt-7">Add Cover Photo</h2>
-                                <p className="text-xs">Max image size of 300KB</p>
-                                {errors.imgUrl && (
-                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                                )}
-                                <input
-                                    type="file"
-                                    className="file-input file-input-bordered w-full"
-                                    {...register("imgUrl", {
-                                        required: "Cover photo is required",
-                                        validate: {
-                                            maxSize: (value) =>
-                                                !value ||
-                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                "File size exceeds the limit of 300KB",
-                                        },
-                                    })}
-                                    onChange={handleFileChange}
-                                    accept="image/*"
-                                />
-                                {previewUrl && <img
-                                    src={previewUrl}
-                                    alt="Cover"
-                                    style={{ height: '225px', width: '300px' }}
-                                    className=" mt-5 rounded-lg"
-                                />}
-                            </div>
-                        }
 
                         <div className="divider"></div>
                         <label htmlFor="">Address</label>
-                        <LocationSearch onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
+                        <LocationSearch onSelect={handleLocationSelect} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
