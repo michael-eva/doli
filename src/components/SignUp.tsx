@@ -105,7 +105,7 @@ export default function SignUp() {
             supabase
                 .from("members")
                 .insert({
-                    id: signUpResponse?.data?.user?.id,
+                    id: response?.data?.user?.id,
                     gender: data.gender,
                     email: data.email,
                     birthMonth: data.birthMonth,
