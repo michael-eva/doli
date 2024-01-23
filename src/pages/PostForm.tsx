@@ -58,7 +58,8 @@ type PostData = {
     contact: string,
     website: string,
     isVerified: boolean,
-    postId: string
+    postId: string,
+    coordinates: any
 }
 
 type LocationData = {
@@ -66,7 +67,8 @@ type LocationData = {
     postcode: string,
     suburb: string,
     state: string,
-    country: string
+    country: string,
+    coordinates: any
 }
 
 export default function PostForm({ postData, }: { postData: PostData | undefined }) {
@@ -79,6 +81,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
+        coordinates: "",
         address: "",
         postcode: "",
         suburb: "",
@@ -90,8 +93,9 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
-    const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string) => {
+    const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string, coordinates: any) => {
         setSelectedLocation({
+            coordinates: coordinates,
             address: address,
             postcode: postcode,
             suburb: suburb,
@@ -230,7 +234,8 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                     postcode: selectedLocation.postcode,
                     streetAddress: selectedLocation.address,
                     formatted_address: selectedLocation.address,
-                    postId: postData?.postId
+                    postId: postData?.postId,
+                    coordinates: selectedLocation.coordinates
                 })
                 .eq("postId", postData?.postId)
             if (locationError) {
@@ -262,7 +267,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
             const { error: insertError } = await supabase
                 .from('posts')
                 .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
-            // .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray, address: selectedLocation.address, postcode: selectedLocation.postcode, suburb: selectedLocation.suburb, state: selectedLocation.state, country: selectedLocation.country })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -300,7 +304,8 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                         postcode: selectedLocation.postcode,
                         streetAddress: selectedLocation.address,
                         formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
-                        postId: postId
+                        postId: postId,
+                        coordinates: selectedLocation.coordinates
                     })
                 if (locationError) {
                     console.error("Error updating location table", locationError);
@@ -328,6 +333,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         if (postData) {
             setValue('name', postData.name)
             setSelectedLocation({
+                coordinates: postData.coordinates,
                 address: postData.formatted_address,
                 suburb: postData.suburb,
                 state: postData.state,
@@ -351,7 +357,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         }
     }, [postData]);
 
-    console.log(watch('openingHours'));
+
     return (
         <div className="md:flex justify-center">
             <div>

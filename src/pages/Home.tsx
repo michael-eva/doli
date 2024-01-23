@@ -9,8 +9,10 @@ import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
+import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
 
 type CardProps = {
+    locationData: any;
     id: string,
     postId: string,
     imgUrl: string | null,
@@ -38,6 +40,7 @@ type CardProps = {
     website: string,
 }
 type LocationData = {
+    coordinates: any,
     address: string,
     postcode: string,
     locality: string,
@@ -52,6 +55,7 @@ export default function Home() {
     // const deliveryFilter = searchParams.get("deliveryMethod")
     const searchFilter = searchParams.get("search")
     const locationFilter = searchParams.get("location")
+    const nearbyFilter = searchParams.get("coordinates")
     const { register, watch, getValues } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -59,6 +63,7 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
+        coordinates: "",
         address: "",
         postcode: "",
         locality: "",
@@ -129,7 +134,6 @@ export default function Home() {
             console.error("Error fetching combined data:", error);
         }
     };
-    // console.log(posts);
 
     const getMembers = async () => {
         const { error, data }: any = await supabase
@@ -166,6 +170,17 @@ export default function Home() {
     const containsSearchText = (text: string, searchTerm: string) =>
         text.toLowerCase().includes(searchTerm.toLowerCase());
 
+    // const tests = posts.filter((post) => {
+    //     // console.log(typeof (post.locationData?.coordinates?.longitude));
+
+    //     isCoordinateWithinRadius(
+    //         { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude },
+    //         selectedLocation.coordinates,
+    //         2000
+    //     )
+    // })
+    // console.log(tests)
+
     const filterOrders = () => {
         let filterPosts = [...posts];
 
@@ -173,7 +188,7 @@ export default function Home() {
             filterPosts = filterPosts.filter((post) => post.type === typeFilter);
         }
 
-        if (locationFilter) {
+        if (!isChecked && locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
                 const lowercaseSuburb = post?.locationData?.postcode?.toLowerCase();
@@ -181,7 +196,17 @@ export default function Home() {
             });
         }
 
+        if (isChecked && nearbyFilter) {
+            const [latitude, longitude] = nearbyFilter.split('+')
+            filterPosts = filterPosts.filter((post) =>
+                isCoordinateWithinRadius(
+                    { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude, },
+                    { latitude: latitude, longitude: longitude },
+                    20000
+                )
 
+            );
+        }
         if (searchFilter && searchFilter.trim() !== "") {
             filterPosts = filterPosts.filter((post) => {
                 const columnsToSearch = ["description", "selectedTags", "type", "state", "suburb", "name"];
@@ -204,6 +229,8 @@ export default function Home() {
 
         return paginatePage(currentPage, pageSize, filterPosts);
     };
+    // console.log(posts);
+
 
     const paginatePage = (currentPage, pageSize, filterPosts) => {
         const startIndex = (currentPage - 1) * pageSize;
@@ -230,15 +257,16 @@ export default function Home() {
     }
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
-    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string) => {
+    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string, coordinates: any) => {
         setSelectedLocation({
             address: address,
             postcode: postcode,
             locality: locality,
             state: state,
-            country: country
+            country: country,
+            coordinates: coordinates
         });
-        genNewSearchParams('location', postcode)
+        genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
     };
     const clearFilters = () => {
         setSearchParams("")
@@ -265,7 +293,7 @@ export default function Home() {
                                     <div className="flex flex-col">
                                         <div className=" mt-4">
                                             <label htmlFor="">Suburb</label>
-                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" />
+                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" includeNearby={isChecked} suburbAndPostcode={false} />
                                         </div>
                                         <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                             <input
@@ -306,7 +334,7 @@ export default function Home() {
                                         </select>
                                     </div>
                                 </div>
-                                {searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
+                                {nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
                                 <div className="divider "></div>
                                 <div className="flex justify-center gap-10">
                                     <div className="flex flex-col w-72">
