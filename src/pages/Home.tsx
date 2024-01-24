@@ -38,14 +38,7 @@ type CardProps = {
     dineIn: boolean,
     contact: string,
     website: string,
-}
-type LocationData = {
-    coordinates: any,
-    address: string,
-    postcode: string,
-    locality: string,
-    state: string,
-    country: string
+    [key: string]: any;
 }
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -56,20 +49,12 @@ export default function Home() {
     const searchFilter = searchParams.get("search")
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
-    const { register, watch, getValues } = useForm()
+    const { register } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState('')
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
-    const [selectedLocation, setSelectedLocation] = useState<LocationData>({
-        coordinates: "",
-        address: "",
-        postcode: "",
-        locality: "",
-        state: "",
-        country: ""
-    })
     const [inputClear, setInputClear] = useState<boolean>(false)
 
     const handleCheckboxChange = () => {
@@ -170,17 +155,6 @@ export default function Home() {
     const containsSearchText = (text: string, searchTerm: string) =>
         text.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // const tests = posts.filter((post) => {
-    //     // console.log(typeof (post.locationData?.coordinates?.longitude));
-
-    //     isCoordinateWithinRadius(
-    //         { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude },
-    //         selectedLocation.coordinates,
-    //         2000
-    //     )
-    // })
-    // console.log(tests)
-
     const filterOrders = () => {
         let filterPosts = [...posts];
 
@@ -200,7 +174,7 @@ export default function Home() {
             const [latitude, longitude] = nearbyFilter.split('+')
             filterPosts = filterPosts.filter((post) =>
                 isCoordinateWithinRadius(
-                    { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude, },
+                    { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude },
                     { latitude: latitude, longitude: longitude },
                     20000
                 )
@@ -229,10 +203,9 @@ export default function Home() {
 
         return paginatePage(currentPage, pageSize, filterPosts);
     };
-    // console.log(posts);
 
 
-    const paginatePage = (currentPage, pageSize, filterPosts) => {
+    const paginatePage = (currentPage: number, pageSize: number, filterPosts: string | any[]) => {
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         const paginatePage = filterPosts.slice(startIndex, endIndex);
@@ -257,16 +230,13 @@ export default function Home() {
     }
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
-    const handleLocationSelect = (address: string, postcode: string, locality: string, state: string, country: string, coordinates: any) => {
-        setSelectedLocation({
-            address: address,
-            postcode: postcode,
-            locality: locality,
-            state: state,
-            country: country,
-            coordinates: coordinates
-        });
-        genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
+    // const handleLocationSelect = (postcode: string, coordinates: any) => {
+    const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
+        if (isChecked) {
+            genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
+        } else if (!isChecked) {
+            genNewSearchParams('location', postcode)
+        }
     };
     const clearFilters = () => {
         setSearchParams("")

@@ -17,10 +17,10 @@ type CardProps = {
     id: string,
     imgUrl: string | null,
     name: string,
-    suburb: string,
+    suburb?: string,
     state: string,
     postcode: string,
-    formatted_address: string,
+    formatted_address?: string,
     type: string,
     selectedTags?: [{
         value: string,
