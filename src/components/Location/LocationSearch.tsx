@@ -31,8 +31,8 @@ type PostData = {
 };
 
 type UserLocation = {
-    latitude: number | LatLngLiteral;
-    longitude: number | null;
+    latitude: number | LatLngLiteral | (() => number);
+    longitude: number | null | LatLngLiteral | (() => number);
 };
 
 type AddressComponent = {
@@ -53,18 +53,19 @@ type LocationSearchProps = {
         postcode: string,
         suburb: string,
         state: string,
-        country: string
+        country: string,
+        coordinates: any
     ) => void;
     postData?: PostData;
     fullAddress?: boolean;
     types: string[];
-    label: string;
     placeholder: string;
     inputClear?: boolean,
     setInputClear?: any,
     infoModal?: any
     suburbAndPostcode: boolean
-    signUpData: AddressData
+    signUpData?: AddressData,
+    includeNearby?: boolean
 };
 
 export default function LocationSearch({
@@ -76,13 +77,17 @@ export default function LocationSearch({
     placeholder,
     inputClear,
     setInputClear,
-    suburbAndPostcode
+    suburbAndPostcode,
+    includeNearby,
+
 }: LocationSearchProps) {
     const [userLocation, setUserLocation] = useState<UserLocation>({
         latitude: 0,
         longitude: 0,
     });
     const [postcode, setPostcode] = useState<string>("");
+    const [circleCoordinates, setCircleCoordinates] = useState("")
+    const [targetCoordinates, setTargetCoordinates] = useState("")
     // const [suburb, setSuburb] = useState<string>("");
     // const [state, setState] = useState<string>("");
     // const [country, setCountry] = useState<string>("");
@@ -103,6 +108,25 @@ export default function LocationSearch({
         }
     }, []);
 
+    function getCoordinates(latitude: number | (() => number), longitude: number | (() => number), radius: number): LatLngLiteral {
+        const lat = typeof latitude === "function" ? latitude() : latitude;
+        const lng = typeof longitude === "function" ? longitude() : longitude;
+
+        const googleEl = new google.maps.Circle({
+            center: new google.maps.LatLng(lat, lng),
+            radius: radius,
+        });
+
+        const circleCenter = googleEl.getCenter();
+        const circleLatitude = circleCenter.lat();
+        const circleLongitude = circleCenter.lng();
+        const searchResults = { lat: circleLatitude, lng: circleLongitude }
+
+        setCircleCoordinates(searchResults)
+    }
+
+
+
     const {
         ready,
         value,
@@ -111,6 +135,7 @@ export default function LocationSearch({
         clearSuggestions,
     } = usePlacesAutocomplete({
         requestOptions: {
+            // locationBias: createCircle(userLocation?.latitude, userLocation?.longitude, 2000),
             locationBias: new google.maps.Circle({
                 center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
                 radius: 2000
@@ -122,6 +147,7 @@ export default function LocationSearch({
         },
         debounce: 300,
     });
+
 
     const ref = useOnclickOutside(() => {
         clearSuggestions();
@@ -142,13 +168,20 @@ export default function LocationSearch({
     }, [inputClear])
 
     const handleSelect = (suggestion: Suggestion) => () => {
-        console.log("Handle select:", suggestion.description);
+        console.log("Handle select suggestion:", suggestion);
 
         setValue(suggestion.description, false);
         clearSuggestions();
 
 
         getGeocode({ address: suggestion.description }).then((results) => {
+            const firstResult = results[0];
+
+            const { lat, lng } = firstResult.geometry.location;
+
+            //run getCoordinates and return coordinates for the search
+            getCoordinates(lat(), lng(), 2000)
+
             const addressComponents: AddressComponent[] =
                 results[0].address_components;
 
@@ -176,10 +209,11 @@ export default function LocationSearch({
             if (onSelect) {
                 onSelect(
                     suggestion.description,
-                    postalCodeComponent ? postalCodeComponent.long_name : '',
+                    postalCodeComponent ? postalCodeComponent.long_name : "",
                     suburbComponent ? suburbComponent.long_name : "",
                     stateComponent ? stateComponent?.short_name : "",
                     countryComponent ? countryComponent?.long_name : "",
+                    { latitude: lat(), longitude: lng() } // Include coordinates in the onSelect callback
                 );
             }
         });
@@ -234,7 +268,6 @@ export default function LocationSearch({
         }
 
     }, [signUpData, postData]);
-
 
     return (
         <div ref={ref} className="flex flex-col gap-5">
