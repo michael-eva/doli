@@ -121,26 +121,31 @@ export default function LocationSearch({
 
         setCircleCoordinates(searchResults)
     }
+
+
+
     const {
         ready,
         value,
         suggestions: { status, data },
         setValue,
         clearSuggestions,
-    } = usePlacesAutocomplete({
-        requestOptions: {
-            locationBias: new google.maps.Circle({
-                center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
-                radius: 2000
-            }),
-            componentRestrictions: {
-                country: ["au",]
+    } = usePlacesAutocomplete(
+        {
+            callbackName: "initMap",
+            requestOptions: {
+                locationBias: new google.maps.Circle({
+                    center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
+                    radius: 2000
+                }),
+                componentRestrictions: {
+                    country: ["au",]
+                },
+                types: types,
             },
-            types: types,
-        },
-        debounce: 300,
-    });
-
+            debounce: 300,
+        }
+    );
 
     const ref = useOnclickOutside(() => {
         clearSuggestions();
@@ -163,12 +168,11 @@ export default function LocationSearch({
         setValue(suggestion.description, false);
         clearSuggestions();
 
-
         getGeocode({ address: suggestion.description }).then((results) => {
             const firstResult = results[0];
-
             const { lat, lng } = firstResult.geometry.location;
 
+            // if (window.google) {
             //run getCoordinates and return coordinates for the search
             getCoordinates(lat(), lng(), 2000)
 
@@ -203,6 +207,9 @@ export default function LocationSearch({
                     { latitude: lat(), longitude: lng() } // Include coordinates in the onSelect callback
                 );
             }
+            // } else {
+            //     console.error("Google Maps API not yet loaded.");
+            // }
         });
     };
     //This function is to stop the dropdown auto appearing when there is data in being pushed to the components.
@@ -249,7 +256,6 @@ export default function LocationSearch({
         }
 
     }, [signUpData, postData]);
-
     return (
         <div ref={ref} className="flex flex-col gap-5">
             <div className=" flex flex-col w-full">
@@ -276,3 +282,4 @@ export default function LocationSearch({
         </div>
     );
 }
+
