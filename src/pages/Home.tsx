@@ -310,7 +310,7 @@ export default function Home() {
                                 <div className="flex justify-center gap-10">
                                     <div className="flex flex-col w-72">
                                         <p className="text-xl" >Search Results:</p>
-                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
+                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="text-xl" >Active Members:</p>
