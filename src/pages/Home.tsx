@@ -223,7 +223,7 @@ export default function Home() {
     };
 
     const searchItemLength = () => {
-        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter) {
+        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter || nearbyFilter) {
             return filterOrders().length
         }
         return posts.length
@@ -232,6 +232,7 @@ export default function Home() {
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
     // const handleLocationSelect = (postcode: string, coordinates: any) => {
     const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
+
         if (isChecked) {
             genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
         } else if (!isChecked) {
@@ -248,8 +249,8 @@ export default function Home() {
         <>
             <div className=" max-w-7xl m-auto mb-10">
                 {isMobile &&
-                    <div className="flex justify-center">
-                        <FilterFields register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} />
+                    <div className="flex justify-center px-4">
+                        <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
                     </div>
                 }
                 {!isMobile &&
@@ -344,7 +345,7 @@ export default function Home() {
                         </div> */}
                         </div >
                     </div>}
-                <p>
+                <p className={`${isMobile ? "px-7" : ""}`}>
                     {startIndex} - {endIndex} of {searchItemLength()} results
                 </p>
                 <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>

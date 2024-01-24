@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import LocationSearch from '../Location/LocationSearch';
 type FilterFields = {
     register: any
     genNewSearchParams: (key: string, value: string) => void
@@ -9,11 +10,20 @@ type FilterFields = {
 
 }
 
-export default function FilterFields({ register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter }: FilterFields) {
-    const [isChecked, setIsChecked] = useState(true)
-    const handleCheckboxChange = () => {
-        setIsChecked(!isChecked)
-    }
+export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, handleLocationSelect, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFields) {
+    // const [isChecked, setIsChecked] = useState(true)
+    // const handleCheckboxChange = () => {
+    //     setIsChecked(!isChecked)
+    // }
+    // const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
+
+    //     if (isChecked) {
+    //         genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
+    //     } else if (!isChecked) {
+    //         genNewSearchParams('location', postcode)
+    //     }
+    // };
+
 
     return (
         <>
@@ -26,16 +36,8 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                 <div className="collapse-content bg-primary text-base-content peer-checked:bg-slate-300 ">
                     <div className="flex flex-wrap justify-between md:hidden">
                         <div className="flex flex-col">
-                            {/* <LocationSearch /> */}
-                            <div className="flex flex-col mt-4">
-                                <label htmlFor="">Location:</label>
-                                <input type="text"
-                                    className="input input-bordered w-72"
-                                    placeholder='eg: Fremantle'
-                                    {...register("location")}
-                                    onChange={(e) => genNewSearchParams("location", e.target.value)}
-                                    value={locationFilter || ""}
-                                />
+                            <div className="flex flex-col mt-4 w-72">
+                                <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={onSelect} types={['locality']} placeholder="Start typing in a suburb" includeNearby={isChecked} suburbAndPostcode={false} />
                             </div>
                             <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                 <input
@@ -100,6 +102,7 @@ export default function FilterFields({ register, genNewSearchParams, typeFilter,
                                 value={searchFilter || ""}
                             />
                         </div>
+                        {nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto mt-4" onClick={clearFilters}>Clear filters</button> : ""}
                     </div >
                 </div>
             </div>
