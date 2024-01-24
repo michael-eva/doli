@@ -88,9 +88,6 @@ export default function LocationSearch({
     const [postcode, setPostcode] = useState<string>("");
     const [circleCoordinates, setCircleCoordinates] = useState("")
     const [targetCoordinates, setTargetCoordinates] = useState("")
-    // const [suburb, setSuburb] = useState<string>("");
-    // const [state, setState] = useState<string>("");
-    // const [country, setCountry] = useState<string>("");
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -124,9 +121,6 @@ export default function LocationSearch({
 
         setCircleCoordinates(searchResults)
     }
-
-
-
     const {
         ready,
         value,
@@ -135,7 +129,6 @@ export default function LocationSearch({
         clearSuggestions,
     } = usePlacesAutocomplete({
         requestOptions: {
-            // locationBias: createCircle(userLocation?.latitude, userLocation?.longitude, 2000),
             locationBias: new google.maps.Circle({
                 center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
                 radius: 2000
@@ -155,9 +148,6 @@ export default function LocationSearch({
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-        // setSuburb("");
-        // setPostcode("");
-        // setCountry("");
         setValue(e.target.value);
     };
     useEffect(() => {
@@ -194,18 +184,15 @@ export default function LocationSearch({
             const suburbComponent = addressComponents.find(
                 (component: AddressComponent) => component.types.includes("locality")
             );
-            // setSuburb(suburbComponent?.long_name || "");
 
             const stateComponent = addressComponents.find(
                 (component: AddressComponent) =>
                     component.types.includes("administrative_area_level_1")
             );
-            // setState(stateComponent?.short_name || "");
 
             const countryComponent = addressComponents.find(
                 (component: AddressComponent) => component.types.includes("country")
             );
-            // setCountry(countryComponent?.long_name || "");
             if (onSelect) {
                 onSelect(
                     suggestion.description,
@@ -254,17 +241,11 @@ export default function LocationSearch({
         if (signUpData) {
             setValue(signUpData?.address || "");
             setPostcode(signUpData?.postcode || "");
-            // setState(signUpData?.state || "");
-            // setCountry(signUpData?.country || "");
-            // setSuburb(signUpData?.suburb || "");
             return
         }
         if (postData) {
             setValue(postData?.locationData?.formatted_address || "");
             setPostcode(postData?.locationData?.postcode || "");
-            // setState(postData.locationData?.state || "");
-            // setCountry(postData.locationData?.country || "");
-            // setSuburb(postData.locationData?.suburb || "");
         }
 
     }, [signUpData, postData]);
@@ -292,39 +273,6 @@ export default function LocationSearch({
                         {postcode ? postcode : "Postcode"}
                     </div>
                 </div>}
-            {/* {fullAddress && (
-                <>
-                    <div className="flex gap-2">
-                        <div className="flex flex-col w-1/2">
-                            <label htmlFor="">Suburb</label>
-                            <div
-                                className={`input input-bordered cursor-not-allowed flex items-center ${!suburb ? "text-gray-400" : ""
-                                    }`}
-                            >
-                                {suburb ? suburb : "Suburb"}
-                            </div>
-                        </div>
-                        <div className="flex flex-col w-1/2">
-                            <label htmlFor="">Postcode</label>
-                            <div
-                                className={`input input-bordered cursor-not-allowed flex items-center ${!postcode ? "text-gray-400" : ""
-                                    }`}
-                            >
-                                {postcode ? postcode : "Postcode"}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-2/3">
-                        <label htmlFor="">Country</label>
-                        <div
-                            className={`input input-bordered cursor-not-allowed flex items-center ${!country ? "text-gray-400" : ""
-                                }`}
-                        >
-                            {country ? country : "Country"}
-                        </div>
-                    </div>
-                </>
-            )} */}
         </div>
     );
 }

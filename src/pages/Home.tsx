@@ -223,7 +223,7 @@ export default function Home() {
     };
 
     const searchItemLength = () => {
-        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter) {
+        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter || nearbyFilter) {
             return filterOrders().length
         }
         return posts.length
