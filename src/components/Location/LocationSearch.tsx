@@ -122,8 +122,6 @@ export default function LocationSearch({
         setCircleCoordinates(searchResults)
     }
 
-
-
     const {
         ready,
         value,
@@ -136,7 +134,7 @@ export default function LocationSearch({
             requestOptions: {
                 locationBias: new google.maps.Circle({
                     center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
-                    radius: 2000
+                    radius: 5000
                 }),
                 componentRestrictions: {
                     country: ["au",]
@@ -174,7 +172,7 @@ export default function LocationSearch({
 
             // if (window.google) {
             //run getCoordinates and return coordinates for the search
-            getCoordinates(lat(), lng(), 2000)
+            getCoordinates(lat(), lng(), 5000)
 
             const addressComponents: AddressComponent[] =
                 results[0].address_components;
