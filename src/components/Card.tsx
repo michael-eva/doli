@@ -6,7 +6,7 @@ import ToggleOn from "./Toggle/ToggleOn";
 import ToggleButton from "./Toggle/ToggleButton";
 import { useNavigate } from "react-router";
 import RatingComp from "./Rating/Rating";
-import DispOpeningHours from "./DispOpeningHours";
+import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 
 type CardProps = {

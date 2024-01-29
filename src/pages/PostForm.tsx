@@ -8,7 +8,7 @@ import { PreviewCard } from "../components/PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
-import OpeningHours from "../components/OpeningHours.tsx"
+import OpeningHours from "../components/Opening-Hours/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
 import LocationSearch from "../components/Location/LocationSearch.tsx";

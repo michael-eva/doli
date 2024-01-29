@@ -23,38 +23,37 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         { day: "Sunday", isOpen: 'closed', fromTime: "", toTime: "" },])
 
     const timeOptions = generateTimeOptions();
-    const isTimeAfter = (fromTime: string, toTime: string) => {
 
-        const [fromHour, fromMinute] = fromTime.split(':').map(Number);
-        const [toHour, toMinute] = toTime.split(':').map(Number);
 
-        const fromTotalMinutes = fromHour * 60 + fromMinute;
-        const toTotalMinutes = toHour * 60 + toMinute;
+    //Function to check whether closing time is after opening time
 
-        return toTotalMinutes > fromTotalMinutes;
-    };
+    // function handleToTimeChange(e: any, index: string) {
+    //     const toTimeValue = e.target.value;
+    //     const fromTimeValue = watch(`openingHours.${index}.fromTime`);
 
-    function handleToTimeChange(e: any, index: string) {
-        const toTimeValue = e.target.value;
-        const fromTimeValue = watch(`openingHours.${index}.fromTime`);
-
-        if (!isTimeAfter(fromTimeValue, toTimeValue)) {
-            setError(`openingHours.${index}.toTime`, {
-                type: 'manual',
-                message: 'Closing time needs to be after opening time'
-            });
-            setValue(`openingHours.${index}.fromTime`, "");
-            setValue(`openingHours.${index}.toTime`, "");
-        } else {
-            clearErrors(`openingHours.${index}.toTime`);
-        }
-    }
-
-    // useEffect(() => {
-    //     if (postData) {
-    //         setInitialOpeningHours(postData.openingHours)
+    //     if (!isTimeAfter(fromTimeValue, toTimeValue)) {
+    //         setError(`openingHours.${index}.toTime`, {
+    //             type: 'manual',
+    //             message: 'Closing time needs to be after opening time'
+    //         });
+    //         setValue(`openingHours.${index}.fromTime`, "");
+    //         setValue(`openingHours.${index}.toTime`, "");
+    //     } else {
+    //         clearErrors(`openingHours.${index}.toTime`);
     //     }
-    // }, [postData]);
+    // }
+
+    // const isTimeAfter = (fromTime: string, toTime: string) => {
+
+    //     const [fromHour, fromMinute] = fromTime.split(':').map(Number);
+    //     const [toHour, toMinute] = toTime.split(':').map(Number);
+
+    //     const fromTotalMinutes = fromHour * 60 + fromMinute;
+    //     const toTotalMinutes = toHour * 60 + toMinute;
+
+    //     return toTotalMinutes > fromTotalMinutes;
+    // };
+
 
     const editOpeningTimesEl = () => {
         return (
@@ -100,7 +99,7 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
                                         id={`openingHours.${index}.toTime`}
                                         className="input input-bordered w-1/2"
                                         {...register(`openingHours.${index}.toTime`, {
-                                            onChange: (e: string) => handleToTimeChange(e, index),
+                                            // onChange: (e: string) => handleToTimeChange(e, index),
                                         })}
                                         defaultValue={initialOpeningHours[index].toTime || ""}
                                     >

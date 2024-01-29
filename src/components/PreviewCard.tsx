@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import OpeningHours from "./OpeningHours";
-import DispOpeningHours from "./DispOpeningHours";
+import OpeningHours from "./Opening-Hours/OpeningHours";
+import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 
 type CardProps = {
     imgUrl: string | null,
