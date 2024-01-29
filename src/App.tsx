@@ -33,6 +33,7 @@ function App() {
           <Route element={<JodRequired />} >
             <Route path="validate-updates" element={<Validation />} />
           </Route>
+          <Route path="seed" element={<SeedForm />} />
         </Route>
         <Route path="member-register" element={<SignUp />} />
         <Route path="login" element={<Login />} />
@@ -40,7 +41,6 @@ function App() {
         <Route path="specials" element={<Specials />} />
         <Route path="wholesale" element={<Wholesale />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="seed" element={<SeedForm />} />
       </Routes>
     </>
   )
