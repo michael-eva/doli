@@ -66,7 +66,8 @@ type LocationData = {
     postcode: string,
     suburb: string,
     state: string,
-    country: string
+    country: string,
+    coordinates: any,
 }
 
 export default function SeedForm() {
@@ -83,14 +84,16 @@ export default function SeedForm() {
         postcode: "",
         suburb: "",
         state: "",
-        country: ""
+        country: "",
+        coordinates: ""
     })
 
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
-    const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string) => {
+    const handleLocationSelect = (address: string, postcode: string, suburb: string, state: string, country: string, coordinates: any) => {
         setSelectedLocation({
+            coordinates: coordinates,
             address: address,
             postcode: postcode,
             suburb: suburb,
@@ -146,6 +149,7 @@ export default function SeedForm() {
     //     return CDNUrl(imageData);
     // };
 
+    console.log(selectedLocation);
 
 
     const countChars = (name: string) => {
@@ -179,7 +183,7 @@ export default function SeedForm() {
                     selectedTags: selectedTags,
                     isVerified: true,
                     openingHours: openingHoursArray,
-                    hasOwner: false
+                    hasOwner: false,
                 })
 
             if (insertError) {
@@ -218,7 +222,8 @@ export default function SeedForm() {
                         postcode: selectedLocation.postcode,
                         streetAddress: selectedLocation.address,
                         formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
-                        postId: postId
+                        postId: postId,
+                        coordinates: selectedLocation.coordinates
                     })
                 if (locationError) {
                     console.error("Error updating location table", locationError);
@@ -234,7 +239,6 @@ export default function SeedForm() {
         formCleanup()
     }
 
-    console.log(watch('openingHours'));
     return (
         <div className="md:flex justify-center">
             <div>
