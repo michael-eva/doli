@@ -1,14 +1,16 @@
 import { ReactNode } from "react";
 
 type OpeningHours = {
-    id: string;
-    day: ReactNode;
-    isOpen: string;
-    fromTime: ReactNode;
-    toTime: ReactNode;
+    openingHours: [{
+        id: string;
+        day: ReactNode;
+        isOpen: string;
+        fromTime: ReactNode;
+        toTime: ReactNode;
+    }]
 }
 
-export default function DispOpeningHours({ openingHours }) {
+export default function DispOpeningHours({ openingHours }: OpeningHours) {
 
     return (
         <div className="mt-5 flex flex-col">
@@ -16,7 +18,7 @@ export default function DispOpeningHours({ openingHours }) {
                 <div className="inline-block min-w-full py-2 align-middle px-6 lg:px-8">
                     <table className="min-w-full divide-y divide-gray-300">
                         <tbody className="bg-white">
-                            {openingHours?.map((item: OpeningHours, index: number) => (
+                            {openingHours?.map((item, index: number) => (
                                 <tr key={index} className={index % 2 === 0 ? undefined : ' bg-amber-50'}>
                                     <td
                                         className="whitespace-nowrap py-1  pr-3 text-xs font-medium text-gray-900 pl-6"

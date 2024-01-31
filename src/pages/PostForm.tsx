@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import transformedTags from '../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
 import businessType from "../data/businessTypes.json"
-import { useForm, useWatch } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import supabase from "../config/supabaseClient.ts";
 import { PreviewCard } from "../components/PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";

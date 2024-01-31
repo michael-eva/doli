@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import LocationSearch from '../Location/LocationSearch';
 type FilterFields = {
     register: any
@@ -7,23 +7,24 @@ type FilterFields = {
     businessType: string[] | null
     searchFilter: string | null
     locationFilter: string | null
+    clearFilters: () => void
+    setInputClear: Dispatch<SetStateAction<boolean>>
+    inputClear: boolean
+    isChecked: boolean
+    onSelect?: (
+        address: string,
+        postcode: string,
+        suburb: string,
+        state: string,
+        country: string,
+        coordinates: any
+    ) => void;
+    handleCheckboxChange: () => void
+    nearbyFilter: string | null
 
 }
 
-export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, handleLocationSelect, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFields) {
-    // const [isChecked, setIsChecked] = useState(true)
-    // const handleCheckboxChange = () => {
-    //     setIsChecked(!isChecked)
-    // }
-    // const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
-
-    //     if (isChecked) {
-    //         genNewSearchParams('coordinates', `${coordinates.latitude} + ${coordinates.longitude}`)
-    //     } else if (!isChecked) {
-    //         genNewSearchParams('location', postcode)
-    //     }
-    // };
-
+export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFields) {
 
     return (
         <>

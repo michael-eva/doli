@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import months from "../data/months.json"
+import months from "../data/months"
 import { nanoid } from "nanoid"
 import supabase from "../config/supabaseClient"
 import { Link, useNavigate } from "react-router-dom"
@@ -64,7 +64,7 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     };
-    const insertLocationData = async (response) => {
+    const insertLocationData = async (response: { data: any; error?: null }) => {
         const { error } = await supabase
             .from("locations")
             .insert({
@@ -118,15 +118,6 @@ export default function SignUp() {
                 email: data.email,
                 birthMonth: data.birthMonth,
                 birthYear: data.birthYear,
-                // suburb: primaryLocation.suburb,
-                // postcode: primaryLocation.postcode,
-                // altSuburb: secondaryLocation.suburb,
-                // altPostcode: secondaryLocation.postcode,
-                // country: primaryLocation.country,
-                // state: primaryLocation.state,
-                // altState: secondaryLocation.state,
-                // address: primaryLocation.address,
-                // altAddress: secondaryLocation.address,
             })
             .eq('id', user?.id)
 
@@ -151,15 +142,7 @@ export default function SignUp() {
                     email: data.email,
                     birthMonth: data.birthMonth,
                     birthYear: data.birthYear,
-                    // suburb: primaryLocation.suburb,
-                    // postcode: primaryLocation.postcode,
-                    // altSuburb: secondaryLocation.suburb,
-                    // altPostcode: secondaryLocation.postcode,
-                    // country: primaryLocation.country,
-                    // altCountry: secondaryLocation.country,
                     isJod: false,
-                    // state: primaryLocation.state
-
                 })
                 .single()
                 .then(
@@ -264,7 +247,7 @@ export default function SignUp() {
             } else {
                 clearErrors("email")
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error:', error.message);
             return
         }
@@ -279,15 +262,14 @@ export default function SignUp() {
             });
         }
     }
+    console.log(months);
 
     return (
         <>
             {hasSubmitted ?
                 <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center bg-green-100">
                     <div className="flex items-center flex-col gap-5">
-                        {/* <img src="images/doli_logo.PNG" alt="" width={80} /> */}
                         <div style={{ fontSize: "50px" }}>
-
                             <IoCheckmarkCircleOutline style={{ color: 'green' }} />
                         </div>
                         <h2 className=" text-xl font-bold">Submitted.</h2>
@@ -426,7 +408,6 @@ export default function SignUp() {
                                 <label>Primary Suburb</label>
                                 <LocationSearch
                                     types={['locality']}
-                                    label="Suburb"
                                     placeholder="Start typing in a suburb"
                                     onSelect={(address, postcode, suburb, state, country) => {
                                         setPrimaryLocation({
@@ -454,7 +435,6 @@ export default function SignUp() {
                                 </div>
                                 <LocationSearch
                                     types={['locality']}
-                                    label="Suburb"
                                     placeholder="Start typing in a suburb"
                                     onSelect={(address, postcode, suburb, state, country) => {
                                         setSecondaryLocation({

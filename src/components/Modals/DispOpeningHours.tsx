@@ -1,6 +1,16 @@
-export default function DispOpeningHours({ openingHours }) {
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react";
 
-    console.log(openingHours);
+type OpeningHours = {
+    openingHours: [{
+        id: Key | null | undefined;
+        day: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
+        isOpen: string;
+        fromTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
+        toTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
+    }]
+}
+
+export default function DispOpeningHours({ openingHours }: OpeningHours) {
 
     return (
         <div className="mt-5 flex flex-col">
@@ -9,7 +19,7 @@ export default function DispOpeningHours({ openingHours }) {
                     {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"> */}
                     <table className="min-w-full divide-y divide-gray-300">
                         <tbody className="bg-white">
-                            {openingHours?.map((item, index) => (
+                            {openingHours?.map((item, index: number) => (
                                 <tr key={item.id} className={index % 2 === 0 ? undefined : ' bg-amber-50'}>
                                     <td
                                         className="whitespace-nowrap py-1  pr-3 text-xs font-medium text-gray-900 sm:pl-6"
@@ -28,8 +38,6 @@ export default function DispOpeningHours({ openingHours }) {
                                     >
                                         {item.toTime}
                                     </td>
-
-
                                 </tr >
                             ))}
                         </tbody>

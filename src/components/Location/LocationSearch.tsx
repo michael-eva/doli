@@ -4,7 +4,7 @@ import usePlacesAutocomplete, {
     getGeocode,
     Suggestion,
 } from "use-places-autocomplete";
-import { LatLngLiteral } from "leaflet";
+// import { LatLngLiteral } from "leaflet";
 import { IoLocationOutline } from "react-icons/io5";
 
 type PostData = {
@@ -29,10 +29,9 @@ type PostData = {
     isVerified: boolean;
     postId: string;
 };
-
 type UserLocation = {
-    latitude: number | LatLngLiteral | (() => number);
-    longitude: number | null | LatLngLiteral | (() => number);
+    latitude: number;
+    longitude: number;
 };
 
 type AddressComponent = {
@@ -72,24 +71,17 @@ export default function LocationSearch({
     onSelect,
     signUpData,
     postData,
-    // fullAddress,
     types,
     placeholder,
     inputClear,
     setInputClear,
     suburbAndPostcode,
-    includeNearby,
-
 }: LocationSearchProps) {
     const [userLocation, setUserLocation] = useState<UserLocation>({
         latitude: 0,
         longitude: 0,
     });
     const [postcode, setPostcode] = useState<string>("");
-    const [circleCoordinates, setCircleCoordinates] = useState("")
-    const [targetCoordinates, setTargetCoordinates] = useState("")
-    let map: google.maps.Map;
-
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
@@ -106,23 +98,6 @@ export default function LocationSearch({
         }
     }, []);
 
-    function getCoordinates(latitude: number | (() => number), longitude: number | (() => number), radius: number): LatLngLiteral {
-        const lat = typeof latitude === "function" ? latitude() : latitude;
-        const lng = typeof longitude === "function" ? longitude() : longitude;
-
-        const googleEl = new google.maps.Circle({
-            center: new google.maps.LatLng(lat, lng),
-            radius: radius,
-        });
-
-        const circleCenter = googleEl.getCenter();
-        const circleLatitude = circleCenter.lat();
-        const circleLongitude = circleCenter.lng();
-        const searchResults = { lat: circleLatitude, lng: circleLongitude }
-
-        setCircleCoordinates(searchResults)
-    }
-
     const {
         ready,
         value,
@@ -135,7 +110,7 @@ export default function LocationSearch({
             requestOptions: {
                 locationBias: new google.maps.Circle({
                     center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
-                    radius: 5000
+                    radius: 20000
                 }),
                 componentRestrictions: {
                     country: ["au",]
@@ -170,10 +145,6 @@ export default function LocationSearch({
             const firstResult = results[0];
             const { lat, lng } = firstResult.geometry.location;
 
-            // if (window.google) {
-            //run getCoordinates and return coordinates for the search
-            getCoordinates(lat(), lng(), 5000)
-
             const addressComponents: AddressComponent[] =
                 results[0].address_components;
 
@@ -205,9 +176,7 @@ export default function LocationSearch({
                     { latitude: lat(), longitude: lng() } // Include coordinates in the onSelect callback
                 );
             }
-            // } else {
-            //     console.error("Google Maps API not yet loaded.");
-            // }
+
         });
     };
     //This function is to stop the dropdown auto appearing when there is data in being pushed to the components.

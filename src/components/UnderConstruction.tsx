@@ -1,5 +1,3 @@
-// import {logo} from "/images/IMG_20231227_130325.jpg"
-
 export default function UnderConstruction() {
     return (
         <div className=" flex justify-center mt-20">

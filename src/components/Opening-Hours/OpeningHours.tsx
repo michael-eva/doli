@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
 
-export default function OpeningHours({ register, errors, setError, clearErrors, watch, postData, setValue }: any) {
+type OpeningHours = {
+    register: any,
+    errors: any,
+    watch: any
+}
+export default function OpeningHours({ register, errors, watch }: OpeningHours) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -13,14 +17,14 @@ export default function OpeningHours({ register, errors, setError, clearErrors, 
         return times;
     }
 
-    const [initialOpeningHours, setInitialOpeningHours] = useState([
+    const initialOpeningHours = [
         { day: "Monday", isOpen: 'closed', fromTime: "", toTime: "" },
         { day: "Tuesday", isOpen: 'closed', fromTime: "", toTime: "" },
         { day: "Wednesday", isOpen: 'closed', fromTime: "", toTime: "" },
         { day: "Thursday", isOpen: 'closed', fromTime: "", toTime: "" },
         { day: "Friday", isOpen: 'closed', fromTime: "", toTime: "" },
         { day: "Saturday", isOpen: 'closed', fromTime: "", toTime: "" },
-        { day: "Sunday", isOpen: 'closed', fromTime: "", toTime: "" },])
+        { day: "Sunday", isOpen: 'closed', fromTime: "", toTime: "" },]
 
     const timeOptions = generateTimeOptions();
 

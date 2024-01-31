@@ -4,7 +4,6 @@ import { Toaster, toast } from "react-hot-toast"
 import { useUser } from "@supabase/auth-helpers-react";
 import { IoIosLogOut } from "react-icons/io";
 import { RxAvatar } from "react-icons/rx";
-import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import SearchComp from "./SearchComp";
@@ -14,8 +13,6 @@ export default function NavBar() {
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const navigate = useNavigate()
     const user = useUser()
-    const location = useLocation()
-    const isResetPasswordPage = location.pathname === '/reset-password'
     const [isJod, setIsJod] = useState<boolean | null>(null)
 
 
