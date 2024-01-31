@@ -70,8 +70,9 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                                 className="select select-bordered w-72"
                                 onChange={(e) => genNewSearchParams('type', e.target.value)}
                                 value={typeFilter || ""}
+                                defaultChecked="All Types"
                             >
-                                <option value="all" selected>All Types</option>
+                                <option value="all">All Types</option>
                                 {businessType?.map(item => (
                                     <option
                                         key={item}

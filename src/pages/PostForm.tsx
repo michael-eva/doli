@@ -382,8 +382,9 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                             <select
                                 className="select select-bordered w-full max-w-xs"
                                 {...register("type", { required: "Type of business is required" })}
+                                defaultValue="Select Type"
                             >
-                                <option value="" selected disabled>Select Type</option>
+                                <option disabled>Select Type</option>
                                 {businessType.map(item => (
                                     <option key={item}>{item}</option>
                                 ))}
