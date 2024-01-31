@@ -30,8 +30,8 @@ export default function SearchComp() {
             </div>
             {isOpen && <div className="flex flex-col">
                 <input type="text"
-                    className="input input-bordered w-36 md:w-60"
-                    placeholder='Enter search term'
+                    className="input input-bordered w-36"
+                    placeholder='Search'
                     {...register("search")}
                     onChange={(e) => genNewSearchParams("search", e.target.value)}
                     value={searchFilter || ""}

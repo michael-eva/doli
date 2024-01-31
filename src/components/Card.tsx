@@ -17,10 +17,6 @@ type CardProps = {
     id: string,
     imgUrl: string | null,
     name: string,
-    suburb?: string,
-    state: string,
-    postcode: string,
-    formatted_address?: string,
     type: string,
     selectedTags?: [{
         value: string,
@@ -28,6 +24,7 @@ type CardProps = {
     }] | undefined,
     description: string,
     openingHours: [{
+        id: string,
         day: string,
         isOpen: string,
         fromTime: string,
@@ -41,9 +38,27 @@ type CardProps = {
     isJod?: boolean
     showStatus?: boolean
     isVerified?: boolean,
+    locationData: {
+        altCountry: string,
+        altFormatted_address: string,
+        altPostcode: string,
+        altState: string,
+        altSuburb: string,
+        coordinates: {
+            latitude: number,
+            longitude: number,
+        },
+        country: string,
+        formatted_address: string,
+        state: string,
+        suburb: string,
+        streetAddress: string,
+        postcode: string
+    }
 }
 
-export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, suburb, state, postcode, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
+
     const maxDescriptionHeight = 80;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()

@@ -12,7 +12,23 @@ import Pagination from "../components/Pagination";
 import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
 
 type CardProps = {
-    locationData: any;
+    locationData: {
+        altCountry: string,
+        altFormatted_address: string,
+        altPostcode: string,
+        altState: string,
+        altSuburb: string,
+        coordinates: {
+            latitude: number,
+            longitude: number,
+        },
+        country: string,
+        formatted_address: string,
+        state: string,
+        suburb: string,
+        streetAddress: string,
+        postcode: string
+    },
     id: string,
     postId: string,
     imgUrl: string | null,
@@ -28,6 +44,7 @@ type CardProps = {
     }],
     description: string,
     openingHours: [{
+        id: string,
         day: string,
         isOpen: string,
         fromTime: string,
@@ -172,11 +189,12 @@ export default function Home() {
 
         if (isChecked && nearbyFilter) {
             const [latitude, longitude] = nearbyFilter.split('+')
+
             filterPosts = filterPosts.filter((post) =>
                 isCoordinateWithinRadius(
-                    { lat: post.locationData?.coordinates?.latitude, lng: post.locationData?.coordinates?.longitude },
-                    { latitude: latitude, longitude: longitude },
-                    20000
+                    { latitude: post.locationData?.coordinates?.latitude, longitude: post.locationData?.coordinates?.longitude },
+                    { latitude: parseFloat(latitude), longitude: parseFloat(longitude) },
+                    5000
                 )
 
             );
@@ -205,7 +223,7 @@ export default function Home() {
     };
 
 
-    const paginatePage = (currentPage: number, pageSize: number, filterPosts: string | any[]) => {
+    const paginatePage = (currentPage: number, pageSize: number, filterPosts: CardProps[]) => {
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         const paginatePage = filterPosts.slice(startIndex, endIndex);
@@ -230,7 +248,6 @@ export default function Home() {
     }
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
-    // const handleLocationSelect = (postcode: string, coordinates: any) => {
     const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
 
         if (isChecked) {
