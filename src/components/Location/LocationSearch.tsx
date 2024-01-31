@@ -4,7 +4,6 @@ import usePlacesAutocomplete, {
     getGeocode,
     Suggestion,
 } from "use-places-autocomplete";
-// import { LatLngLiteral } from "leaflet";
 import { IoLocationOutline } from "react-icons/io5";
 
 type PostData = {
@@ -29,10 +28,10 @@ type PostData = {
     isVerified: boolean;
     postId: string;
 };
-type UserLocation = {
-    latitude: number;
-    longitude: number;
-};
+// type UserLocation = {
+//     latitude: number;
+//     longitude: number;
+// };
 
 type AddressComponent = {
     long_name: string;
@@ -77,26 +76,26 @@ export default function LocationSearch({
     setInputClear,
     suburbAndPostcode,
 }: LocationSearchProps) {
-    const [userLocation, setUserLocation] = useState<UserLocation>({
-        latitude: 0,
-        longitude: 0,
-    });
+    // const [userLocation, setUserLocation] = useState<UserLocation>({
+    //     latitude: 0,
+    //     longitude: 0,
+    // });
     const [postcode, setPostcode] = useState<string>("");
-    useEffect(() => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation({ latitude, longitude });
-                },
-                (error) => {
-                    console.error("Error getting user location:", error.message);
-                }
-            );
-        } else {
-            console.error("Geolocation is not supported by your browser.");
-        }
-    }, []);
+    // useEffect(() => {
+    //     if ("geolocation" in navigator) {
+    //         navigator.geolocation.getCurrentPosition(
+    //             (position) => {
+    //                 const { latitude, longitude } = position.coords;
+    //                 setUserLocation({ latitude, longitude });
+    //             },
+    //             (error) => {
+    //                 console.error("Error getting user location:", error.message);
+    //             }
+    //         );
+    //     } else {
+    //         console.error("Geolocation is not supported by your browser.");
+    //     }
+    // }, []);
 
     const {
         ready,
@@ -108,10 +107,10 @@ export default function LocationSearch({
         {
             callbackName: "initMap",
             requestOptions: {
-                locationBias: new google.maps.Circle({
-                    center: new google.maps.LatLng(userLocation?.latitude, userLocation?.longitude),
-                    radius: 20000
-                }),
+                // locationBias: new google.maps.Circle({
+                //     center: new google.maps.LatLng(0, 0),
+                //     radius: 20000
+                // }),
                 componentRestrictions: {
                     country: ["au",]
                 },
