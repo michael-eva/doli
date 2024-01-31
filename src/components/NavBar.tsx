@@ -118,10 +118,9 @@ export default function NavBar() {
                     <SearchComp />
                     {user ?
                         <>
-                            <div className="text-xl md:ml-10 md:mr-5">{profileEl()}</div>
                             <div className="md:hidden text-2xl">
                                 <div className="dropdown dropdown-bottom dropdown-end">
-                                    <div tabIndex={1} role="button"><CiMenuBurger /></div>
+                                    <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
                                     <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                                         <li><NavLink to='/'>Home</NavLink></li>
                                         <li>{postListingEl()}</li>
@@ -131,11 +130,12 @@ export default function NavBar() {
                                     </ul>
                                 </div>
                             </div>
+                            <div className="text-xl md:ml-10 md:mr-5">{profileEl()}</div>
                         </>
                         :
                         <>
                             <div className="dropdown dropdown-bottom dropdown-end md:hidden">
-                                <div tabIndex={1} role="button"><CiMenuBurger /></div>
+                                <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
                                 <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                                     <li><NavLink to='/'>Home</NavLink></li>
                                     <li>{postListingEl()}</li>
@@ -145,7 +145,8 @@ export default function NavBar() {
                                 </ul>
                             </div>
                             <div className=" flex items-center">
-                                <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div>
+                                <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Sign In</NavLink></div>
+                                {/* <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div> */}
                             </div>
                         </>
                     }
