@@ -88,6 +88,7 @@ export default function LocationSearch({
     const [postcode, setPostcode] = useState<string>("");
     const [circleCoordinates, setCircleCoordinates] = useState("")
     const [targetCoordinates, setTargetCoordinates] = useState("")
+    let map: google.maps.Map;
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -161,7 +162,6 @@ export default function LocationSearch({
     }, [inputClear])
 
     const handleSelect = (suggestion: Suggestion) => () => {
-        console.log("Handle select suggestion:", suggestion);
 
         setValue(suggestion.description, false);
         clearSuggestions();

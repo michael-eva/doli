@@ -279,7 +279,6 @@ export default function SignUp() {
             });
         }
     }
-    console.log("Primary Location:", primaryLocation);
 
     return (
         <>

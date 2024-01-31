@@ -37,7 +37,6 @@ export default function ManageListings() {
             setIsLoading(false)
         }
     }, [user?.id])
-    console.log(user);
 
     const getCombinedData = async () => {
         try {
@@ -53,7 +52,6 @@ export default function ManageListings() {
 
             if (postsData) {
                 // Process posts data
-                console.log(postsData);
 
                 const parsedPostsData = postsData.map((post) => ({
                     ...post,

@@ -32,7 +32,7 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
 
     const truncatedDescription = description?.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description?.length > maxDescriptionHeight;
-    console.log("Opening Hours", openingHours);
+
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);

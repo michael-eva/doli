@@ -296,7 +296,7 @@ export default function Home() {
                                             onChange={(e) => genNewSearchParams('type', e.target.value)}
                                             value={typeFilter || ""}
                                         >
-                                            <option value="all" selected>All Types</option>
+                                            <option value="all" >All Types</option>
                                             {businessType.map(item => (
                                                 <option
                                                     key={item}
