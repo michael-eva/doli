@@ -5,65 +5,12 @@ import usePlacesAutocomplete, {
     Suggestion,
 } from "use-places-autocomplete";
 import { IoLocationOutline } from "react-icons/io5";
-
-type PostData = {
-    imgUrl: string;
-    name: string;
-    locationData: {
-        formatted_address: string,
-        postcode: string,
-        state: string,
-        country: string,
-        suburb: string,
-    }
-    type: string;
-    selectedTags: string[];
-    description: string;
-    openingHours: string;
-    pickUp: boolean;
-    delivery: boolean;
-    dineIn: boolean;
-    contact: string;
-    website: string;
-    isVerified: boolean;
-    postId: string;
-};
-// type UserLocation = {
-//     latitude: number;
-//     longitude: number;
-// };
+import { LocationSearchProps } from "../../Types";
 
 type AddressComponent = {
     long_name: string;
     short_name: string;
     types: string[];
-};
-type AddressData = {
-    address: string,
-    suburb: string,
-    postcode: string,
-    country: string,
-    state: string,
-}
-type LocationSearchProps = {
-    onSelect?: (
-        address: string,
-        postcode: string,
-        suburb: string,
-        state: string,
-        country: string,
-        coordinates: any
-    ) => void;
-    postData?: PostData;
-    fullAddress?: boolean;
-    types: string[];
-    placeholder: string;
-    inputClear?: boolean,
-    setInputClear?: any,
-    infoModal?: any
-    suburbAndPostcode: boolean
-    signUpData?: AddressData,
-    includeNearby?: boolean
 };
 
 export default function LocationSearch({
@@ -76,27 +23,7 @@ export default function LocationSearch({
     setInputClear,
     suburbAndPostcode,
 }: LocationSearchProps) {
-    // const [userLocation, setUserLocation] = useState<UserLocation>({
-    //     latitude: 0,
-    //     longitude: 0,
-    // });
     const [postcode, setPostcode] = useState<string>("");
-    // useEffect(() => {
-    //     if ("geolocation" in navigator) {
-    //         navigator.geolocation.getCurrentPosition(
-    //             (position) => {
-    //                 const { latitude, longitude } = position.coords;
-    //                 setUserLocation({ latitude, longitude });
-    //             },
-    //             (error) => {
-    //                 console.error("Error getting user location:", error.message);
-    //             }
-    //         );
-    //     } else {
-    //         console.error("Geolocation is not supported by your browser.");
-    //     }
-    // }, []);
-
     const {
         ready,
         value,
@@ -107,10 +34,6 @@ export default function LocationSearch({
         {
             callbackName: "initMap",
             requestOptions: {
-                // locationBias: new google.maps.Circle({
-                //     center: new google.maps.LatLng(0, 0),
-                //     radius: 20000
-                // }),
                 componentRestrictions: {
                     country: ["au",]
                 },
@@ -123,7 +46,6 @@ export default function LocationSearch({
     const ref = useOnclickOutside(() => {
         clearSuggestions();
     });
-
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         setValue(e.target.value);
@@ -200,7 +122,6 @@ export default function LocationSearch({
             }
         }
     }
-
     const renderSuggestions = () =>
         data.map((suggestion) => {
             return (<li key={suggestion.place_id} onClick={handleSelect(suggestion)} className="gap-2 flex items-center cursor-pointer hover:text-indigo-600 p-2 border-t border-gray-300 hover:bg-indigo-50" >
@@ -209,7 +130,6 @@ export default function LocationSearch({
                 <p className=" text-sm">{suggestion.structured_formatting.secondary_text}</p>
             </li >)
         })
-
     useEffect(() => {
         if (signUpData) {
             setValue(signUpData?.address || "");

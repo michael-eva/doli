@@ -14,19 +14,7 @@ import ForgotPassword from "../components/ForgotPassword"
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form"
 import LocationSearch from "./Location/LocationSearch"
-
-
-type FormData = {
-    gender: string,
-    email: string,
-    password: string,
-    confirmPassword: string,
-    birthMonth: string,
-    birthYear: string,
-    suburb: string,
-    altSuburb: string
-    country: string
-}
+import { SignUpType } from "../Types"
 
 export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -51,7 +39,7 @@ export default function SignUp() {
         country: "",
     });
 
-    const signUpAndInsertData = async (data: FormData) => {
+    const signUpAndInsertData = async (data: SignUpType) => {
         setIsSubmitting(true)
         try {
             const signUpResponse = await supabase.auth.signUp({
@@ -109,7 +97,7 @@ export default function SignUp() {
 
         }
     }
-    const handleUpdateDetailsSubmit = async (data: FormData) => {
+    const handleUpdateDetailsSubmit = async (data: SignUpType) => {
         setIsSubmitting(true)
         const { error } = await supabase
             .from("members")
@@ -131,7 +119,7 @@ export default function SignUp() {
         navigate("/")
 
     }
-    const handleNewSubmit = async (data: FormData) => {
+    const handleNewSubmit = async (data: SignUpType) => {
         const response = await signUpAndInsertData(data);
         if (response && !response.error) {
             supabase
@@ -217,7 +205,7 @@ export default function SignUp() {
             getMembers();
         }
     }, [user?.id]);
-    const getSubmitFunction = (data: FormData) => {
+    const getSubmitFunction = (data: SignUpType) => {
         if (user) {
             return handleUpdateDetailsSubmit(data)
         } else {
@@ -262,7 +250,6 @@ export default function SignUp() {
             });
         }
     }
-    console.log(months);
 
     return (
         <>
@@ -278,7 +265,7 @@ export default function SignUp() {
                     </div>
                 </div >
                 :
-                <form onSubmit={handleSubmit((data) => getSubmitFunction(data as FormData))}>
+                <form onSubmit={handleSubmit((data) => getSubmitFunction(data as SignUpType))}>
                     <div className="flex flex-col max-w-3xl m-auto shadow-lg px-14 md:px-24 pb-24 pt-10">
                         <div className="mb-6">
                             <h3 className=" text-xl font-semibold mb-3">
@@ -341,10 +328,11 @@ export default function SignUp() {
                             <div className="flex flex-col w-1/2">
                                 <label>Birth Month</label>
                                 <select
+                                    defaultValue="- Select Month -"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthMonth', { required: 'Birth month is required' })}
                                 >
-                                    <option value="" disabled selected>- Select Month -</option>
+                                    <option value="" disabled>- Select Month -</option>
                                     {months.map(month => (
                                         <option key={nanoid()} value={month}>{month}</option>
                                     ))}
@@ -355,10 +343,11 @@ export default function SignUp() {
                             <div className="flex flex-col w-1/2">
                                 <label>Birth Year</label>
                                 <select
+                                    defaultValue="- Select Year -"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthYear', { required: 'Birth year is required' })}
                                 >
-                                    <option value="" disabled selected>- Select Year -</option>
+                                    <option value="" disabled>- Select Year -</option>
                                     {years.map(year => (
                                         <option value={year} key={year}>{year}</option>
                                     ))}
@@ -372,10 +361,11 @@ export default function SignUp() {
                             <div className="flex flex-col w-1/2">
                                 <label>Gender</label>
                                 <select
+                                    defaultValue='- Select Gender -'
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('gender', { required: 'Gender is required' })}
                                 >
-                                    <option value="" disabled selected>- Select Gender -</option>
+                                    <option value="" disabled>- Select Gender -</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="non-binary">Non-binary</option>

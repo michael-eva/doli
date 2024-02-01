@@ -8,54 +8,7 @@ import { useNavigate } from "react-router";
 import RatingComp from "./Rating/Rating";
 import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
-
-type CardProps = {
-    handleEditSubmit?: any
-    onDelete?: any
-    handleSubmit?: any,
-    postId: string,
-    id: string,
-    imgUrl: string | null,
-    name: string,
-    type: string,
-    selectedTags?: [{
-        value: string,
-        label: string
-    }] | undefined,
-    description: string,
-    openingHours: [{
-        id: string,
-        day: string,
-        isOpen: string,
-        fromTime: string,
-        toTime: string
-    }],
-    pickUp: boolean,
-    delivery: boolean,
-    dineIn: boolean,
-    contact: string,
-    website: string,
-    isJod?: boolean
-    showStatus?: boolean
-    isVerified?: boolean,
-    locationData: {
-        altCountry: string,
-        altFormatted_address: string,
-        altPostcode: string,
-        altState: string,
-        altSuburb: string,
-        coordinates: {
-            latitude: number,
-            longitude: number,
-        },
-        country: string,
-        formatted_address: string,
-        state: string,
-        suburb: string,
-        streetAddress: string,
-        postcode: string
-    }
-}
+import { CardProps } from "../Types";
 
 export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
 

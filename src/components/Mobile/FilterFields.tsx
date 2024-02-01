@@ -1,34 +1,10 @@
-import { Dispatch, SetStateAction } from 'react';
 import LocationSearch from '../Location/LocationSearch';
-type FilterFields = {
-    register: any
-    genNewSearchParams: (key: string, value: string) => void
-    typeFilter: string | null
-    businessType: string[] | null
-    searchFilter: string | null
-    locationFilter: string | null
-    clearFilters: () => void
-    setInputClear: Dispatch<SetStateAction<boolean>>
-    inputClear: boolean
-    isChecked: boolean
-    onSelect?: (
-        address: string,
-        postcode: string,
-        suburb: string,
-        state: string,
-        country: string,
-        coordinates: any
-    ) => void;
-    handleCheckboxChange: () => void
-    nearbyFilter: string | null
+import { FilterFieldsType } from '../../Types/index';
 
-}
-
-export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFields) {
+export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFieldsType) {
 
     return (
         <>
-
             <div className="collapse bg-base-200 collapse-arrow mt-10">
                 <input type="checkbox" className="peer" />
                 <div className="collapse-title bg-primary text-primary-content peer-checked:text-primary-content">
@@ -38,7 +14,7 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                     <div className="flex flex-wrap justify-between md:hidden">
                         <div className="flex flex-col">
                             <div className="flex flex-col mt-4 w-72">
-                                <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={onSelect} types={['locality']} placeholder="Start typing in a suburb" includeNearby={isChecked} suburbAndPostcode={false} />
+                                <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={onSelect} types={['locality']} placeholder="Start typing in a suburb" suburbAndPostcode={false} />
                             </div>
                             <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                 <input

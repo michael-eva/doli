@@ -12,54 +12,13 @@ import OpeningHours from "../components/Opening-Hours/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
 import LocationSearch from "../components/Location/LocationSearch.tsx";
+import { CardProps, SelectedTags } from "../Types/index.ts"
+
 
 
 
 type imgPath = {
     path: string
-}
-
-type FormData = {
-    postId: string,
-    id: string | undefined
-    imgUrl: string
-    name: string;
-    suburb: string;
-    state: string;
-    postcode: string;
-    address: string;
-    type: string;
-    selectedTags: string[];
-    description: string;
-    openingHours: string;
-    delivery: boolean,
-    dineIn: boolean,
-    pickUp: boolean,
-    website: string;
-    contact: string;
-}
-
-type PostData = {
-    imgUrl: string,
-    name: string,
-    suburb: string,
-    state: string,
-    country: string
-    postcode: string,
-    streetAddress: string,
-    formatted_address: string,
-    type: string,
-    selectedTags: string[],
-    description: string,
-    openingHours: string,
-    pickUp: boolean,
-    delivery: boolean,
-    dineIn: boolean,
-    contact: string,
-    website: string,
-    isVerified: boolean,
-    postId: string,
-    coordinates: any
 }
 
 type LocationData = {
@@ -71,12 +30,12 @@ type LocationData = {
     coordinates: any
 }
 
-export default function PostForm({ postData, }: { postData: PostData | undefined }) {
+export default function PostForm({ postData, }: CardProps) {
     const navigate = useNavigate()
-    const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues, setError, clearErrors } = useForm();
+    const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues } = useForm();
     const user = useUser();
     const [selectedFile, setSelectedFile] = useState<string>("");
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<SelectedTags[]>([]);
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
@@ -124,7 +83,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
             navigate("/");
         }, 1000);
     }
-    const handleTagChange = (selectedTags: string | any[] | ((prevState: string[]) => string[])) => {
+    const handleTagChange = (selectedTags: any) => {
         if (selectedTags.length <= 5) {
             setSelectedTags(selectedTags);
         }
@@ -174,20 +133,15 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         const inputLength = watchValue?.length
         return inputLength
     }
-    const determineVerificationStatus = (formData: FormData, postData?: PostData) => {
+
+    const determineVerificationStatus = (formData: CardProps, postData?: CardProps) => {
         const isNameChanged = formData.name !== postData?.name;
         const isDescriptionChanged = formData.description !== postData?.description;
-        const isImageChanged = formData.imgUrl.length > 0; // Assuming selectedFile is set when changing the image
+        const isImageChanged = formData.imgUrl && formData.imgUrl.length > 0;
         return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
     };
-    const handleEditFormSubmit = async (formData: FormData) => {
-
-        const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
-            return {
-                day,
-                ...data
-            };
-        });
+    const handleEditFormSubmit = async (formData: CardProps) => {
+        const openingHoursArray = formData.openingHours
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -249,13 +203,9 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         setIsSubmitting(false);
         formCleanup(shouldSetVerifiedFalse)
     }
-    const handleNewFormSubmit = async (formData: FormData) => {
-        const openingHoursArray = Object.entries(formData.openingHours).map(([day, data]) => {
-            return {
-                day,
-                ...data
-            };
-        });
+
+    const handleNewFormSubmit = async (formData: CardProps) => {
+        const openingHoursArray = formData.openingHours
 
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
@@ -318,10 +268,10 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
         } catch (error) {
             console.error('Error handling submit:', error);
         }
-        formCleanup()
+        formCleanup(false)
     }
 
-    const submitChooser = (formData: FormData) => {
+    const submitChooser = (formData: CardProps) => {
         if (postData) {
             return handleEditFormSubmit(formData)
         } else {
@@ -340,9 +290,6 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                 country: postData.country,
                 postcode: postData.postcode
             })
-            // setValue('suburb', postData.suburb)
-            // setValue('postcode', postData.postcode)
-            // setValue('state', postData.state)
             setValue('type', postData.type)
             setValue('description', postData.description || null)
             setValue('pickUp', postData.pickUp);
@@ -361,7 +308,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
     return (
         <div className="md:flex justify-center">
             <div>
-                <form onSubmit={handleSubmit((data) => submitChooser(data as FormData))}>
+                <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))}>
                     <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-24 pb-24 pt-10">
                         <header className="mb-7">
                             <h1 className=" text-xl font-bold ">Profile</h1>
@@ -443,7 +390,7 @@ export default function PostForm({ postData, }: { postData: PostData | undefined
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            <OpeningHours setValue={setValue} register={register} watch={watch} errors={errors} setError={setError} clearErrors={clearErrors} />
+                            <OpeningHours register={register} watch={watch} errors={errors} />
                         </div>
                         <div className="flex mb-2">
                             <label >Choose up to 5 options that best describe your business:</label>

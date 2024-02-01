@@ -1,30 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
-
-type CardProps = {
-    imgUrl: string | null,
-    name: string,
-    suburb: string,
-    state: string,
-    postcode: string,
-    address: string,
-    type: string,
-    products: string,
-    description: string,
-    openingHours: [{
-        id: string;
-        day: ReactNode;
-        isOpen: string;
-        fromTime: ReactNode;
-        toTime: ReactNode;
-    }]
-    pickUp: boolean,
-    delivery: boolean,
-    dineIn: boolean,
-    contact: string
-}
-
+import { CardProps } from "../Types";
 
 export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, type, products, description, openingHours, contact, pickUp, delivery, dineIn }: CardProps) {
     const maxDescriptionHeight = 80; // Set your desired max height in pixels

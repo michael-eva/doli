@@ -1,14 +1,4 @@
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react";
-
-type OpeningHours = {
-    openingHours: [{
-        id: Key | null | undefined;
-        day: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
-        isOpen: string;
-        fromTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
-        toTime: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
-    }]
-}
+import { OpeningHours } from "../../Types";
 
 export default function DispOpeningHours({ openingHours }: OpeningHours) {
 
@@ -16,7 +6,6 @@ export default function DispOpeningHours({ openingHours }: OpeningHours) {
         <div className="mt-5 flex flex-col">
             <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                    {/* <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"> */}
                     <table className="min-w-full divide-y divide-gray-300">
                         <tbody className="bg-white">
                             {openingHours?.map((item, index: number) => (

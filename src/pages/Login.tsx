@@ -8,15 +8,8 @@ import ForgotPassword from "../components/ForgotPassword"
 import Toggle from "../components/Toggle/Toggle"
 import ToggleButton from "../components/Toggle/ToggleButton"
 import ToggleOn from "../components/Toggle/ToggleOn"
+import { MemberType } from "../Types"
 
-type Members = {
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    postcode: string,
-    suburb: string
-}
 
 type LoginData = {
     email: string,
@@ -31,7 +24,7 @@ export default function Login({ title }: LoginProps) {
     let navigate = useNavigate()
     const [isUser, setIsUser] = useState<string>("")
     const location = useLocation()
-    const [members, setMembers] = useState<Members[]>([])
+    const [members, setMembers] = useState<MemberType[]>([])
     const [loginError, setLoginError] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const { register, formState: { errors }, handleSubmit, reset } = useForm()

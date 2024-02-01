@@ -1,22 +1,15 @@
 import supabase from "../config/supabaseClient";
 import { useState, useEffect, useContext } from "react";
 import { ToggleContext } from "./Toggle/Toggle";
+import { MemberType } from "../Types";
 
-type Members = {
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    postcode: string,
-    suburb: string
-}
 export default function ForgotPassword() {
     const { toggle }: any = useContext(ToggleContext)
     const [isRecoverySubmitting, setIsRecoverySubmitting] = useState<boolean>(false)
     const [email, setEmail] = useState<string>('')
     const [success, setSuccess] = useState<boolean>(false)
     const [resetPasswordEmail, setResetPasswordEmail] = useState<string>("")
-    const [members, setMembers] = useState<Members[]>([])
+    const [members, setMembers] = useState<MemberType[]>([])
 
     useEffect(() => {
         const getUsers = async () => {

@@ -3,53 +3,8 @@ import supabase from "../config/supabaseClient"
 import { useUser } from "@supabase/auth-helpers-react"
 import { Card } from "../components/Card"
 import Loading from "../components/Loading"
+import { CardProps } from "../Types"
 
-type CardProps = {
-    locationData: {
-        altCountry: string,
-        altFormatted_address: string,
-        altPostcode: string,
-        altState: string,
-        altSuburb: string,
-        coordinates: {
-            latitude: number,
-            longitude: number,
-        },
-        country: string,
-        formatted_address: string,
-        state: string,
-        suburb: string,
-        streetAddress: string,
-        postcode: string
-    },
-    id: string,
-    postId: string,
-    imgUrl: string | null,
-    name: string,
-    locality: string,
-    state: string,
-    postcode: string,
-    address: string,
-    type: string,
-    selectedTags: [{
-        value: string,
-        label: string
-    }],
-    description: string,
-    openingHours: [{
-        id: string,
-        day: string,
-        isOpen: string,
-        fromTime: string,
-        toTime: string
-    }],
-    pickUp: boolean,
-    delivery: boolean,
-    dineIn: boolean,
-    contact: string,
-    website: string,
-    [key: string]: any;
-}
 export default function ManageListings() {
     const user = useUser()
     const [posts, setPosts] = useState<CardProps[]>([])

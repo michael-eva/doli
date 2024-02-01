@@ -10,66 +10,20 @@ import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
 import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
+import { CardProps, MemberType } from "../Types";
 
-type CardProps = {
-    locationData: {
-        altCountry: string,
-        altFormatted_address: string,
-        altPostcode: string,
-        altState: string,
-        altSuburb: string,
-        coordinates: {
-            latitude: number,
-            longitude: number,
-        },
-        country: string,
-        formatted_address: string,
-        state: string,
-        suburb: string,
-        streetAddress: string,
-        postcode: string
-    },
-    id: string,
-    postId: string,
-    imgUrl: string | null,
-    name: string,
-    locality: string,
-    state: string,
-    postcode: string,
-    address: string,
-    type: string,
-    selectedTags: [{
-        value: string,
-        label: string
-    }],
-    description: string,
-    openingHours: [{
-        id: string,
-        day: string,
-        isOpen: string,
-        fromTime: string,
-        toTime: string
-    }],
-    pickUp: boolean,
-    delivery: boolean,
-    dineIn: boolean,
-    contact: string,
-    website: string,
-    [key: string]: any;
-}
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
     const [posts, setPosts] = useState<CardProps[]>([])
     const [searchParams, setSearchParams] = useSearchParams()
     const typeFilter = searchParams.get("type")
-    // const deliveryFilter = searchParams.get("deliveryMethod")
     const searchFilter = searchParams.get("search")
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
     const { register } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
-    const [members, setMembers] = useState('')
+    const [members, setMembers] = useState<MemberType[]>()
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
@@ -77,12 +31,9 @@ export default function Home() {
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
-
     useEffect(() => {
         setIsLoading(true); // Set loading to true when fetching data
         getMembers()
-        // getLocations()
-        // getPosts()
         getCombinedData()
             .then(() => setIsLoading(false)) // Set loading to false once data is fetched
             .catch((error) => {
@@ -136,9 +87,8 @@ export default function Home() {
             console.error("Error fetching combined data:", error);
         }
     };
-
     const getMembers = async () => {
-        const { error, data }: any = await supabase
+        const { error, data } = await supabase
             .from("members")
             .select("*")
 
@@ -157,7 +107,6 @@ export default function Home() {
         }
         getCombinedData()
     }
-
     const genNewSearchParams = (key: string, value: string) => {
         const sp = new URLSearchParams(searchParams)
         if (value === null) {
@@ -168,10 +117,8 @@ export default function Home() {
         setSearchParams(`?${sp.toString()}`)
         setCurrentPage(1)
     }
-
     const containsSearchText = (text: string, searchTerm: string) =>
         text.toLowerCase().includes(searchTerm.toLowerCase());
-
     const filterOrders = () => {
         let filterPosts = [...posts];
 
@@ -189,7 +136,6 @@ export default function Home() {
 
         if (isChecked && nearbyFilter) {
             const [latitude, longitude] = nearbyFilter.split('+')
-
             filterPosts = filterPosts.filter((post) =>
                 isCoordinateWithinRadius(
                     { latitude: post.locationData?.coordinates?.latitude, longitude: post.locationData?.coordinates?.longitude },
@@ -221,15 +167,12 @@ export default function Home() {
 
         return paginatePage(currentPage, pageSize, filterPosts);
     };
-
-
     const paginatePage = (currentPage: number, pageSize: number, filterPosts: CardProps[]) => {
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         const paginatePage = filterPosts.slice(startIndex, endIndex);
         return paginatePage;
     };
-
     const isFilter = () => {
         if (typeFilter || searchFilter) {
             return true
@@ -331,7 +274,7 @@ export default function Home() {
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="text-xl" >Active Members:</p>
-                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{members.length} <span>Users</span></p>
+                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
                                     </div>
                                 </div>
                             </div>
