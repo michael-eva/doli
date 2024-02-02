@@ -11,6 +11,8 @@ import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
 import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
 import { CardProps, MemberType } from "../Types";
+import { RetrieveOwner } from "../seed/RetrieveOwner";
+import { useUser } from "@supabase/auth-helpers-react";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -28,6 +30,13 @@ export default function Home() {
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
 
+    const user = useUser();
+
+    useEffect(() => {
+        if (user) {
+            RetrieveOwner(user.email, user);
+        }
+    }, [user?.email]);
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
@@ -224,7 +233,7 @@ export default function Home() {
                                     <div className="flex flex-col">
                                         <div className=" mt-4">
                                             <label htmlFor="">Suburb</label>
-                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" includeNearby={isChecked} suburbAndPostcode={false} />
+                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" suburbAndPostcode={false} />
                                         </div>
                                         <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                             <input

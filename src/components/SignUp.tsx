@@ -121,6 +121,7 @@ export default function SignUp() {
     }
     const handleNewSubmit = async (data: SignUpType) => {
         const response = await signUpAndInsertData(data);
+
         if (response && !response.error) {
             supabase
                 .from("members")
