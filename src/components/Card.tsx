@@ -16,7 +16,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
     const isMobile = useMediaQuery({ maxWidth: 640 })
-    const truncatedDescription = description.slice(0, maxDescriptionHeight);
+    const truncatedDescription = description?.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = description.length > maxDescriptionHeight;
 
     const toggleDescription = () => {
@@ -40,7 +40,7 @@ export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, im
     }
 
     return (
-        <div className="card card-compact bg-base-100 shadow-xl " style={!isMobile ? { width: '300px' } : { width: "315px" }}>
+        <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "315px" }}>
 
             < img src={`${imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
             <div className="card-body p-4">
