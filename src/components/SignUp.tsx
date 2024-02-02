@@ -468,14 +468,14 @@ export default function SignUp() {
                                 />
                             </div> */}
                         </div>
-                        <Toggle>
+                        {user && <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
                                 Forgot Password?
                             </ToggleButton>
                             <ToggleOn>
                                 <ForgotPassword />
                             </ToggleOn>
-                        </Toggle>
+                        </Toggle>}
 
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
