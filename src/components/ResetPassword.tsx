@@ -44,8 +44,6 @@ function ResetPassword() {
         }
     }
 
-    console.log(errors.password);
-
     return (
         <>
             <form

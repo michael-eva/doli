@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost"
 import Wholesale from "./pages/Wholesale"
 import SeedForm from "./seed/SeedForm"
+import ResetPassword from "./components/ResetPassword"
 
 
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="specials" element={<Specials />} />
         <Route path="wholesale" element={<Wholesale />} />
+        <Route path="reset-password" element={<ResetPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
