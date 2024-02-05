@@ -302,7 +302,7 @@ export default function SignUp() {
                                 </div>}
                         </div>
 
-                        {!user && <div className="md:flex gap-3 mt-7 w-full mb-2">
+                        {!user && <div className="md:flex gap-3 md:mt-7 w-full mb-2">
                             <div className="flex flex-col md:w-1/2">
                                 <label>Password</label>
                                 <input
@@ -333,7 +333,7 @@ export default function SignUp() {
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthMonth', { required: 'Birth month is required' })}
                                 >
-                                    <option value="" disabled>- Select Month -</option>
+                                    <option disabled>- Select Month -</option>
                                     {months.map(month => (
                                         <option key={nanoid()} value={month}>{month}</option>
                                     ))}
@@ -348,7 +348,7 @@ export default function SignUp() {
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthYear', { required: 'Birth year is required' })}
                                 >
-                                    <option value="" disabled>- Select Year -</option>
+                                    <option disabled>- Select Year -</option>
                                     {years.map(year => (
                                         <option value={year} key={year}>{year}</option>
                                     ))}
@@ -366,7 +366,7 @@ export default function SignUp() {
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('gender', { required: 'Gender is required' })}
                                 >
-                                    <option value="" disabled>- Select Gender -</option>
+                                    <option disabled>- Select Gender -</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="non-binary">Non-binary</option>
@@ -468,14 +468,14 @@ export default function SignUp() {
                                 />
                             </div> */}
                         </div>
-                        <Toggle>
+                        {user && <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
                                 Forgot Password?
                             </ToggleButton>
                             <ToggleOn>
                                 <ForgotPassword />
                             </ToggleOn>
-                        </Toggle>
+                        </Toggle>}
 
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :

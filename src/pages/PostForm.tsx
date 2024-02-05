@@ -66,7 +66,8 @@ export default function PostForm({ postData, }: CardProps) {
         setIsChecked(!isChecked)
     }
     const CDNUrl = (imgPath: imgPath) => {
-        return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
+        return `${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/cover_images/` + imgPath.path
+        // return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
     }
     const formCleanup = (shouldSetVerifiedFalse: boolean) => {
         setDeliveryMethodError(false)

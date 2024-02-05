@@ -9,13 +9,15 @@ import About from "./pages/About"
 import Specials from "./pages/Specials"
 import PostForm from "./pages/PostForm"
 import AuthRequired from "./Auth/AuthRequired"
-import Validation from "./Jod/Validation"
 import JodRequired from "./Jod/JodRequired"
 import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost"
 import Wholesale from "./pages/Wholesale"
 import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
+import Dashboard from "./Jod/Dashboard"
+import Validation from "./Jod/Validation"
+import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 
 
 
@@ -32,7 +34,9 @@ function App() {
           <Route path="manage-listings" element={<ManageListings />} />
           <Route path="edit-post/:postId" element={<EditPost />} />
           <Route element={<JodRequired />} >
-            <Route path="validate-updates" element={<Validation />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="dashboard/validate" element={<Validation />} />
+            <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
           </Route>
           <Route path="seed" element={<SeedForm />} />
         </Route>

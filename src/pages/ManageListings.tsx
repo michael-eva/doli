@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { useUser } from "@supabase/auth-helpers-react"
 import { Card } from "../components/Card"
-import Loading from "../components/Loading"
 import { CardProps } from "../Types"
+import CardSkeleton from "../components/Loading/CardSkeleton"
 
 export default function ManageListings() {
     const user = useUser()
@@ -12,9 +12,8 @@ export default function ManageListings() {
     useEffect(() => {
         setIsLoading(true)
         if (user?.id) {
-            // getPosts()
             getCombinedData()
-            setIsLoading(false)
+
         }
     }, [user?.id])
 
@@ -57,6 +56,7 @@ export default function ManageListings() {
                     }));
 
                     // Set the merged data in the posts state
+                    setIsLoading(false)
                     setPosts(mergedData);
                 }
             }
@@ -80,7 +80,7 @@ export default function ManageListings() {
         if (posts?.length > 0) {
 
             return (
-                <div className="flex flex-wrap gap-4 max-w-7xl m-auto justify-start">
+                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
@@ -90,7 +90,8 @@ export default function ManageListings() {
                     })}
                 </div>
             )
-        } else return (
+        }
+        else return (
             <div className=" flex items-center text-2xl flex-col pt-10">
                 <p >No listings to display.</p>
                 <p >Post a listing to view it here.</p>
@@ -100,7 +101,15 @@ export default function ManageListings() {
 
     return (
         <>
-            {isLoading ? <Loading /> : cardsEl()
+            {isLoading ?
+                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
+                    {
+                        Array.from({ length: 2 }, (_, index) => (
+                            <CardSkeleton key={index} />
+                        ))
+                    }
+                </div>
+                : cardsEl()
             }
         </>
     )
