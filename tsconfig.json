@@ -25,7 +25,8 @@
   "include": [
     "src",
     "tailwind.config.js",
-    "@"
+    "@",
+    "netlify-functions"
   ],
   "references": [
     {
