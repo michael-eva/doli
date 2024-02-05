@@ -65,7 +65,7 @@ export default function NavBar() {
                     <li><NavLink to={'update-details'}>Update Details</NavLink></li>
                     <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
 
-                    {isJod && <li><NavLink to={'validate-updates'}>Validate Updates</NavLink></li>
+                    {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
                     <div className="divider" style={{ margin: '0' }}></div>
                     <li className=" text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>

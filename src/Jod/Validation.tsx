@@ -51,7 +51,6 @@ export default function Validation() {
     const [posts, setPosts] = useState<CardProps[]>([])
 
     useEffect(() => {
-        // getPosts()
         getCombinedData()
     }, [])
 
@@ -123,8 +122,7 @@ export default function Validation() {
     return (
         <>
             <div className=" flex justify-center gap-10">
-                <h3>Validation Page</h3>
-                <h3>Validations required: {posts.length}</h3>
+                {posts.length > 0 ? posts.length : <h1 className=" text-xl italic">No posts to be validated</h1>}
             </div>
             <div className=" max-w-7xl m-auto">
                 <div className="flex flex-wrap justify-evenly h-full">
