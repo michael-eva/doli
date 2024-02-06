@@ -5,4 +5,5 @@ export type MemberType = {
     birthMonth: string,
     birthYear: string,
     isJod: boolean,
+    isVerified: boolean
 }

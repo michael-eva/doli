@@ -24,6 +24,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+    const [hasUpdatedEmail, setHasUpdatedEmail] = useState<boolean>(false)
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
@@ -38,6 +39,21 @@ export default function SignUp() {
         state: "",
         country: "",
     });
+    const updateAuthEmail = async (email: string) => {
+        try {
+            const { error } = await supabase.auth.updateUser({
+                email: email,
+            });
+
+            if (error) {
+                console.error('Error updating email:', error.message);
+            } else {
+                console.log('Email updated successfully');
+            }
+        } catch (error) {
+            console.error('An unexpected error occurred:', error.message);
+        }
+    };
 
     const signUpAndInsertData = async (data: SignUpType) => {
         setIsSubmitting(true)
@@ -103,7 +119,7 @@ export default function SignUp() {
             .from("members")
             .update({
                 gender: data.gender,
-                email: data.email,
+                isVerified: false,
                 birthMonth: data.birthMonth,
                 birthYear: data.birthYear,
             })
@@ -115,13 +131,17 @@ export default function SignUp() {
         }
         updateLocationData()
         setIsSubmitting(false)
+        if (data.email != user?.email) {
+            updateAuthEmail(data.email)
+            navigate('/update-email')
+            return
+        }
         toast.success("Details updated successfully")
         navigate("/")
 
     }
     const handleNewSubmit = async (data: SignUpType) => {
         const response = await signUpAndInsertData(data);
-
         if (response && !response.error) {
             supabase
                 .from("members")
@@ -132,6 +152,7 @@ export default function SignUp() {
                     birthMonth: data.birthMonth,
                     birthYear: data.birthYear,
                     isJod: false,
+                    isVerified: false,
                 })
                 .single()
                 .then(
@@ -178,7 +199,7 @@ export default function SignUp() {
             }
             if (data) {
                 const { formatted_address, altFormatted_address, postcode, altPostcode, country, altCountry, suburb, altSuburb, state, altState } = await getLocationData()
-                setValue('email', data.email)
+                setValue('email', user?.email)
                 setValue('gender', data.gender)
                 setValue('birthMonth', data.birthMonth)
                 setValue('birthYear', data.birthYear)
@@ -276,12 +297,16 @@ export default function SignUp() {
                         <div className=" flex mt-7 items-center gap-3">
                             {user ? <div className="flex flex-col w-full">
                                 <label>Email</label>
+
                                 <input
                                     type="text"
                                     className="input input-bordered "
                                     {...register('email')}
-                                    disabled
                                 />
+                                {/* <div
+                                    className="btn btn-warning btn-xs w-32 mt-2"
+                                    onClick={() => setChangeEmail(!changeEmail)}
+                                >Update email</div> */}
                             </div>
                                 :
                                 <div className="flex flex-col w-full">

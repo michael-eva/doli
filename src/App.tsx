@@ -18,6 +18,7 @@ import ResetPassword from "./components/ResetPassword"
 import Dashboard from "./Jod/Dashboard"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
+import UpdateEmail from "./pages/UpdateEmail"
 
 
 
@@ -27,6 +28,7 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/update-email" element={<UpdateEmail />} />
         <Route element={<AuthRequired />}>
           <Route path="post-listing" element={<PostForm postData={undefined} />} />
           <Route path="manage-listings" element={<ManageListings />} />

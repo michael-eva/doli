@@ -13,9 +13,11 @@ import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
 import LocationSearch from "../components/Location/LocationSearch.tsx";
 import { CardProps, SelectedTags } from "../Types/index.ts"
-
-
-
+import Toggle from "../components/Toggle/Toggle.tsx";
+import ToggleButton from "../components/Toggle/ToggleButton.tsx";
+import ToggleOn from "../components/Toggle/ToggleOn.tsx";
+import SimpleModal from "../components/Modals/SimpleModal.tsx";
+import { FaInfoCircle } from "react-icons/fa";
 
 type imgPath = {
     path: string
@@ -67,7 +69,6 @@ export default function PostForm({ postData, }: CardProps) {
     }
     const CDNUrl = (imgPath: imgPath) => {
         return `${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/cover_images/` + imgPath.path
-        // return `https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/cover_images/` + imgPath.path
     }
     const formCleanup = (shouldSetVerifiedFalse: boolean) => {
         setDeliveryMethodError(false)
@@ -212,6 +213,8 @@ export default function PostForm({ postData, }: CardProps) {
             setDeliveryMethodError(true)
             return
         }
+        console.log(formData);
+
         setIsSubmitting(true)
         try {
             const postId = nanoid()
@@ -291,6 +294,7 @@ export default function PostForm({ postData, }: CardProps) {
                 country: postData.country,
                 postcode: postData.postcode
             })
+            setValue('adminEmail', postData.adminEmail)
             setValue('type', postData.type)
             setValue('description', postData.description || null)
             setValue('pickUp', postData.pickUp);
@@ -324,6 +328,41 @@ export default function PostForm({ postData, }: CardProps) {
                                 {...register("name", { required: "Business name is required" })}
                             />
                         </div>
+
+                        <div className="flex flex-col mb-5">
+                            <label htmlFor="">Author Email</label>
+                            <input
+                                type="text"
+                                value={user?.email}
+                                className="input input-bordered w-full max-w-xs"
+                                disabled
+                            />
+                        </div>
+                        <div className="flex flex-col mb-5">
+                            <div className="flex items-center gap-5">
+                                <label htmlFor="">Admin Email (optional)</label>
+                                <Toggle>
+                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                    <ToggleOn>
+                                        <SimpleModal title="doli" >Add an admin who can edit the post on the authors behalf.</SimpleModal>
+                                    </ToggleOn>
+                                </Toggle>
+                            </div>
+                            {errors.adminEmail && <p className=" text-red-600">*{errors.adminEmail.message?.toString()}</p>}
+                            <input
+                                type="text"
+                                className="input input-bordered w-full max-w-xs"
+                                {...register("adminEmail")}
+                            />
+                            <div>
+                                {watch('adminEmail') && <button
+                                    className=" btn btn-error btn-xs" onClick={() => setValue("adminEmail", null)}
+                                >Remove admin</button>}
+                            </div>
+                        </div>
+
+                        <div className="divider "></div>
+
                         <div className="flex flex-col mb-5">
                             <label> Select Type:</label>
                             {errors.type && <p className=" text-red-600">*{errors.type.message?.toString()}</p>}
