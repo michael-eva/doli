@@ -24,7 +24,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
-    const [hasUpdatedEmail, setHasUpdatedEmail] = useState<boolean>(false)
+
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
@@ -83,6 +83,8 @@ export default function SignUp() {
                 altSuburb: secondaryLocation.suburb,
                 postcode: primaryLocation.postcode,
                 altPostcode: secondaryLocation.postcode,
+                coordinates: primaryLocation.coordinates,
+                altCoordinates: secondaryLocation.coordinates
             })
             .single()
         if (error) {
@@ -104,6 +106,9 @@ export default function SignUp() {
                 altPostcode: secondaryLocation.postcode,
                 formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
                 altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
+                coordinates: primaryLocation.coordinates,
+                altCoordinates: secondaryLocation.coordinates
+
             })
             .eq('userId', user?.id)
             .single()
@@ -425,13 +430,14 @@ export default function SignUp() {
                                 <LocationSearch
                                     types={['locality']}
                                     placeholder="Start typing in a suburb"
-                                    onSelect={(address, postcode, suburb, state, country) => {
+                                    onSelect={(address, postcode, suburb, state, country, coordinates) => {
                                         setPrimaryLocation({
                                             address,
                                             postcode,
                                             suburb,
                                             state,
                                             country,
+                                            coordinates,
                                         });
                                     }}
                                     suburbAndPostcode={true}
@@ -452,13 +458,14 @@ export default function SignUp() {
                                 <LocationSearch
                                     types={['locality']}
                                     placeholder="Start typing in a suburb"
-                                    onSelect={(address, postcode, suburb, state, country) => {
+                                    onSelect={(address, postcode, suburb, state, country, coordinates) => {
                                         setSecondaryLocation({
                                             address,
                                             postcode,
                                             suburb,
                                             state,
                                             country,
+                                            coordinates,
                                         });
                                     }}
                                     suburbAndPostcode={true}

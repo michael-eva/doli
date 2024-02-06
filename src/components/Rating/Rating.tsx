@@ -7,22 +7,54 @@ import StarRatings from 'react-star-ratings';
 import CustomModal from '../Modals/CustomModal';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import Login from '../../pages/Login';
+import { isCoordinateWithinRadius } from '../Location/locationHelpers';
 
 type NameType = {
     name: string
     postId: string
-    user: any
+    user: any,
+    coordinates: {
+        latitude: number,
+        longitude: number
+    }
 }
 type RatingsType = {
     id: number,
     userId: string,
     rating: number,
     postId: string,
+    isLocal: boolean
 }
-export default function RatingComp({ name, postId, user }: NameType) {
+export default function RatingComp({ name, postId, user, coordinates }: NameType) {
     const [userRating, setUserRating] = useState<number>(0);
     const [ratings, setRating] = useState<RatingsType[]>()
     const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
+    const [isLocal, setIsLocal] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (user) {
+            getMemberCoordinates()
+        }
+    }, [user])
+
+    const getMemberCoordinates = async () => {
+        const { data, error } = await supabase
+            .from("locations")
+            .select("coordinates, altCoordinates")
+            .eq("userId", user?.id)
+            .single()
+
+        if (error) {
+            console.error(error);
+        }
+        if (data) {
+            setIsLocal(
+                isCoordinateWithinRadius({ latitude: data?.altCoordinates?.latitude, longitude: data?.altCoordinates?.longitude }
+                    , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 5000) || isCoordinateWithinRadius({ latitude: data?.coordinates.latitude, longitude: data?.coordinates.longitude }
+                        , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 5000)
+            )
+        }
+    }
 
     const handleStarClick = (rating: number) => {
         setUserRating(rating);
@@ -48,7 +80,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
         if (!hasRated) {
             const { error } = await supabase
                 .from("ratings")
-                .insert({ rating: userRating, postId: postId, userId: user.id })
+                .insert({ rating: userRating, postId: postId, userId: user.id, isLocal: isLocal })
 
             if (error) {
                 console.log(error);
@@ -56,7 +88,7 @@ export default function RatingComp({ name, postId, user }: NameType) {
         }
         setRatingSubmitted(true);
     }
-    const filteredRatings = ratings?.filter(rating => rating.postId === postId);
+    const filteredRatings = ratings?.filter(rating => rating.postId === postId && rating.isLocal === true);
     const displayRating = () => {
         if (filteredRatings && filteredRatings.length > 0) {
             const averageRating =
@@ -117,7 +149,6 @@ export default function RatingComp({ name, postId, user }: NameType) {
             }
         }
     }
-
 
     return (
         <div className="mt-3">

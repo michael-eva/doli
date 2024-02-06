@@ -19,20 +19,34 @@ export default function ManageListings() {
 
     const getCombinedData = async () => {
         try {
+            setIsLoading(true);
+            if (!user?.id && !user?.email) return;
+
             // Fetch posts data
-            const { data: postsData, error: postsError } = await supabase
+            const { data: userPostsData, error: userPostsError } = await supabase
                 .from("posts")
                 .select("*")
-                .eq("id", user?.id)
+                .eq("id", user?.id);
 
-            if (postsError) {
-                console.error("Error fetching posts data:", postsError);
+            if (userPostsError) {
+                console.error("Error fetching user posts data:", userPostsError);
             }
 
-            if (postsData) {
-                // Process posts data
+            // Fetch posts data where adminEmail matches user's email
+            const { data: adminPostsData, error: adminPostsError } = await supabase
+                .from("posts")
+                .select("*")
+                .eq("adminEmail", user?.email);
 
-                const parsedPostsData = postsData.map((post) => ({
+            if (adminPostsError) {
+                console.error("Error fetching admin posts data:", adminPostsError);
+            }
+
+            const allPostsData = [...(userPostsData || []), ...(adminPostsData || [])];
+
+            if (allPostsData.length > 0) {
+                // Process posts data...
+                const parsedPostsData = allPostsData.map((post) => ({
                     ...post,
                     selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
                     openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
@@ -41,8 +55,7 @@ export default function ManageListings() {
                 // Fetch locations data
                 const { data: locationsData, error: locationsError } = await supabase
                     .from("locations")
-                    .select("*")
-                // .eq("userId", user?.id)
+                    .select("*");
 
                 if (locationsError) {
                     console.error("Error fetching locations data:", locationsError);
@@ -56,14 +69,18 @@ export default function ManageListings() {
                     }));
 
                     // Set the merged data in the posts state
-                    setIsLoading(false)
+                    setIsLoading(false);
                     setPosts(mergedData);
                 }
+            } else {
+                setIsLoading(false);
+                setPosts([]);
             }
         } catch (error) {
             console.error("Error fetching combined data:", error);
         }
     };
+
     const deletePost = async (postId: string) => {
         const { error } = await supabase
             .from("posts")

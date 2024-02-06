@@ -64,7 +64,9 @@ export default function LocationSearch({
 
         getGeocode({ address: suggestion.description }).then((results) => {
             const firstResult = results[0];
+
             const { lat, lng } = firstResult.geometry.location;
+
 
             const addressComponents: AddressComponent[] =
                 results[0].address_components;
