@@ -19,7 +19,6 @@ export function Card(props: CardProps, handleSubmit: any) {
     const isMobile = useMediaQuery({ maxWidth: 640 })
     const truncatedDescription = props.description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = props.description.length > maxDescriptionHeight;
-    console.log(props.adminEmail === user?.email);
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -72,7 +71,7 @@ export function Card(props: CardProps, handleSubmit: any) {
                     </button>
                 )}
                 <div className="pb-3">
-                    <RatingComp name={props.name} postId={props.postId!} user={user} />
+                    <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
                 </div>
                 <p className=" text-md font-bold">Operating hours:</p>
                 <DispOpeningHours openingHours={props.openingHours!} />

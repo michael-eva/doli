@@ -49,7 +49,6 @@ async function deleteOldLocationData(postId: string) {
 
 export async function RetrieveOwner(email: string | undefined, user: any) {
     const newPostId = nanoid()
-    //get matching posts
     const { data: postsData, error: postsError } = await supabase
         .from("posts")
         .select("*")
@@ -58,6 +57,9 @@ export async function RetrieveOwner(email: string | undefined, user: any) {
         .single();
 
     if (postsError) {
+        if (postsError.code === 'PGRST116') {
+            return
+        }
         console.error("Error fetching posts data:", postsError);
         return;
     }
@@ -74,7 +76,8 @@ export async function RetrieveOwner(email: string | undefined, user: any) {
             ...postsData,
             id: user?.id,
             postId: newPostId,
-            hasOwner: true
+            hasOwner: true,
+            adminEmail: null
         });
 
     if (insertError) {

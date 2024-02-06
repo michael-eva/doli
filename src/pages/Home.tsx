@@ -32,11 +32,8 @@ export default function Home() {
 
     const user = useUser();
 
+
     useEffect(() => {
-        const isVerified = members?.filter(member => (member.isVerified === false && member.id === user?.id))
-        if (!isVerified) {
-            verifyUser()
-        }
         if (user) {
             RetrieveOwner(user.email, user);
         }
@@ -55,6 +52,8 @@ export default function Home() {
             });
 
     }, [typeFilter, locationFilter, searchFilter]);
+
+
 
     const getCombinedData = async () => {
         try {
@@ -130,23 +129,20 @@ export default function Home() {
 
     // fetchData();
 
+    const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
+    if (!isVerified) {
+        const verifyUser = async () => {
+            const { error } = await supabase
+                .from("members")
+                .update({ isVerified: true, email: user?.email })
+                .eq("id", user?.id)
 
-    // ** First Sign in **
-
-    // if authed user matches member and member.isVerified === false,
-    // set isVerified true.
-
-    const verifyUser = async () => {
-        const { error } = await supabase
-            .from("members")
-            .update({ isVerified: true, email: user?.email })
-            .eq("id", user?.id)
-
-        if (error) {
-            console.error(error);
+            if (error) {
+                console.error(error);
+            }
         }
+        verifyUser()
     }
-
     const deletePost = async (postId: string) => {
         const { error } = await supabase
             .from("posts")
