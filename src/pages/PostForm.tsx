@@ -288,7 +288,7 @@ export default function PostForm({ postData, }: CardProps) {
             setValue('name', postData.name)
             setSelectedLocation({
                 coordinates: postData.coordinates,
-                address: postData.formatted_address,
+                address: postData.streetAddress,
                 suburb: postData.suburb,
                 state: postData.state,
                 country: postData.country,

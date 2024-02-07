@@ -64,6 +64,7 @@ export default function LocationSearch({
 
         getGeocode({ address: suggestion.description }).then((results) => {
             const firstResult = results[0];
+            console.log(suggestion.structured_formatting.main_text);
 
             const { lat, lng } = firstResult.geometry.location;
 
@@ -91,7 +92,8 @@ export default function LocationSearch({
             );
             if (onSelect) {
                 onSelect(
-                    suggestion.description,
+                    // suggestion.description,
+                    suggestion.structured_formatting.main_text,
                     postalCodeComponent ? postalCodeComponent.long_name : "",
                     suburbComponent ? suburbComponent.long_name : "",
                     stateComponent ? stateComponent?.short_name : "",
