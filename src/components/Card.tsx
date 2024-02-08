@@ -10,7 +10,7 @@ import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 import { CardProps } from "../Types";
 
-export function Card(props: CardProps, handleSubmit: any) {
+export function Card({ handleSubmit, ...props }: CardProps) {
     // export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
 
     const maxDescriptionHeight = 80;
