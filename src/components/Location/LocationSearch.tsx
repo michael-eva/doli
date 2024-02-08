@@ -155,7 +155,7 @@ export default function LocationSearch({
                     onChange={handleInput}
                     disabled={!ready}
                     placeholder={placeholder}
-                    className="input input-bordered"
+                    className=" border-2 rounded p-3"
                 />
             </div>
             {displaySuggestions()}

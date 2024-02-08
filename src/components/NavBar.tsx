@@ -30,14 +30,14 @@ export default function NavBar() {
             console.error('Error:', error.message);
         }
     };
-    function postListingEl() {
+    // function postListingEl() {
 
-        if (user) {
-            return <NavLink to='/post-listing'>Post a Listing</NavLink>;
-        } else {
-            return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
-        }
-    }
+    //     if (user) {
+    //         return <NavLink to='/post-listing'>Post a Listing</NavLink>;
+    //     } else {
+    //         return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
+    //     }
+    // }
     function specialsEl() {
         if (user) {
             return <NavLink to='/specials'>Specials</NavLink>;
@@ -64,7 +64,7 @@ export default function NavBar() {
                 <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><NavLink to={'update-details'}>Update Details</NavLink></li>
                     <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
-
+                    <li><NavLink to={'post-listing'}>Register Business</NavLink></li>
                     {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
                     <div className="divider" style={{ margin: '0' }}></div>
@@ -107,7 +107,7 @@ export default function NavBar() {
             <div className="navbar-center hidden md:flex">
                 <ul className="menu menu-horizontal px-1 ">
                     <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
-                    <li className="text-xl ">{postListingEl()}</li>
+                    {/* <li className="text-xl ">{postListingEl()}</li> */}
                     <li className="text-xl"><NavLink to='/about'>About</NavLink></li>
                     <li className="text-xl">{specialsEl()}</li>
                     <li className="text-xl">{wholesaleEl()}</li>
@@ -123,7 +123,7 @@ export default function NavBar() {
                                     <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
                                     <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                                         <li><NavLink to='/'>Home</NavLink></li>
-                                        <li>{postListingEl()}</li>
+                                        {/* <li>{postListingEl()}</li> */}
                                         <li ><NavLink to='/about'>About</NavLink></li>
                                         <li>{specialsEl()}</li>
                                         <li>{wholesaleEl()}</li>
@@ -138,7 +138,7 @@ export default function NavBar() {
                                 <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
                                 <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                                     <li><NavLink to='/'>Home</NavLink></li>
-                                    <li>{postListingEl()}</li>
+                                    {/* <li>{postListingEl()}</li> */}
                                     <li ><NavLink to='/about'>About</NavLink></li>
                                     <li>{specialsEl()}</li>
                                     <li>{wholesaleEl()}</li>
