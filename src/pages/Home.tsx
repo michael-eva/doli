@@ -314,7 +314,7 @@ export default function Home() {
                                 <label> Select Type:</label>
                                 <select
                                     {...register('type')}
-                                    className=" border-2 p-3 rounded"
+                                    className=" border-2 p-3 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams('type', e.target.value)}
                                     value={typeFilter || ""}
                                 >
@@ -330,7 +330,7 @@ export default function Home() {
                                 <label htmlFor="">Select Delivery Method:</label>
                                 <select
                                     name="deliveryMethod"
-                                    className="border-2 p-3 rounded"
+                                    className="border-2 p-3 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
                                     value={deliveryFilter || ""}
                                 >
