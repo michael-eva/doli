@@ -22,6 +22,7 @@ export default function LocationSearch({
     inputClear,
     setInputClear,
     suburbAndPostcode,
+    className,
 }: LocationSearchProps) {
     const [postcode, setPostcode] = useState<string>("");
     const {
@@ -155,7 +156,7 @@ export default function LocationSearch({
                     onChange={handleInput}
                     disabled={!ready}
                     placeholder={placeholder}
-                    className=" border-2 rounded p-3"
+                    className={className}
                 />
             </div>
             {displaySuggestions()}

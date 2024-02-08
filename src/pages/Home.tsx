@@ -286,7 +286,7 @@ export default function Home() {
                             <div className="flex flex-col">
                                 <div className=" mt-4">
                                     <label htmlFor="">Suburb</label>
-                                    <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" suburbAndPostcode={false} />
+                                    <LocationSearch className="border-2 p-2 rounded" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" suburbAndPostcode={false} />
                                 </div>
                                 <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                     <input
