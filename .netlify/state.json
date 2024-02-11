@@ -1,0 +1,20 @@
+{
+	"siteId": "664d632f-8742-4a51-b7af-694c9dead199",
+	"geolocation": {
+		"data": {
+			"city": "Perth",
+			"country": {
+				"code": "AU",
+				"name": "Australia"
+			},
+			"subdivision": {
+				"code": "WA",
+				"name": "Western Australia"
+			},
+			"timezone": "Australia/Perth",
+			"latitude": -32.0301,
+			"longitude": 115.973
+		},
+		"timestamp": 1707114974913
+	}
+}
