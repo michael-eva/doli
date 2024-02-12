@@ -545,7 +545,7 @@ export default function PostForm({ postData, }: CardProps) {
 
                         <div className="divider"></div>
                         <label htmlFor="">Address</label>
-                        <LocationSearch onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
+                        <LocationSearch className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :

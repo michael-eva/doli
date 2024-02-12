@@ -440,6 +440,7 @@ export default function SignUp() {
                                             coordinates,
                                         });
                                     }}
+                                    className="input input-bordered"
                                     suburbAndPostcode={true}
                                     signUpData={primaryLocation}
                                 />
@@ -468,6 +469,7 @@ export default function SignUp() {
                                             coordinates,
                                         });
                                     }}
+                                    className="input input-bordered"
                                     suburbAndPostcode={true}
                                     signUpData={secondaryLocation}
                                 />
