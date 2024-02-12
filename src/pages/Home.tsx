@@ -53,15 +53,14 @@ export default function Home() {
 
     }, [typeFilter, locationFilter, searchFilter]);
 
-
-
     const getCombinedData = async () => {
         try {
             // Fetch posts data
             const { data: postsData, error: postsError } = await supabase
                 .from("posts")
                 .select("*")
-                .eq("isVerified", true);
+                .eq("isVerified", true)
+                .order("created_at", { ascending: false });
 
             if (postsError) {
                 console.error("Error fetching posts data:", postsError);
