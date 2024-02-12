@@ -13,6 +13,7 @@ import { isCoordinateWithinRadius } from "../components/Location/locationHelpers
 import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
+import { FaMapPin } from "react-icons/fa";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -22,6 +23,7 @@ export default function Home() {
     const searchFilter = searchParams.get("search")
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
+    const deliveryFilter = searchParams.get("deliveryMethod")
     const { register } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -170,7 +172,9 @@ export default function Home() {
         if (typeFilter && typeFilter !== "all") {
             filterPosts = filterPosts.filter((post) => post.type === typeFilter);
         }
-
+        if (deliveryFilter && deliveryFilter !== "all") {
+            filterPosts = filterPosts.filter(post => post[deliveryFilter] === true)
+        }
         if (!isChecked && locationFilter) {
             const lowercaseLocationFilter = locationFilter.toLowerCase();
             filterPosts = filterPosts.filter((post) => {
@@ -219,7 +223,7 @@ export default function Home() {
         return paginatePage;
     };
     const isFilter = () => {
-        if (typeFilter || searchFilter) {
+        if (typeFilter || searchFilter || deliveryFilter) {
             return true
         }
         else return false
@@ -229,7 +233,7 @@ export default function Home() {
     };
 
     const searchItemLength = () => {
-        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter || nearbyFilter) {
+        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter || nearbyFilter || deliveryFilter) {
             return filterOrders().length
         }
         return posts.length
@@ -259,97 +263,113 @@ export default function Home() {
                     </div>
                 }
                 {!isMobile &&
-                    <div className="flex">
-                        <div className="w-1/3">
-                            <img src="images/doli_logo.PNG" alt="" width={300} style={{ minHeight: "200px", minWidth: '200px' }} height={300} />
-                        </div>
-                        <div className="flex w-2/3">
-                            <div className="flex flex-col justify-around">
-                                <div className="flex gap-10">
-                                    <div className="flex flex-col">
-                                        <div className=" mt-4">
-                                            <label htmlFor="">Suburb</label>
-                                            <LocationSearch setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Start typing in a suburb" suburbAndPostcode={false} />
-                                        </div>
-                                        <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
-                                            <input
-                                                type='checkbox'
-                                                name='autoSaver'
-                                                className='sr-only'
-                                                checked={isChecked}
-                                                onChange={handleCheckboxChange}
-                                            />
-                                            <span
-                                                className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
-                                                    }`}
-                                            >
-                                                <span
-                                                    className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
-                                                        }`}
-                                                ></span>
-                                            </span>
-                                            <span className='label flex items-center text-sm font-medium text-black'>
-                                                Include Nearby Locations
-                                            </span>
-                                        </label>
-                                    </div>
-                                    <div className="flex flex-col mt-4 dropdown-bottom w-72">
-                                        <label> Select Type:</label>
-                                        <select
-                                            {...register('type')}
-                                            className="select select-bordered"
-                                            onChange={(e) => genNewSearchParams('type', e.target.value)}
-                                            value={typeFilter || ""}
-                                        >
-                                            <option value="all" >All Types</option>
-                                            {businessType.map(item => (
-                                                <option
-                                                    key={item}
-                                                    value={item}>{item}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                {nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto" onClick={clearFilters}>Clear filters</button> : ""}
-                                <div className="divider "></div>
-                                <div className="flex justify-center gap-10">
-                                    <div className="flex flex-col w-72">
-                                        <p className="text-xl" >Search Results:</p>
-                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p className="text-xl" >Active Members:</p>
-                                        <p className=" text-xl py-2" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
-                                    </div>
-                                </div>
-                            </div>
+                    <>
 
-                            {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                            <label htmlFor="">Select Delivery Method:</label>
-                            <select
-                                name="deliveryMethod"
-                                className="select select-bordered"
-                                onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
-                                value={deliveryFilter || ""}
-                            >
-                                <option value="all" selected>All Methods</option>
-                                <option value="delivery" >Delivery</option>
-                                <option value="dineIn" >Dine-In</option>
-                                <option value="pickUp" >Pick-Up</option>
-                            </select>
-                        </div> */}
-                            {/* <div className="flex flex-col mt-4">
-                            <label htmlFor="">Enter Search Term:</label>
-                            <input type="text"
-                                className="input input-bordered w-72"
-                                placeholder='Beer'
-                                {...register("search")}
-                                onChange={(e) => genNewSearchParams("search", e.target.value)}
-                                value={searchFilter || ""}
-                            />
-                        </div> */}
-                        </div >
-                    </div>}
+
+
+                        <div className="flex items-center ">
+                            <div className="w-1/3 ml-11">
+                                {/* <div className=" border-4 shadow-xl p-6 rounded flex flex-col items-center "> */}
+                                <div className=" rounded flex flex-col items-center ">
+                                    <h2 className=" text-5xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
+                                    <p className=" text-2xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
+                                </div>
+
+                            </div>
+                            {/* <div className="w-1/3">
+                                <img src="images/cropped_logo.png" alt="" width={350} style={{ minHeight: "200px", minWidth: '200px' }} />
+                            </div> */}
+                            <div className="flex w-1/3 items-center justify-center">
+                                <div className="flex flex-col">
+                                    <p className="text-xl font-bold font-raleway" >Search Results:</p>
+                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
+                                </div>
+                                {/* <div className="flex flex-col">
+                                    <p className=" text-xl py-2 font-bold" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
+                                </div> */}
+                            </div>
+                            <div className="w-1/3 flex justify-center">
+                                <img src="images/cropped_logo.png" alt="" width={350} style={{ minHeight: "200px", minWidth: '200px' }} />
+                            </div>
+                            {/* <div className="w-1/3 items-center flex justify-center">
+                                <Carousel />
+                            </div> */}
+                        </div>
+                        <div className="flex gap-10 justify-center mt-10">
+                            <div className="flex flex-col">
+                                <div className=" mt-4 mb-4">
+                                    <LocationSearch className="border-2 p-2 rounded" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
+                                </div>
+                                <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+                                    <input
+                                        type='checkbox'
+                                        name='autoSaver'
+                                        className='sr-only'
+                                        checked={isChecked}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span
+                                        className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+                                            }`}
+                                    >
+                                        <span
+                                            className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
+                                                }`}
+                                        ></span>
+                                    </span>
+                                    <span className='label flex items-center text-sm font-medium text-black'>
+                                        Include Nearby Locations
+                                    </span>
+                                </label>
+                            </div>
+                            <div className="flex flex-col mt-4 dropdown-bottom w-72">
+                                {/* <label> Select Type:</label> */}
+                                <select
+                                    {...register('type')}
+                                    className=" border-2 p-3 rounded cursor-pointer"
+                                    onChange={(e) => genNewSearchParams('type', e.target.value)}
+                                    value={typeFilter || ""}
+                                >
+                                    <option value="all">Select Type of Business</option>
+                                    {businessType.map(item => (
+                                        <option
+                                            key={item}
+                                            value={item}>{item}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                                {/* <label htmlFor="">Select Delivery Method:</label> */}
+                                <select
+                                    name="deliveryMethod"
+                                    className="border-2 p-3 rounded cursor-pointer"
+                                    onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
+                                    value={deliveryFilter || ""}
+                                >
+                                    <option value="all" selected>Select Delivery Method</option>
+                                    <option value="delivery" >Delivery</option>
+                                    <option value="dineIn" >Dine-In</option>
+                                    <option value="pickUp" >Pick-Up</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col mt-4">
+                                {/* <label htmlFor="">Enter Search Term:</label> */}
+                                <input type="text"
+                                    className="border-2 p-3 rounded w-72"
+                                    placeholder='General Search'
+                                    {...register("search")}
+                                    onChange={(e) => genNewSearchParams("search", e.target.value)}
+                                    value={searchFilter || ""}
+                                />
+                            </div>
+                        </div>
+                        {/* </div> */}
+                        <div className=" flex justify-center">
+                            {deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-md btn-error w-36" onClick={clearFilters}>Clear filters</button> : ""}
+                        </div>
+                        <div className="divider "></div>
+                    </>
+                }
                 <p className={`${isMobile ? "px-7" : ""}`}>
                     {startIndex} - {endIndex} of {searchItemLength()} results
                 </p>
@@ -377,7 +397,32 @@ export default function Home() {
                         ) : null}
                 </div>
                 {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
-            </div>
+            </div >
         </>
     );
 }
+
+{/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                            <label htmlFor="">Select Delivery Method:</label>
+                            <select
+                                name="deliveryMethod"
+                                className="select select-bordered"
+                                onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
+                                value={deliveryFilter || ""}
+                            >
+                                <option value="all" selected>All Methods</option>
+                                <option value="delivery" >Delivery</option>
+                                <option value="dineIn" >Dine-In</option>
+                                <option value="pickUp" >Pick-Up</option>
+                            </select>
+                        </div> */}
+{/* <div className="flex flex-col mt-4">
+                            <label htmlFor="">Enter Search Term:</label>
+                            <input type="text"
+                                className="input input-bordered w-72"
+                                placeholder='Beer'
+                                {...register("search")}
+                                onChange={(e) => genNewSearchParams("search", e.target.value)}
+                                value={searchFilter || ""}
+                            />
+                        </div> */}
