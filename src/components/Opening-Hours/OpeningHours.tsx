@@ -14,6 +14,7 @@ export default function OpeningHours({ register, errors, watch }: OpeningHours) 
                 times.push(`${formattedHour}:${formattedMinute}`);
             }
         }
+        times.push("Late")
         return times;
     }
 
