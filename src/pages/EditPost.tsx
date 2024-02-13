@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useParams } from "react-router";
-import PostForm from "./PostForm";
+import PostForm from "../components/PostForm/PostForm";
 import { CardProps } from "../Types";
 
 export default function EditPost() {

@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react"
-import transformedTags from '../data/tags.ts'
+import transformedTags from '../../data/tags.ts'
 import { useUser } from "@supabase/auth-helpers-react";
-import businessType from "../data/businessTypes.json"
+import businessType from "../../data/businessTypes.json"
 import { useForm } from "react-hook-form"
-import supabase from "../config/supabaseClient.ts";
-import { PreviewCard } from "../components/PreviewCard.tsx";
+import supabase from "../../config/supabaseClient.ts";
+import { PreviewCard } from "../PreviewCard.tsx";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
-import OpeningHours from "../components/Opening-Hours/OpeningHours.tsx"
+import OpeningHours from "../Opening-Hours/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
-import LocationSearch from "../components/Location/LocationSearch.tsx";
-import { CardProps, OpeningHoursType, SelectedTags } from "../Types/index.ts"
-import Toggle from "../components/Toggle/Toggle.tsx";
-import ToggleButton from "../components/Toggle/ToggleButton.tsx";
-import ToggleOn from "../components/Toggle/ToggleOn.tsx";
-import SimpleModal from "../components/Modals/SimpleModal.tsx";
+import LocationSearch from "../Location/LocationSearch.tsx";
+import { CardProps, SelectedTags } from "../../Types/index.ts"
+import Toggle from "../Toggle/Toggle.tsx";
+import ToggleButton from "../Toggle/ToggleButton.tsx";
+import ToggleOn from "../Toggle/ToggleOn.tsx";
+import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
+import { determineVerificationStatus, handleErrors, countChars } from "./Functions.ts";
 
 type imgPath = {
     path: string
@@ -41,7 +42,8 @@ export default function PostForm({ postData, }: CardProps) {
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
-    const [error, setError] = useState<string>('')
+    const [openingHoursError, setOpeningHoursError] = useState<string>("")
+    const [locationError, setLocationError] = useState<boolean>(false)
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
         coordinates: "",
         address: "",
@@ -131,37 +133,43 @@ export default function PostForm({ postData, }: CardProps) {
             console.error('Error updating imgUrl:', updateError);
         }
     };
-    const countChars = (name: string) => {
-        const watchValue = getValues(name)
-        const inputLength = watchValue?.length
-        return inputLength
-    }
 
-
-    const determineVerificationStatus = (formData: CardProps, postData?: CardProps) => {
-        if (postData?.isVerified === false) {
+    function handleFormErrors(formData, selectedLocation) {
+        const { isDeliveryMethod, hasOpeningHours, hasSelectedLocation } = handleErrors({ delivery: watch().delivery, dineIn: watch().dineIn, pickUp: watch().pickUp }, { openingHours: formData.openingHours }, selectedLocation)
+        setDeliveryMethodError(false)
+        setLocationError(false)
+        setOpeningHoursError("")
+        if (!isDeliveryMethod) {
+            setDeliveryMethodError(true)
             return false
         }
-        const isNameChanged = formData.name !== postData?.name;
-        const isDescriptionChanged = formData.description !== postData?.description;
-        const isImageChanged = formData.imgUrl && formData.imgUrl.length > 0;
-        return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
-    };
+        if (hasOpeningHours?.hasOpenDays === false) {
+            setOpeningHoursError("*No opening days have been selected.")
+            return false
+        }
+        if (hasOpeningHours?.validOpeningTimes === false) {
+            setOpeningHoursError("Cannot have both opening and closing times set to '00:00.'")
+            return false
+        }
+        if (!hasSelectedLocation) {
+            setLocationError(true)
+            return false
+        }
+        return true
+    }
+
     const handleEditFormSubmit = async (formData: CardProps) => {
-        const openingHoursArray = formData.openingHours
-        hasOpeningHours(openingHoursArray)
-        setDeliveryMethodError(false)
-        if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
-            setDeliveryMethodError(true)
+        const noErrors = handleFormErrors(formData, { selectedLocation: postData.locationData.postcode })
+        if (!noErrors) {
             return
         }
         setIsSubmitting(true);
-
         const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
+
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: openingHoursArray })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -211,25 +219,10 @@ export default function PostForm({ postData, }: CardProps) {
         setIsSubmitting(false);
         formCleanup(shouldSetVerifiedFalse)
     }
-    const hasOpeningHours = (openingHours: OpeningHoursType[] | undefined) => {
-        for (const item of openingHours!) {
-            if (item.isOpen === 'open') {
-                if (item.fromTime === '00:00' && item.toTime === '00:00') {
-                    setError("*Opening Hours are invalid - opening and closing hours cannot be 00:00")
-                    return
-                }
-                return setError("")
-            }
-            setError("*No opening hours listed")
-            return
-        }
-    }
+
     const handleNewFormSubmit = async (formData: CardProps) => {
-        const openingHoursArray = formData.openingHours
-        hasOpeningHours(openingHoursArray)
-        setDeliveryMethodError(false)
-        if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
-            setDeliveryMethodError(true)
+        const noErrors = handleFormErrors(formData, { selectedLocation: selectedLocation.postcode })
+        if (!noErrors) {
             return
         }
         setIsSubmitting(true)
@@ -237,7 +230,7 @@ export default function PostForm({ postData, }: CardProps) {
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: openingHoursArray })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: formData.openingHours })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
@@ -299,7 +292,6 @@ export default function PostForm({ postData, }: CardProps) {
             return handleNewFormSubmit(formData)
         }
     }
-    //fetching data from db and setting the value to display when editing form
     useEffect(() => {
         if (postData) {
             setValue('name', postData.name)
@@ -409,8 +401,8 @@ export default function PostForm({ postData, }: CardProps) {
                             </textarea>
                             <div className="label">
                                 <span className="label-text-alt"></span>
-                                <span className={countChars("description") >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
-                                    {countChars("description") || 0}/500
+                                <span className={countChars(getValues("description")) >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
+                                    {countChars(getValues("description")) || 0}/500
                                 </span>
 
                             </div>
@@ -447,8 +439,8 @@ export default function PostForm({ postData, }: CardProps) {
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
-                            {error && <div className=" text-red-600 mt-5">
-                                {error}
+                            {openingHoursError && <div className=" text-red-600 mt-5">
+                                {openingHoursError}
                             </div>}
                             <OpeningHours register={register} watch={watch} errors={errors} />
                         </div>
@@ -566,10 +558,11 @@ export default function PostForm({ postData, }: CardProps) {
                         <div className="divider"></div>
                         <label htmlFor="">Address</label>
                         <LocationSearch className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
-                        {error && <div className=" text-red-600 mt-5">
-                            {error}
+                        {openingHoursError && <div className=" text-red-600 mt-5">
+                            {openingHoursError}
                         </div>}
                         {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
+                        {locationError && <p className="text-red-600 mt-5">*Please select a business location.</p>}
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
