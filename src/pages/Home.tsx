@@ -14,6 +14,9 @@ import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { FaMapPin } from "react-icons/fa";
+import { IoIosSearch } from "react-icons/io";
+import { IoRestaurantOutline } from "react-icons/io5";
+import { BsShop } from "react-icons/bs";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -296,38 +299,23 @@ export default function Home() {
                                 <Carousel />
                             </div> */}
                         </div>
-                        <div className="flex gap-10 justify-center mt-10">
-                            <div className="flex flex-col">
-                                <div className=" mt-4 mb-4">
-                                    <LocationSearch className="border-2 p-2 rounded" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
+                        <div className="flex gap-10 justify-center mt-16">
+                            <div className="flex w-60">
+                                {/* <div className=" text-2xl border-2 p-3 rounded-l" style={{ backgroundColor: "#f1c827" }}> */}
+                                <div className=" text-2xl border-2 p-3 rounded-l" >
+                                    <FaMapPin />
                                 </div>
-                                <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
-                                    <input
-                                        type='checkbox'
-                                        name='autoSaver'
-                                        className='sr-only'
-                                        checked={isChecked}
-                                        onChange={handleCheckboxChange}
-                                    />
-                                    <span
-                                        className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
-                                            }`}
-                                    >
-                                        <span
-                                            className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
-                                                }`}
-                                        ></span>
-                                    </span>
-                                    <span className='label flex items-center text-sm font-medium text-black'>
-                                        Include Nearby Locations
-                                    </span>
-                                </label>
+                                <LocationSearch className="border-t-2 border-r-2 border-b-2 rounded-r p-3" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
                             </div>
-                            <div className="flex flex-col mt-4 dropdown-bottom w-72">
-                                {/* <label> Select Type:</label> */}
+                            <div className="flex w-60 -ml-3">
+                                {/* <div className=" text-2xl border-2 p-3 rounded-l" style={{ backgroundColor: "#f1c827" }}> */}
+                                <div className=" text-2xl border-2 p-3 rounded-l bg-gray-200" >
+                                    <BsShop />
+
+                                </div>
                                 <select
                                     {...register('type')}
-                                    className=" border-2 p-3 rounded cursor-pointer"
+                                    className="border-t-2 border-r-2 border-b-2 rounded-r p-3 cursor-pointer"
                                     onChange={(e) => genNewSearchParams('type', e.target.value)}
                                     value={typeFilter || ""}
                                 >
@@ -339,11 +327,14 @@ export default function Home() {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                                {/* <label htmlFor="">Select Delivery Method:</label> */}
+                            <div className="flex w-60 ml-1">
+                                <div className=" text-2xl border-2 p-3 rounded-l bg-gray-200" >
+                                    {/* <div className=" text-2xl border-2 p-3 rounded-l" style={{ backgroundColor: "#f1c827" }}> */}
+                                    <IoRestaurantOutline />
+                                </div>
                                 <select
                                     name="deliveryMethod"
-                                    className="border-2 p-3 rounded cursor-pointer"
+                                    className="border-t-2 border-r-2 border-b-2 rounded-r p-3 cursor-pointer"
                                     onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
                                     value={deliveryFilter || ""}
                                 >
@@ -353,10 +344,13 @@ export default function Home() {
                                     <option value="pickUp" >Pick-Up</option>
                                 </select>
                             </div>
-                            <div className="flex flex-col mt-4">
-                                {/* <label htmlFor="">Enter Search Term:</label> */}
+                            <div className="flex w-60">
+                                <div className=" text-2xl border-2 p-3 rounded-l bg-gray-200">
+                                    {/* <div className=" text-2xl border-2 p-3 rounded-l" style={{ backgroundColor: "#f1c827" }}> */}
+                                    <IoIosSearch />
+                                </div>
                                 <input type="text"
-                                    className="border-2 p-3 rounded w-72"
+                                    className="border-t-2 border-r-2 border-b-2 rounded-r p-3"
                                     placeholder='General Search'
                                     {...register("search")}
                                     onChange={(e) => genNewSearchParams("search", e.target.value)}
@@ -364,7 +358,29 @@ export default function Home() {
                                 />
                             </div>
                         </div>
-                        {/* </div> */}
+                        <div className="ml-24 mt-4">
+                            <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+                                <input
+                                    type='checkbox'
+                                    name='autoSaver'
+                                    className='sr-only'
+                                    checked={isChecked}
+                                    onChange={handleCheckboxChange}
+                                />
+                                <span
+                                    className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+                                        }`}
+                                >
+                                    <span
+                                        className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
+                                            }`}
+                                    ></span>
+                                </span>
+                                <span className='label flex items-center text-sm font-medium text-black'>
+                                    Include Nearby Locations
+                                </span>
+                            </label>
+                        </div>
                         <div className=" flex justify-center">
                             {deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-md btn-error w-36" onClick={clearFilters}>Clear filters</button> : ""}
                         </div>
@@ -403,27 +419,3 @@ export default function Home() {
     );
 }
 
-{/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                            <label htmlFor="">Select Delivery Method:</label>
-                            <select
-                                name="deliveryMethod"
-                                className="select select-bordered"
-                                onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
-                                value={deliveryFilter || ""}
-                            >
-                                <option value="all" selected>All Methods</option>
-                                <option value="delivery" >Delivery</option>
-                                <option value="dineIn" >Dine-In</option>
-                                <option value="pickUp" >Pick-Up</option>
-                            </select>
-                        </div> */}
-{/* <div className="flex flex-col mt-4">
-                            <label htmlFor="">Enter Search Term:</label>
-                            <input type="text"
-                                className="input input-bordered w-72"
-                                placeholder='Beer'
-                                {...register("search")}
-                                onChange={(e) => genNewSearchParams("search", e.target.value)}
-                                value={searchFilter || ""}
-                            />
-                        </div> */}
