@@ -12,7 +12,7 @@ import OpeningHours from "../components/Opening-Hours/OpeningHours.tsx"
 import Select from "react-select"
 import { useMediaQuery } from "react-responsive"
 import LocationSearch from "../components/Location/LocationSearch.tsx";
-import { CardProps, SelectedTags } from "../Types/index.ts"
+import { CardProps, OpeningHoursType, SelectedTags } from "../Types/index.ts"
 import Toggle from "../components/Toggle/Toggle.tsx";
 import ToggleButton from "../components/Toggle/ToggleButton.tsx";
 import ToggleOn from "../components/Toggle/ToggleOn.tsx";
@@ -41,6 +41,7 @@ export default function PostForm({ postData, }: CardProps) {
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
+    const [error, setError] = useState<string>('')
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
         coordinates: "",
         address: "",
@@ -144,7 +145,8 @@ export default function PostForm({ postData, }: CardProps) {
     };
     const handleEditFormSubmit = async (formData: CardProps) => {
         const openingHoursArray = formData.openingHours
-
+        hasOpeningHours(openingHoursArray)
+        setDeliveryMethodError(false)
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
@@ -205,16 +207,27 @@ export default function PostForm({ postData, }: CardProps) {
         setIsSubmitting(false);
         formCleanup(shouldSetVerifiedFalse)
     }
-
+    const hasOpeningHours = (openingHours: OpeningHoursType[] | undefined) => {
+        for (const item of openingHours!) {
+            if (item.isOpen === 'open') {
+                if (item.fromTime === '00:00' && item.toTime === '00:00') {
+                    setError("*Opening Hours are invalid - opening and closing hours cannot be 00:00")
+                    return
+                }
+                return setError("")
+            }
+            setError("*No opening hours listed")
+            return
+        }
+    }
     const handleNewFormSubmit = async (formData: CardProps) => {
         const openingHoursArray = formData.openingHours
-
+        hasOpeningHours(openingHoursArray)
+        setDeliveryMethodError(false)
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
-        console.log(formData);
-
         setIsSubmitting(true)
         try {
             const postId = nanoid()
@@ -400,7 +413,7 @@ export default function PostForm({ postData, }: CardProps) {
                         </div>
                         <div className="flex flex-col mb-5 ">
                             <p >Delivery Method</p>
-                            {deliveryMethodError && <p className="text-red-600">*Please select at least one option</p>}
+                            {deliveryMethodError && <p className="text-red-600">*Please select at least one option.</p>}
                             <div className="flex gap-3">
                                 <div className="flex">
                                     <input
@@ -430,6 +443,9 @@ export default function PostForm({ postData, }: CardProps) {
                         </div>
                         <div className="flex flex-col mb-5">
                             <label >Opening Hours:</label>
+                            {error && <div className=" text-red-600 mt-5">
+                                {error}
+                            </div>}
                             <OpeningHours register={register} watch={watch} errors={errors} />
                         </div>
                         <div className="flex mb-2">
@@ -546,6 +562,10 @@ export default function PostForm({ postData, }: CardProps) {
                         <div className="divider"></div>
                         <label htmlFor="">Address</label>
                         <LocationSearch className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
+                        {error && <div className=" text-red-600 mt-5">
+                            {error}
+                        </div>}
+                        {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
                         <div className=" flex gap-2 mt-7">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
