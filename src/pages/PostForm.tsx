@@ -42,6 +42,7 @@ export default function PostForm({ postData, }: CardProps) {
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [isChecked, setIsChecked] = useState<boolean>(true)
     const [error, setError] = useState<string>('')
+    const [locationError, setLocationError] = useState<string>("")
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
         coordinates: "",
         address: "",
@@ -50,7 +51,6 @@ export default function PostForm({ postData, }: CardProps) {
         state: "",
         country: ""
     })
-
     const MAX_FILE_SIZE_IN_BYTES = 300000;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
@@ -143,16 +143,25 @@ export default function PostForm({ postData, }: CardProps) {
         const isImageChanged = formData.imgUrl && formData.imgUrl.length > 0;
         return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
     };
+
+
     const handleEditFormSubmit = async (formData: CardProps) => {
+
         const openingHoursArray = formData.openingHours
-        hasOpeningHours(openingHoursArray)
         setDeliveryMethodError(false)
+        setLocationError("")
+        setError("")
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
+        if (!hasOpeningHours(openingHoursArray)) {
+            return;
+        }
+        if (!hasSelectedLocation(postData.locationData)) {
+            return
+        }
         setIsSubmitting(true);
-
         const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
         try {
             const { error: insertError } = await supabase
@@ -212,22 +221,40 @@ export default function PostForm({ postData, }: CardProps) {
             if (item.isOpen === 'open') {
                 if (item.fromTime === '00:00' && item.toTime === '00:00') {
                     setError("*Opening Hours are invalid - opening and closing hours cannot be 00:00")
-                    return
+                    return false
                 }
-                return setError("")
+                setError("")
+                return true
             }
             setError("*No opening hours listed")
-            return
+            return false
         }
+    }
+    const hasSelectedLocation = (selectedLocation) => {
+        console.log(selectedLocation);
+
+        if (!selectedLocation.postcode) {
+            setLocationError("*Location and postcode is required")
+            return false
+        }
+        return true
     }
     const handleNewFormSubmit = async (formData: CardProps) => {
         const openingHoursArray = formData.openingHours
-        hasOpeningHours(openingHoursArray)
         setDeliveryMethodError(false)
+        setLocationError("")
+        setError("")
         if (!watch().delivery && !watch().pickUp && !watch().dineIn) {
             setDeliveryMethodError(true)
             return
         }
+        if (!hasOpeningHours(openingHoursArray)) {
+            return;
+        }
+        if (!hasSelectedLocation(selectedLocation)) {
+            return
+        }
+
         setIsSubmitting(true)
         try {
             const postId = nanoid()
@@ -560,8 +587,10 @@ export default function PostForm({ postData, }: CardProps) {
                         }
 
                         <div className="divider"></div>
+                        {locationError && <div className=" text-red-600 mt-5">{locationError}</div>}
                         <label htmlFor="">Address</label>
                         <LocationSearch className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
+                        {locationError && <div className=" text-red-600 mt-5">{locationError}</div>}
                         {error && <div className=" text-red-600 mt-5">
                             {error}
                         </div>}

@@ -24,6 +24,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
+    const [locationError, setLocationError] = useState<string>("")
 
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
@@ -105,7 +106,7 @@ export default function SignUp() {
                 altSuburb: secondaryLocation.suburb,
                 altPostcode: secondaryLocation.postcode,
                 formatted_address: `${primaryLocation.suburb} ${primaryLocation.state}, ${primaryLocation.country}`,
-                altFormatted_address: `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}`,
+                altFormatted_address: secondaryLocation.suburb ? `${secondaryLocation.suburb} ${secondaryLocation.state}, ${secondaryLocation.country}` : null,
                 coordinates: primaryLocation.coordinates,
                 altCoordinates: secondaryLocation.coordinates
 
@@ -145,8 +146,14 @@ export default function SignUp() {
         navigate("/")
 
     }
+    const hasSelectedLocation = (primaryLocation: { postcode: any }) => {
+        if (!primaryLocation.postcode) {
+            setLocationError("*Location and postcode is required")
+        }
+    }
     const handleNewSubmit = async (data: SignUpType) => {
         const response = await signUpAndInsertData(data);
+        hasSelectedLocation(primaryLocation)
         if (response && !response.error) {
             supabase
                 .from("members")
@@ -165,7 +172,6 @@ export default function SignUp() {
                         if (error) {
                             console.log(error)
                         }
-                        //react-hook-form method:
                         reset()
                     },
                 )
@@ -456,51 +462,38 @@ export default function SignUp() {
                                         </ToggleOn>
                                     </Toggle>
                                 </div>
-                                <LocationSearch
-                                    types={['locality']}
-                                    placeholder="Start typing in a suburb"
-                                    onSelect={(address, postcode, suburb, state, country, coordinates) => {
-                                        setSecondaryLocation({
-                                            address,
-                                            postcode,
-                                            suburb,
-                                            state,
-                                            country,
-                                            coordinates,
-                                        });
-                                    }}
-                                    className="input input-bordered"
-                                    suburbAndPostcode={true}
-                                    signUpData={secondaryLocation}
-                                />
+                                <div className="flex">
 
 
-                            </div>
-                            {/* <div className="flex flex-col md:w-1/2 mt-4">
-                                <label>Suburb</label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered "
-                                    {...register('suburb', { required: "Please enter your suburb." })}
-                                />
-                                {errors.suburb && <p className=" text-red-600">*{errors.suburb.message?.toString()}</p>}
-                            </div>
-                            <div className="flex flex-col md:w-1/2 mt-4">
-                                <div className="flex justify-between">
-                                    <label>Alternative suburb</label>
-                                    <Toggle>
-                                        <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                        <ToggleOn>
-                                            <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
-                                        </ToggleOn>
-                                    </Toggle>
+                                    <LocationSearch
+                                        types={['locality']}
+                                        placeholder="Start typing in a suburb"
+                                        onSelect={(address, postcode, suburb, state, country, coordinates) => {
+                                            setSecondaryLocation({
+                                                address,
+                                                postcode,
+                                                suburb,
+                                                state,
+                                                country,
+                                                coordinates,
+                                            });
+                                        }}
+                                        className="input input-bordered"
+                                        suburbAndPostcode={true}
+                                        signUpData={secondaryLocation}
+                                    />
                                 </div>
-                                <input
-                                    type="text"
-                                    className="input input-bordered "
-                                    {...register('altSuburb')}
-                                />
-                            </div> */}
+                                {secondaryLocation.postcode && <button
+                                    className="btn btn-error btn-xs mt-4 m-auto "
+                                    onClick={() => setSecondaryLocation({
+                                        address: "",
+                                        postcode: "",
+                                        suburb: "",
+                                        state: "",
+                                        country: "",
+                                    })}
+                                >Remove Secondary Suburb</button>}
+                            </div>
                         </div>
                         {user && <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
@@ -510,7 +503,7 @@ export default function SignUp() {
                                 <ForgotPassword />
                             </ToggleOn>
                         </Toggle>}
-
+                        {locationError && <div className=" text-red-600 mt-5">{locationError}</div>}
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
                             <button className="btn btn-primary mt-7 w-full">Submit</button>
