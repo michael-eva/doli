@@ -65,7 +65,6 @@ export default function LocationSearch({
 
         getGeocode({ address: suggestion.description }).then((results) => {
             const firstResult = results[0];
-            console.log(suggestion.structured_formatting.main_text);
 
             const { lat, lng } = firstResult.geometry.location;
 
@@ -99,7 +98,7 @@ export default function LocationSearch({
                     suburbComponent ? suburbComponent.long_name : "",
                     stateComponent ? stateComponent?.short_name : "",
                     countryComponent ? countryComponent?.long_name : "",
-                    { latitude: lat(), longitude: lng() } // Include coordinates in the onSelect callback
+                    { latitude: lat(), longitude: lng() }
                 );
             }
 
@@ -127,6 +126,7 @@ export default function LocationSearch({
             }
         }
     }
+
     const renderSuggestions = () =>
         data.map((suggestion) => {
             return (<li key={suggestion.place_id} onClick={handleSelect(suggestion)} className="gap-2 flex items-center cursor-pointer hover:text-indigo-600 p-2 border-t border-gray-300 hover:bg-indigo-50" >
@@ -135,6 +135,7 @@ export default function LocationSearch({
                 <p className=" text-sm">{suggestion.structured_formatting.secondary_text}</p>
             </li >)
         })
+
     useEffect(() => {
         if (signUpData) {
             setValue(signUpData?.address || "");
@@ -147,6 +148,7 @@ export default function LocationSearch({
         }
 
     }, [signUpData, postData]);
+
     return (
         <div ref={ref} className="flex flex-col gap-5">
             <div className=" flex flex-col w-full">
