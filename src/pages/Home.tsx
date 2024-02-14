@@ -9,11 +9,10 @@ import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
 import Pagination from "../components/Pagination";
-import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
 import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
-import { FaMapPin } from "react-icons/fa";
+import { filterOrders } from "../Functions/filterOrders";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -31,9 +30,12 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
-
+    const { filterPosts, paginatePageVar } = filterOrders(posts, typeFilter, deliveryFilter, isChecked, locationFilter, nearbyFilter, searchFilter, currentPage, pageSize)
+    const isFilter = typeFilter || searchFilter || deliveryFilter || locationFilter || nearbyFilter ? true : false
     const user = useUser();
-
+    const startIndex = (currentPage - 1) * pageSize + 1;
+    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length);
+    const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
 
     useEffect(() => {
         if (user) {
@@ -130,7 +132,6 @@ export default function Home() {
 
     // fetchData();
 
-    const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
     if (!isVerified) {
         const verifyUser = async () => {
             const { error } = await supabase
@@ -164,82 +165,9 @@ export default function Home() {
         setSearchParams(`?${sp.toString()}`)
         setCurrentPage(1)
     }
-    const containsSearchText = (text: string, searchTerm: string) =>
-        text.toLowerCase().includes(searchTerm.toLowerCase());
-    const filterOrders = () => {
-        let filterPosts = [...posts];
-
-        if (typeFilter && typeFilter !== "all") {
-            filterPosts = filterPosts.filter((post) => post.type === typeFilter);
-        }
-        if (deliveryFilter && deliveryFilter !== "all") {
-            filterPosts = filterPosts.filter(post => post[deliveryFilter] === true)
-        }
-        if (!isChecked && locationFilter) {
-            const lowercaseLocationFilter = locationFilter.toLowerCase();
-            filterPosts = filterPosts.filter((post) => {
-                const lowercaseSuburb = post?.locationData?.postcode?.toLowerCase();
-                return lowercaseSuburb && lowercaseSuburb.includes(lowercaseLocationFilter);
-            });
-        }
-
-        if (isChecked && nearbyFilter) {
-            const [latitude, longitude] = nearbyFilter.split('+')
-            filterPosts = filterPosts.filter((post) =>
-                isCoordinateWithinRadius(
-                    { latitude: post.locationData?.coordinates?.latitude, longitude: post.locationData?.coordinates?.longitude },
-                    { latitude: parseFloat(latitude), longitude: parseFloat(longitude) },
-                    5000
-                )
-
-            );
-        }
-        if (searchFilter && searchFilter.trim() !== "") {
-            filterPosts = filterPosts.filter((post) => {
-                const columnsToSearch = ["description", "selectedTags", "type", "state", "suburb", "name"];
-
-                return columnsToSearch.some((column) => {
-                    const value = post[column];
-
-                    if (Array.isArray(value)) {
-                        return value.some(
-                            (tag: any) =>
-                                typeof tag.label === "string" &&
-                                containsSearchText(tag.label, searchFilter)
-                        );
-                    }
-
-                    return typeof value === "string" && containsSearchText(value, searchFilter);
-                });
-            });
-        }
-
-        return paginatePage(currentPage, pageSize, filterPosts);
-    };
-    const paginatePage = (currentPage: number, pageSize: number, filterPosts: CardProps[]) => {
-        const startIndex = (currentPage - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const paginatePage = filterPosts.slice(startIndex, endIndex);
-        return paginatePage;
-    };
-    const isFilter = () => {
-        if (typeFilter || searchFilter || deliveryFilter) {
-            return true
-        }
-        else return false
-    }
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
-
-    const searchItemLength = () => {
-        if (searchFilter || (typeFilter && typeFilter !== "all") || locationFilter || nearbyFilter || deliveryFilter) {
-            return filterOrders().length
-        }
-        return posts.length
-    }
-    const startIndex = (currentPage - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, searchItemLength());
     const handleLocationSelect = (_address: string, postcode: string, _locality: string, _state: string, _country: string, coordinates: any) => {
 
         if (isChecked) {
@@ -264,9 +192,6 @@ export default function Home() {
                 }
                 {!isMobile &&
                     <>
-
-
-
                         <div className="flex items-center ">
                             <div className="w-1/3 ml-11">
                                 {/* <div className=" border-4 shadow-xl p-6 rounded flex flex-col items-center "> */}
@@ -282,7 +207,7 @@ export default function Home() {
                             <div className="flex w-1/3 items-center justify-center">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterOrders().length : posts.length} <span>Businesses</span></p>
+                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterPosts.length : posts.length} <span>Businesses</span></p>
                                 </div>
                                 {/* <div className="flex flex-col">
                                     <p className=" text-xl py-2 font-bold" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
@@ -371,7 +296,7 @@ export default function Home() {
                     </>
                 }
                 <p className={`${isMobile ? "px-7" : ""}`}>
-                    {startIndex} - {endIndex} of {searchItemLength()} results
+                    {startIndex} - {endIndex} of {filterPosts.length} results
                 </p>
                 <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
@@ -383,20 +308,20 @@ export default function Home() {
                             }
                         </>
                         :
-                        filterOrders()?.length > 0 ? (
-                            filterOrders().map((item: CardProps) => (
+                        filterPosts?.length > 0 ? (
+                            paginatePageVar.map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10 flex justify-center">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))
-                        ) : isFilter() ? (
+                        ) : isFilter ? (
                             <div className="my-6">
                                 <p className="text-3xl font-thin">Sorry, no results found.</p>
                                 <p className="text-2xl font-thin">Please try a different search criteria.</p>
                             </div>
                         ) : null}
                 </div>
-                {searchItemLength() > 2 && <Pagination totalItems={searchItemLength()} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {filterPosts.length > 2 && <Pagination totalItems={filterPosts.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );

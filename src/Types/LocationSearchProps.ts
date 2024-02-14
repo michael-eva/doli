@@ -22,4 +22,5 @@ export type LocationSearchProps = {
         country: string,
         state: string,
     },
+    className?: string,
 }
