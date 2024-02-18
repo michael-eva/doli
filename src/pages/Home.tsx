@@ -106,7 +106,7 @@ export default function Home() {
         const { error, data }: { error: any, data: any } = await supabase
             .from("members")
             .select("id, isVerified")
-            .eq("isVerified", true)
+        // .eq("isVerified", true)
 
         if (error) {
             return console.error(error);
@@ -187,8 +187,14 @@ export default function Home() {
         <>
             <div className=" max-w-7xl m-auto mb-10">
                 {isMobile &&
-                    <div className="flex justify-center px-4">
-                        <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
+                    <div className=" flex flex-col gap-5">
+                        <div className=" rounded flex flex-col items-center mt-6">
+                            <h2 className=" text-3xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
+                            <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
+                        </div>
+                        <div className="px-4">
+                            <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
+                        </div>
                     </div>
                 }
                 {!isMobile &&
@@ -200,15 +206,17 @@ export default function Home() {
                                     <h2 className=" text-5xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
                                     <p className=" text-2xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                                 </div>
-
                             </div>
                             {/* <div className="w-1/3">
                                 <img src="images/cropped_logo.png" alt="" width={350} style={{ minHeight: "200px", minWidth: '200px' }} />
                             </div> */}
-                            <div className="flex w-1/3 items-center justify-center">
+                            <div className="flex w-1/3 flex-col pl-32">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
                                     <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterPosts.length : posts.length} <span>Businesses</span></p>
+                                </div>
+                                <div className="flex flex-col">
+                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
                                 </div>
                                 {/* <div className="flex flex-col">
                                     <p className=" text-xl py-2 font-bold" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
@@ -221,9 +229,11 @@ export default function Home() {
                                 <Carousel />
                             </div> */}
                         </div>
-                        <div className="flex gap-10 justify-center mt-10">
+
+
+                        <div className="flex gap-10 justify-center mt-14">
                             <div className="flex flex-col">
-                                <div className=" mt-4 mb-4">
+                                <div className="">
                                     <LocationSearch className="border-2 p-2 rounded" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
                                 </div>
                                 <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
@@ -248,15 +258,15 @@ export default function Home() {
                                     </span>
                                 </label>
                             </div>
-                            <div className="flex flex-col mt-4 dropdown-bottom w-72">
+                            <div className="flex flex-col dropdown-bottom">
                                 {/* <label> Select Type:</label> */}
                                 <select
                                     {...register('type')}
-                                    className=" border-2 p-3 rounded cursor-pointer"
+                                    className=" border-2 p-2.5 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams('type', e.target.value)}
                                     value={typeFilter || ""}
                                 >
-                                    <option value="all">Select Type of Business</option>
+                                    <option value="all" className=" text-blue-500">Select Type of Business</option>
                                     {businessType.map(item => (
                                         <option
                                             key={item}
@@ -264,11 +274,10 @@ export default function Home() {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                                {/* <label htmlFor="">Select Delivery Method:</label> */}
+                            <div className="flex flex-col dropdown-bottom">
                                 <select
                                     name="deliveryMethod"
-                                    className="border-2 p-3 rounded cursor-pointer"
+                                    className="border-2 p-2.5 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
                                     value={deliveryFilter || ""}
                                 >
@@ -278,10 +287,10 @@ export default function Home() {
                                     <option value="pickUp" >Pick-Up</option>
                                 </select>
                             </div>
-                            <div className="flex flex-col mt-4">
+                            <div className="flex flex-col">
                                 {/* <label htmlFor="">Enter Search Term:</label> */}
                                 <input type="text"
-                                    className="border-2 p-3 rounded w-72"
+                                    className="border-2 p-2 rounded"
                                     placeholder='General Search'
                                     {...register("search")}
                                     onChange={(e) => genNewSearchParams("search", e.target.value)}
@@ -289,6 +298,7 @@ export default function Home() {
                                 />
                             </div>
                         </div>
+
                         {/* </div> */}
                         <div className=" flex justify-center">
                             {deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-md btn-error w-36" onClick={clearFilters}>Clear filters</button> : ""}
@@ -296,9 +306,14 @@ export default function Home() {
                         <div className="divider "></div>
                     </>
                 }
-                <p className={`${isMobile ? "px-7" : ""}`}>
-                    {startIndex} - {endIndex} of {filterPosts.length} results
-                </p>
+                <div className="flex justify-between">
+                    <p className={`${isMobile ? "px-7" : ""}`}>
+                        {startIndex} - {endIndex} of {filterPosts.length} results
+                    </p>
+                    {isMobile && <p className={`${isMobile ? "px-7" : ""}`} >
+                        <p className=" font-bold font-raleway" >{members?.length} <span>Users</span></p>
+                    </p>}
+                </div>
                 <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
