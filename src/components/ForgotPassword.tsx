@@ -30,7 +30,6 @@ export default function ForgotPassword() {
         }
         getUsers()
     }, [])
-    console.log(members);
 
     const handleResetPassword = async (event: any) => {
         event.preventDefault()

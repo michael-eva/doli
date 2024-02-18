@@ -497,7 +497,7 @@ export default function SignUp() {
                         </div>
                         {user && <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
-                                Forgot Password?
+                                Change Password?
                             </ToggleButton>
                             <ToggleOn>
                                 <ForgotPassword />
