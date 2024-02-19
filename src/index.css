@@ -2,7 +2,3 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import 'daisyui/dist/full.css';
-
-.html {
-    background-color: white;
-}

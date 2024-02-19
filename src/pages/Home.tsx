@@ -185,7 +185,7 @@ export default function Home() {
 
     return (
         <>
-            <div className=" max-w-7xl m-auto mb-10">
+            <div className=" max-w-7xl m-auto mb-10 dark:bg-white">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
