@@ -7,8 +7,6 @@ import { processUserArray } from "../seed/SeedUser";
 import testUserData from "../seed/testUserData.json"
 
 export default function About() {
-    // processUserArray(testUserData)
-
 
     return (
         <>

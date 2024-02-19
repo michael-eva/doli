@@ -216,7 +216,7 @@ export default function Home() {
                                     <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterPosts.length : posts.length} <span>Businesses</span></p>
                                 </div>
                                 <div className="flex flex-col">
-                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
+                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{members?.length} <span>Members</span></p>
                                 </div>
                                 {/* <div className="flex flex-col">
                                     <p className=" text-xl py-2 font-bold" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
@@ -311,7 +311,7 @@ export default function Home() {
                         {startIndex} - {endIndex} of {filterPosts.length} results
                     </p>
                     {isMobile && <p className={`${isMobile ? "px-7" : ""}`} >
-                        <p className=" font-bold font-raleway" >{members?.length} <span>Users</span></p>
+                        <p className=" font-bold font-raleway" >{members?.length} <span>Members</span></p>
                     </p>}
                 </div>
                 <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>
