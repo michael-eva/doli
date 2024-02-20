@@ -182,6 +182,9 @@ export default function Home() {
         setCurrentPage(1)
     }
 
+    console.log("Posts", posts);
+    console.log("Members", members);
+
 
 
     return (
@@ -214,11 +217,35 @@ export default function Home() {
                             <div className="flex w-1/3 flex-col pl-32">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterPosts.length : posts.length} <span>Businesses</span></p>
+                                    {posts.length > 0 || members ? (
+                                        <>
+                                            <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
+                                                {deliveryFilter || nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? filterPosts.length : posts.length}{" "}
+                                                <span>Businesses</span>
+                                            </p>
+                                            <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
+                                                {members.length} <span>Members</span>
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
+                                            Loading...
+                                        </p>
+                                    )}
+
                                 </div>
-                                <div className="flex flex-col">
-                                    <p className=" text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>{members?.length} <span>Members</span></p>
-                                </div>
+                                {/* <div className="flex flex-col">
+                                    {members ? (
+                                        <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
+                                            {members.length} <span>Members</span>
+                                        </p>
+                                    ) : (
+                                        <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
+                                            Loading...
+                                        </p>
+                                    )}
+
+                                </div> */}
                                 {/* <div className="flex flex-col">
                                     <p className=" text-xl py-2 font-bold" style={{ color: "#4e9da8" }}>{members?.length} <span>Users</span></p>
                                 </div> */}
