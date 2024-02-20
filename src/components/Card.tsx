@@ -73,7 +73,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                 <div className="pb-3">
                     <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
                 </div>
-                <p className=" text-md font-bold">Operating hours:</p>
+                <p className=" text-md font-bold">Opening hours:</p>
                 <DispOpeningHours openingHours={props.openingHours!} />
 
                 <p className=" mt-5">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
