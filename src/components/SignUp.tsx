@@ -483,7 +483,7 @@ export default function SignUp() {
                                         signUpData={secondaryLocation}
                                     />
                                 </div>
-                                {secondaryLocation.postcode && <button
+                                {/* {secondaryLocation.postcode && <button
                                     className="btn btn-error btn-xs mt-4 m-auto "
                                     onClick={() => setSecondaryLocation({
                                         address: "",
@@ -492,7 +492,7 @@ export default function SignUp() {
                                         state: "",
                                         country: "",
                                     })}
-                                >Remove Secondary Suburb</button>}
+                                >Remove Secondary Suburb</button>} */}
                             </div>
                         </div>
                         {user && <Toggle>
