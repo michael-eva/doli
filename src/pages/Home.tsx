@@ -182,11 +182,61 @@ export default function Home() {
         setCurrentPage(1)
     }
 
-    console.log("Posts", posts);
-    console.log("Members", members);
 
+    //Functionality to resend auth link to unauthed users
+    function oncePerUser(fn) {
+        // Create a local object to store the users who have called the function
+        let usersCalled = {};
+        // Return the function that can only be called once per user
+        return function (email) {
+            // Check if the user has already called the function
+            if (usersCalled[email]) {
+                // If yes, do nothing or return some message
+                console.log("You have already called this function");
+                return;
+            }
 
+            // If not, call the original function and store the user email in the local object
+            fn(email);
+            // Set the user email as a key in the local object with a value of true
+            usersCalled[email] = true;
+        };
+    }
+    const getNonAuthorisedUsers = async () => {
+        // Query the auth.users table and filter by confirmed_at
+        const { data, error } = await supabase
+            .from("members")
+            .select("*")
+            .eq("isVerified", false);
 
+        // Handle errors
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        // Map the data to get the user emails
+        const userEmails = data.map((user) => user.email);
+
+        // Return the user emails
+        return userEmails;
+    };
+    // Use the oncePerUser function to create a function that can only be called once per user
+    const test = oncePerUser(async (email) => {
+        const { data, error } = await supabase.auth.resend({
+            type: "signup",
+            email: email,
+        });
+        if (error) {
+            console.error(error);
+        }
+    });
+    useEffect(() => {
+        // Call the getNonAuthorisedUsers function and loop through the result to call the test function for each email
+        // getNonAuthorisedUsers().then((userEmails) =>
+        //   userEmails.forEach((email) => test(email))
+        // );
+    }, []);
     return (
         <>
             <div className=" max-w-7xl m-auto mb-10 dark:bg-white">

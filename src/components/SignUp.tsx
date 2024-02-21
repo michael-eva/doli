@@ -25,7 +25,7 @@ export default function SignUp() {
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
     const [locationError, setLocationError] = useState<string>("")
-
+    const existingEmail = errors.email?.message === "Email already exists in the system"
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
         postcode: "",
@@ -40,7 +40,8 @@ export default function SignUp() {
         state: "",
         country: "",
     });
-    const updateAuthEmail = async (email: string) => {
+    const [userNotVerified, setUserNotVerified] = useState<boolean>(false)
+    async function updateAuthEmail(email: string) {
         try {
             const { error } = await supabase.auth.updateUser({
                 email: email,
@@ -56,7 +57,7 @@ export default function SignUp() {
         }
     };
 
-    const signUpAndInsertData = async (data: SignUpType) => {
+    async function signUpAndInsertData(data: SignUpType) {
         setIsSubmitting(true)
         try {
             const signUpResponse = await supabase.auth.signUp({
@@ -69,7 +70,7 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     };
-    const insertLocationData = async (response: { data: any; error?: null }) => {
+    async function insertLocationData(response: { data: any; error?: null }) {
         const { error } = await supabase
             .from("locations")
             .insert({
@@ -93,7 +94,7 @@ export default function SignUp() {
 
         }
     }
-    const updateLocationData = async () => {
+    async function updateLocationData() {
         const { error } = await supabase
             .from("locations")
             .update({
@@ -119,7 +120,7 @@ export default function SignUp() {
 
         }
     }
-    const handleUpdateDetailsSubmit = async (data: SignUpType) => {
+    async function handleUpdateDetailsSubmit(data: SignUpType) {
         setIsSubmitting(true)
         const { error } = await supabase
             .from("members")
@@ -146,42 +147,80 @@ export default function SignUp() {
         navigate("/")
 
     }
-    const hasSelectedLocation = (primaryLocation: { postcode: any }) => {
+    function hasSelectedLocation(primaryLocation: { postcode: any }) {
         if (!primaryLocation.postcode) {
             setLocationError("*Location and postcode is required")
         }
     }
-    const handleNewSubmit = async (data: SignUpType) => {
-        const response = await signUpAndInsertData(data);
-        hasSelectedLocation(primaryLocation)
-        if (response && !response.error) {
-            supabase
-                .from("members")
-                .insert({
-                    id: response?.data?.user?.id,
-                    gender: data.gender,
-                    email: data.email,
-                    birthMonth: data.birthMonth,
-                    birthYear: data.birthYear,
-                    isJod: false,
-                    isVerified: false,
-                })
-                .single()
-                .then(
-                    ({ error }) => {
-                        if (error) {
-                            console.log(error)
-                        }
-                        reset()
-                    },
-                )
-            insertLocationData(response)
-            setHasSubmitted(true)
-        };
+    async function handleNewSubmit(data: SignUpType) {
+        try {
+            // Check if the user already exists
+            const { data: userData, error: userError } = await supabase
+                .from('members')
+                .select('*')
+                .eq('email', data.email);
+
+            if (userError) {
+                console.error('Error fetching user:', userError.message);
+                return;
+            }
+
+            // User exists
+            if (userData && userData.length > 0) {
+                const user = userData[0];
+                if (user.isVerified) {
+                    setError('email', {
+                        type: 'manual',
+                        message: 'Email already exists in the system',
+                    });
+                    return;
+                } else {
+                    // User exists but is not verified, send reauth token
+                    await sendReauthToken(data.email);
+                    setHasSubmitted(true)
+                    console.log("sent reauth token");
+
+                    return
+                }
+            } else {
+                clearErrors("email");
+            }
+
+            // Proceed with sign up
+            const response = await signUpAndInsertData(data);
+            hasSelectedLocation(primaryLocation);
+
+            if (response && !response.error) {
+                supabase
+                    .from("members")
+                    .insert({
+                        id: response?.data?.user?.id,
+                        gender: data.gender,
+                        email: data.email,
+                        birthMonth: data.birthMonth,
+                        birthYear: data.birthYear,
+                        isJod: false,
+                        isVerified: false,
+                    })
+                    .single()
+                    .then(
+                        ({ error }) => {
+                            if (error) {
+                                console.log(error)
+                            }
+                            reset()
+                        },
+                    )
+                insertLocationData(response)
+                setHasSubmitted(true)
+            };
+        } catch (error: any) {
+            console.error('Error:', error.message);
+        }
+        console.log("new signup");
 
     }
-    const existingEmail = errors.email?.message === "Email already exists in the system"
-    const getLocationData = async () => {
+    async function getLocationData() {
         const { data, error } = await supabase
             .from("locations")
             .select("*")
@@ -197,7 +236,7 @@ export default function SignUp() {
 
 
     }
-    const getMembers = async () => {
+    async function getMembers() {
         try {
             const { data, error } = await supabase
                 .from("members")
@@ -238,34 +277,40 @@ export default function SignUp() {
             getMembers();
         }
     }, [user?.id]);
-    const getSubmitFunction = (data: SignUpType) => {
+    function getSubmitFunction(data: SignUpType) {
         if (user) {
             return handleUpdateDetailsSubmit(data)
         } else {
             return handleNewSubmit(data)
         }
     }
-    const checkEmailExists = async (email: string) => {
+    async function checkEmailExists(email: string) {
         try {
             const { data, error } = await supabase
                 .from('members')
                 .select('*')
-                .eq('email', email);
+                .eq('email', email)
 
             if (error) {
                 console.error('Error fetching user:', error.message);
                 return
             }
-
             if (data && data.length > 0) {
 
-                setError('email', {
-                    type: 'manual',
-                    message: 'Email already exists in the system',
-                });
-                return
+                if (data[0].isVerified === true) {
+
+                    setError('email', {
+                        type: 'manual',
+                        message: 'Email already exists in the system',
+                    });
+                    return
+                } else {
+                    console.log("not verified", data);
+                    setUserNotVerified(true)
+                }
 
             } else {
+
                 clearErrors("email")
             }
         } catch (error: any) {
@@ -273,7 +318,7 @@ export default function SignUp() {
             return
         }
     };
-    const checkPasswordMatches = (value: string) => {
+    function checkPasswordMatches(value: string) {
         if (value === watch().password) {
             clearErrors("confirmPassword");
         } else {
@@ -282,6 +327,18 @@ export default function SignUp() {
                 message: "Passwords don't match",
             });
         }
+    }
+    async function sendReauthToken(email: string) {
+        setIsSubmitting(true)
+        const { error } = await supabase.auth.resend({
+            type: "signup",
+            email: email
+        })
+        if (error) {
+            console.error(error);
+
+        }
+        setIsSubmitting(false)
     }
 
     return (
@@ -329,6 +386,7 @@ export default function SignUp() {
                                         {...register('email', {
                                             required: 'Email address is required',
                                             onChange: (e) => checkEmailExists(e.target.value)
+
                                         })}
                                         onBlur={() => {
                                             if (existingEmail)
@@ -337,7 +395,6 @@ export default function SignUp() {
                                     />
                                 </div>}
                         </div>
-
                         {!user && <div className="md:flex gap-3 md:mt-7 w-full mb-2">
                             <div className="flex flex-col md:w-1/2">
                                 <label>Password</label>
