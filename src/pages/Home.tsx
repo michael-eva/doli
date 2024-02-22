@@ -239,7 +239,7 @@ export default function Home() {
     }, []);
     return (
         <>
-            <div className=" max-w-7xl m-auto mb-10 dark:bg-white">
+            <div className=" max-w-7xl md:m-auto mb-10 ">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
@@ -392,7 +392,7 @@ export default function Home() {
                         <p className=" font-bold font-raleway" >{members?.length} <span>Members</span></p>
                     </p>}
                 </div>
-                <div className={`flex ${isMobile ? 'flex-col ' : 'flex-wrap justify-start gap-4'} h-full`}>
+                <div className={` flex ${isMobile ? 'flex-col border items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
                             {
@@ -404,7 +404,7 @@ export default function Home() {
                         :
                         filterPosts?.length > 0 ? (
                             paginatePageVar.map((item: CardProps) => (
-                                <div key={item.postId} className="mt-10 flex justify-center">
+                                <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))
