@@ -19,12 +19,20 @@ import Dashboard from "./Jod/Dashboard"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./pages/UpdateEmail"
+import { MdOutlineEmail } from "react-icons/md";
 
 
 
 function App() {
   return (
     <>
+<div className=" flex items-center justify-end pr-10 border-b gap-2">
+  <MdOutlineEmail/>
+    Get in touch with us -{' '}
+    <a href="mailto:admin@doli.com.au" className="font-bold" style={{color:"#4d9da8"}} >
+        admin@doli.com.au
+    </a>
+</div>
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
