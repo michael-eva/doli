@@ -404,7 +404,7 @@ export default function Home() {
                         :
                         filterPosts?.length > 0 ? (
                             paginatePageVar.map((item: CardProps) => (
-                                <div key={item.postId} className="mt-10 flex justify-center">
+                                <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deletePost} />
                                 </div>
                             ))

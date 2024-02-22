@@ -95,7 +95,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                     <p className=" text-md font-bold">Opening hours:</p>
                 </div>
                 <Toggle>
-                    <ToggleButton className=" text-xs text-blue-500 underline italic cursor-pointer">Show Opening Hours</ToggleButton>
+                    <ToggleButton className=" text-xs text-blue-500 underline italic cursor-pointer ml-7">Show Opening Hours</ToggleButton>
                     <ToggleOn>
                         <DispOpeningHours openingHours={props.openingHours!} />
                     </ToggleOn>

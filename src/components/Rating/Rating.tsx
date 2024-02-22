@@ -171,7 +171,7 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
             </div>
             <div>
                 <Toggle>
-                    <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline">
+                    <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline ml-7">
                         Add a rating
                     </ToggleButton>
                     <ToggleOn>
