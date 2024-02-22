@@ -1,12 +1,21 @@
 import { Link } from "react-router-dom"
 import { seededPosts } from "./dashBoardFunctions"
 import { needValidation } from "./dashBoardFunctions"
+import { useState } from "react"
 export default function Dashboard() {
+    const [serverResponse, setServerResponse] = useState("")
 
     const validatePost = needValidation().validationRequired
 
     const claimedPosts = seededPosts().claimedPosts
     const posts = seededPosts().seededPosts
+    async function getResponse(){
+        const response = await fetch('/.netlify-functions/hello')
+		.then(response => response.json()
+	)
+    console.log(response);
+    
+    }
     return (
         <>
             <div className=" flex justify-between max-w-xl m-auto">
@@ -26,6 +35,7 @@ export default function Dashboard() {
                     }
                 </div>
             </div>
+            <button className="btn btn-info" onClick={getResponse}>Click me for a surprise</button>
         </>
     )
 }
