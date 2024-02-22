@@ -26,7 +26,8 @@ import { MdOutlineEmail } from "react-icons/md";
 function App() {
   return (
     <>
-<div className=" flex items-center justify-end pr-10 border-b gap-2">
+{/* <div className=" flex items-center gap-2 border-b"> */}
+<div className=" flex items-center justify-center md:justify-end md:pr-10 border-b gap-2 p-2">
   <MdOutlineEmail/>
     Get in touch with us -{' '}
     <a href="mailto:admin@doli.com.au" className="font-bold" style={{color:"#4d9da8"}} >
