@@ -9,11 +9,20 @@ import RatingComp from "./Rating/Rating";
 import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 import { CardProps } from "../Types";
+import { HiBuildingStorefront } from "react-icons/hi2";
+import { FaInfoCircle } from "react-icons/fa";
+import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import { FaClock } from "react-icons/fa6";
+import { FaPhone } from "react-icons/fa6";
+import { PiBowlFoodFill } from "react-icons/pi";
+import { CiLink } from "react-icons/ci";
+
+
 
 export function Card({ handleSubmit, ...props }: CardProps) {
     // export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
 
-    const maxDescriptionHeight = 80;
+    const maxDescriptionHeight = 160;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
     const user = useUser()
     const isMobile = useMediaQuery({ maxWidth: 640 })
@@ -50,18 +59,26 @@ export function Card({ handleSubmit, ...props }: CardProps) {
 
                 <h2 className="card-title">{props.name}</h2>
                 <h2 className="text-blue-600 font-semibold">{props.locationData?.suburb}, {props.locationData?.state} {props.locationData?.postcode}</h2>
-                <h3 className="font-light">{props.locationData?.streetAddress}</h3>
+                <h3 className="font-semibold">{props.locationData?.streetAddress}</h3>
 
 
-
-                <h2 className="font-bold mt-4 mb-3">{props.type}</h2>
+                <div className=" flex items-center gap-3 mt-3">
+                    <span className="">
+                        <HiBuildingStorefront />
+                    </span>
+                    <h2 className="font-bold">{props.type}</h2>
+                </div>
 
                 {props.selectedTags && props.selectedTags.length > 0 &&
-                    <div className="mb-3">
-                        <p>{props.selectedTags.map(tag => tag?.label).join(', ')}</p>
+                    <div className=" flex items-center gap-3">
+                        <FaInfoCircle />
+                        <p className=" font-bold">{props.selectedTags.map(tag => tag?.label).join(', ')}</p>
                     </div>
                 }
-                <p className={` ${showFullDescription ? '' : 'line-clamp-4'}`}>
+                <p className={` ${showFullDescription ? '' : 'line-clamp-4'} flex gap-3`}>
+                    <span className="mt-1 font-extrabold">
+                        <PiDotsThreeOutlineFill />
+                    </span>
                     <span dangerouslySetInnerHTML={{ __html: showFullDescription ? props.description.replace(/\n/g, '<br>') : truncatedDescription.replace(/\n/g, '<br>') }} />
                 </p>
 
@@ -70,23 +87,43 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                         {showFullDescription ? 'See Less' : 'See More'}
                     </button>
                 )}
-                <div className="pb-3">
+                <div className="">
                     <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
                 </div>
-                <p className=" text-md font-bold">Opening hours:</p>
-                <DispOpeningHours openingHours={props.openingHours!} />
-
-                <p className=" mt-5">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+                <div className="flex items-center gap-3">
+                    <FaClock />
+                    <p className=" text-md font-bold">Opening hours:</p>
+                </div>
+                <Toggle>
+                    <ToggleButton className=" text-xs text-blue-500 underline italic cursor-pointer">Show Opening Hours</ToggleButton>
+                    <ToggleOn>
+                        <DispOpeningHours openingHours={props.openingHours!} />
+                    </ToggleOn>
+                </Toggle>
+                <div className=" flex items-center gap-3">
+                    <span className="text-lg">
+                        <PiBowlFoodFill />
+                    </span>
+                    <p className=" font-bold">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+                </div>
 
                 <div className="card-actions mt-4" style={{ height: '48px' }}>
                     {props.contact!.length > 0 &&
                         <div>
-                            <label>Contact: </label>
-                            <p>{props.contact}</p>
+                            <span className="flex items-center gap-3">
+                                <FaPhone />
+                                <label>Contact: </label>
+                            </span>
+                            <p className=" text-blue-600">{props.contact}</p>
                         </div>}
                     {props.website!.length > 0 && (
-                        <a href={props.website!.startsWith('http') ? props.website : `http://${props.website}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-                            Visit Website
+                        <a href={props.website!.startsWith('http') ? props.website : `http://${props.website}`} target="_blank" rel="noopener noreferrer" className="border-blue-600 text-white rounded-md flex items-center p-3 bg-blue-600 gap-1">
+                            <span className=" text-xl">
+                                <CiLink />
+                            </span>
+                            <span>
+                                Visit Website
+                            </span>
                         </a>
                     )}
                 </div>

@@ -8,6 +8,7 @@ import CustomModal from '../Modals/CustomModal';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import Login from '../../pages/Login';
 import { isCoordinateWithinRadius } from '../Location/locationHelpers';
+import { IoStar } from "react-icons/io5";
 
 type NameType = {
     name: string
@@ -149,25 +150,28 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
             }
         }
     }
+    const reviewEl = () => {
+        if (filteredRatings?.length === 1) {
+            return `(${filteredRatings?.length} review)`
+        } else if (filteredRatings?.length === 0) {
+            return null
+        }
+        return `(${filteredRatings?.length} reviews)`
+    }
 
     return (
-        <div className="mt-3">
-            <div className="flex items-center">
-                <StarRatings
-                    rating={displayRating()}
-                    starRatedColor="orange"
-                    numberOfStars={5}
-                    name='rating'
-                    starDimension="30px"
-                />
+        <div className="flex mt-3 flex-col gap-2 ">
+            <div className='flex items-center gap-3'>
+                <span className=' text-lg text-yellow-500 '>
+                    <IoStar />
+                </span>
+                <span className=' font-bold'>Local</span>
+                <span className=' font-bold text-xs'>{displayRating() === 0 ? "No local ratings recorded" : `${displayRating()} / 5`}</span>
+                <span className=' text-gray-500 text-xs italic -ml-2'>{reviewEl()}</span>
             </div>
-            <div className='flex mt-2'>
-                <p className="ml-2 text-xs font-medium">{displayRating()} / 5</p>
-                <p className='text-xs font-medium text-gray-500 dark:text-gray-400'>({filteredRatings?.length})</p>
+            <div>
                 <Toggle>
-                    <ToggleButton
-                        className="text-xs text-blue-600 italic cursor-pointer"
-                    >
+                    <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline">
                         Add a rating
                     </ToggleButton>
                     <ToggleOn>
@@ -177,6 +181,34 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
                     </ToggleOn>
                 </Toggle>
             </div>
+
         </div>
+
+        // <div className="flex mt-3 items-center gap-1">
+        //     <span className=' text-lg text-yellow-500'>
+        //         <IoStar />
+        //     </span>
+
+        //     <p>{displayRating()} / 5</p>
+        //     <p className=' text-gray-500'>({filteredRatings?.length})</p>
+        // </div>
+        // <Toggle>
+        //     <ToggleButton className="text-xs text-blue-600 italic cursor-pointer">
+        //         Add a rating
+        //     </ToggleButton>
+        //     <ToggleOn>
+        //         <CustomModal>
+        //             {ratingModalEl()}
+        //         </CustomModal>
+        //     </ToggleOn>
+        // </Toggle>
+
     );
 }
+{/* <StarRatings
+                    rating={displayRating()}
+                    starRatedColor="orange"
+                    numberOfStars={5}
+                    name='rating'
+                    starDimension="30px"
+                /> */}
