@@ -66,7 +66,8 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                 <h3 className="font-semibold">{props.locationData?.streetAddress}</h3>
 
 
-                <div className=" flex items-center gap-3 mt-3">
+
+                <div className=" flex items-center gap-3 mt-3 -mb-3">
                     <span className="">
                         <HiBuildingStorefront />
                     </span>
@@ -74,6 +75,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                         <h2 className="font-bold">{props.type} - <span className=" font-normal">{selectedTags()}</span></h2>
                     </span>
                 </div>
+                <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
 
                 <p className={`${showFullDescription ? '' : 'line-clamp-4'} flex gap-3`}>
                     <span className="mt-1 font-extrabold ">
@@ -87,9 +89,9 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                         {showFullDescription ? 'See Less' : 'See More'}
                     </button>
                 )}
-                <div className="">
-                    <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
-                </div>
+
+                {/* <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} /> */}
+
                 <div className=" flex gap-3 items">
                     <div className="flex items-center gap-3 ml-0.5">
                         <FaClock />
@@ -98,12 +100,6 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                     <p className=" text-xs text-blue-600 underline italic cursor-pointer" onClick={() => setShowOpeningHours(!showOpeningHours)}>Show Opening Hours</p>
                 </div>
                 {showOpeningHours && <DispOpeningHours openingHours={props.openingHours!} />}
-                {/* <Toggle>
-                    <ToggleButton className=" text-xs text-blue-500 underline italic cursor-pointer ml-7">Show Opening Hours</ToggleButton>
-                    <ToggleOn>
-                        <DispOpeningHours openingHours={props.openingHours!} />
-                    </ToggleOn>
-                </Toggle> */}
                 <div className=" flex items-center gap-3">
                     <span className="text-lg">
                         <PiBowlFoodFill />
@@ -126,7 +122,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                                 <CiLink />
                             </span>
                             <span>
-                                {props.website}
+                                Visit Website
                             </span>
                         </a>
                     )}
