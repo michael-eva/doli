@@ -24,6 +24,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
 
     const maxDescriptionHeight = 160;
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
+    const [showOpeningHours, setShowOpeningHours] = useState<boolean>(false)
     const user = useUser()
     const isMobile = useMediaQuery({ maxWidth: 640 })
     const truncatedDescription = props.description.slice(0, maxDescriptionHeight);
@@ -44,11 +45,14 @@ export function Card({ handleSubmit, ...props }: CardProps) {
     const navigate = useNavigate()
 
     const handleEditSubmit = (postId: string) => {
-
         navigate(`/edit-post/${postId}`)
+    }
+    const selectedTags = () => {
+        if (props.selectedTags && props.selectedTags.length > 0) {
+            return <span className="">{props.selectedTags.map(tag => tag?.label).join(', ')}</span>
+        }
 
     }
-
     return (
         <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "330px" }}>
 
@@ -66,18 +70,14 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                     <span className="">
                         <HiBuildingStorefront />
                     </span>
-                    <h2 className="font-bold">{props.type}</h2>
+                    <span className=" flex">
+                        <h2 className="font-bold">{props.type} - <span className=" font-normal">{selectedTags()}</span></h2>
+                    </span>
                 </div>
 
-                {props.selectedTags && props.selectedTags.length > 0 &&
-                    <div className=" flex items-center gap-3">
+                <p className={`${showFullDescription ? '' : 'line-clamp-4'} flex gap-3`}>
+                    <span className="mt-1 font-extrabold ">
                         <FaInfoCircle />
-                        <p className=" font-bold">{props.selectedTags.map(tag => tag?.label).join(', ')}</p>
-                    </div>
-                }
-                <p className={` ${showFullDescription ? '' : 'line-clamp-4'} flex gap-3`}>
-                    <span className="mt-1 font-extrabold">
-                        <PiDotsThreeOutlineFill />
                     </span>
                     <span dangerouslySetInnerHTML={{ __html: showFullDescription ? props.description.replace(/\n/g, '<br>') : truncatedDescription.replace(/\n/g, '<br>') }} />
                 </p>
@@ -90,16 +90,20 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                 <div className="">
                     <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} />
                 </div>
-                <div className="flex items-center gap-3">
-                    <FaClock />
-                    <p className=" text-md font-bold">Opening hours:</p>
+                <div className=" flex gap-3 items">
+                    <div className="flex items-center gap-3 ml-0.5">
+                        <FaClock />
+                        <p className=" text-md font-bold">Opening hours:</p>
+                    </div>
+                    <p className=" text-xs text-blue-600 underline italic cursor-pointer" onClick={() => setShowOpeningHours(!showOpeningHours)}>Show Opening Hours</p>
                 </div>
-                <Toggle>
+                {showOpeningHours && <DispOpeningHours openingHours={props.openingHours!} />}
+                {/* <Toggle>
                     <ToggleButton className=" text-xs text-blue-500 underline italic cursor-pointer ml-7">Show Opening Hours</ToggleButton>
                     <ToggleOn>
                         <DispOpeningHours openingHours={props.openingHours!} />
                     </ToggleOn>
-                </Toggle>
+                </Toggle> */}
                 <div className=" flex items-center gap-3">
                     <span className="text-lg">
                         <PiBowlFoodFill />
@@ -107,22 +111,22 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                     <p className=" font-bold">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
                 </div>
 
-                <div className="card-actions mt-4" style={{ height: '48px' }}>
+                <div className=" flex mt-4 gap-1 flex-col">
                     {props.contact!.length > 0 &&
                         <div>
-                            <span className="flex items-center gap-3">
+                            <span className="flex items-center gap-4">
                                 <FaPhone />
-                                <label>Contact: </label>
+                                {/* <label>Contact: </label> */}
+                                <p className=" text-blue-600">{props.contact}</p>
                             </span>
-                            <p className=" text-blue-600">{props.contact}</p>
                         </div>}
                     {props.website!.length > 0 && (
-                        <a href={props.website!.startsWith('http') ? props.website : `http://${props.website}`} target="_blank" rel="noopener noreferrer" className="border-blue-600 text-white rounded-md flex items-center p-3 bg-blue-600 gap-1">
-                            <span className=" text-xl">
+                        <a href={props.website!.startsWith('http') ? props.website : `http://${props.website}`} target="_blank" rel="noopener noreferrer" className=" flex items-center text-blue-600 gap-3">
+                            <span className=" text-xl text-black font-extrabold">
                                 <CiLink />
                             </span>
                             <span>
-                                Visit Website
+                                {props.website}
                             </span>
                         </a>
                     )}

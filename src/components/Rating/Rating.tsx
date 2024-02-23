@@ -161,13 +161,13 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
 
     return (
         <div className="flex mt-3 flex-col gap-2 ">
-            <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-1'>
                 <span className=' text-lg text-yellow-500 '>
                     <IoStar />
                 </span>
-                <span className=' font-bold'>Local</span>
-                <span className=' font-bold text-xs'>{displayRating() === 0 ? "No local ratings recorded" : `${displayRating()} / 5`}</span>
-                <span className=' text-gray-500 text-xs italic -ml-2'>{reviewEl()}</span>
+                <span className=' font-bold'>Locals Rating</span>
+                <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5</span>}</span>
+                <span className=' text-gray-500 text-xs italic'>{reviewEl()}</span>
             </div>
             <div>
                 <Toggle>

@@ -392,7 +392,7 @@ export default function Home() {
                         <p className=" font-bold font-raleway" >{members?.length} <span>Members</span></p>
                     </p>}
                 </div>
-                <div className={` flex ${isMobile ? 'flex-col border items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
+                <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
                     {isLoading ?
                         <>
                             {
