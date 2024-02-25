@@ -60,8 +60,6 @@ export default function OpeningHours({ register, errors, watch, allChecked }: Op
     //     return toTotalMinutes > fromTotalMinutes;
     // };
 
-    console.log(allChecked);
-
     const editOpeningTimesEl = () => {
         return (
             <>
