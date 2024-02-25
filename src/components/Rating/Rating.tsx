@@ -11,10 +11,10 @@ import { isCoordinateWithinRadius } from '../Location/locationHelpers';
 import { IoStar } from "react-icons/io5";
 
 type NameType = {
-    name: string
-    postId: string
-    user: any,
-    coordinates: {
+    name?: string
+    postId?: string
+    user?: any,
+    coordinates?: {
         latitude: number,
         longitude: number
     }
@@ -168,11 +168,11 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
                 </span>
                 <div className=' flex items-center gap-1'>
                     <span className=' font-bold'>Locals Rate:</span>
-                    <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5.0</span>}</span>
+                    {name && <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5.0</span>}</span>}
                     <span className=' text-gray-500 text-xs italic'>{reviewEl()}</span>
                 </div>
             </div>
-            <div>
+            {name && <div>
                 <Toggle>
                     <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline ml-7">
                         Add a rating
@@ -183,7 +183,7 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
                         </CustomModal>
                     </ToggleOn>
                 </Toggle>
-            </div>
+            </div>}
 
         </div>
 
