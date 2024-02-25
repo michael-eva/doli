@@ -62,7 +62,7 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                 {isManageListingsPage && badgePicker()}
 
                 <h2 className="card-title">{props.name}</h2>
-                <h2 className="text-blue-600 font-semibold">{props.locationData?.suburb}, {props.locationData?.state} {props.locationData?.postcode}</h2>
+                <h2 className="text-blue-600">{props.locationData?.suburb}, {props.locationData?.state} {props.locationData?.postcode}</h2>
                 <h3 className="">{props.locationData?.streetAddress}</h3>
 
 
