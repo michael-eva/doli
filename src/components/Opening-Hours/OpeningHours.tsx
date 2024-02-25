@@ -2,9 +2,10 @@
 type OpeningHours = {
     register: any,
     errors: any,
-    watch: any
+    watch: any,
+    allChecked: boolean
 }
-export default function OpeningHours({ register, errors, watch }: OpeningHours) {
+export default function OpeningHours({ register, errors, watch, allChecked }: OpeningHours) {
     function generateTimeOptions() {
         const times = [];
         for (let hour = 0; hour < 24; hour++) {
@@ -59,6 +60,7 @@ export default function OpeningHours({ register, errors, watch }: OpeningHours) 
     //     return toTotalMinutes > fromTotalMinutes;
     // };
 
+    console.log(allChecked);
 
     const editOpeningTimesEl = () => {
         return (
@@ -77,6 +79,7 @@ export default function OpeningHours({ register, errors, watch }: OpeningHours) 
                                 className="input input-bordered"
                                 defaultValue={initialOpeningHours[index].isOpen}
                                 {...register(`openingHours.${index}.isOpen`)}
+                                disabled={!allChecked}
                             >
                                 <option value='open'>Open</option>
                                 <option value='closed'>Closed</option>
