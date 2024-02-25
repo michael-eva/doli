@@ -23,6 +23,7 @@ export default function LocationSearch({
     setInputClear,
     suburbAndPostcode,
     className,
+    allChecked
 }: LocationSearchProps) {
     const [postcode, setPostcode] = useState<string>("");
     const {
@@ -156,7 +157,7 @@ export default function LocationSearch({
                 <input
                     value={value || ""}
                     onChange={handleInput}
-                    disabled={!ready}
+                    disabled={!ready || !allChecked}
                     placeholder={placeholder}
                     className={className}
                 />
@@ -166,8 +167,8 @@ export default function LocationSearch({
                 <div className="flex flex-col w-1/2">
                     <label htmlFor="">Postcode</label>
                     <div
-                        className={`input input-bordered cursor-not-allowed flex items-center ${!postcode ? "text-gray-400" : ""
-                            }`}
+                        className={`input input-bordered cursor-not-allowed flex items-center ${!postcode ? "text-gray-400" : ""} `}
+                        style={!allChecked ? { backgroundColor: "#f2f2f2", borderColor: "#f2f2f2" } : {}}
                     >
                         {postcode ? postcode : "Postcode"}
                     </div>

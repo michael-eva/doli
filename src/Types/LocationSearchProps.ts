@@ -23,4 +23,5 @@ export type LocationSearchProps = {
         state: string,
     },
     className?: string,
+    allChecked: boolean
 }
