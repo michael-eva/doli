@@ -95,10 +95,11 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
             const averageRating =
                 filteredRatings.reduce((acc, curr) => acc + curr.rating, 0) /
                 filteredRatings.length;
-            return isNaN(averageRating) ? 0 : +averageRating.toFixed(2);
+            return Number(averageRating).toFixed(1);
         }
-        return 0;
+        return 0.0;
     };
+
     const ratingModalEl = () => {
         if (ratingSubmitted) {
             return (
@@ -161,13 +162,15 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
 
     return (
         <div className="flex mt-3 flex-col gap-2 ">
-            <div className='flex items-center gap-1'>
-                <span className=' text-lg text-yellow-500 '>
+            <div className='flex items-center gap-2'>
+                <span className=' text-lg text-yellow-500'>
                     <IoStar />
                 </span>
-                <span className=' font-bold'>Locals Rating</span>
-                <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5</span>}</span>
-                <span className=' text-gray-500 text-xs italic'>{reviewEl()}</span>
+                <div className=' flex items-center gap-1'>
+                    <span className=' font-bold'>Locals Rate:</span>
+                    <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5.0</span>}</span>
+                    <span className=' text-gray-500 text-xs italic'>{reviewEl()}</span>
+                </div>
             </div>
             <div>
                 <Toggle>

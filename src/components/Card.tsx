@@ -63,12 +63,12 @@ export function Card({ handleSubmit, ...props }: CardProps) {
 
                 <h2 className="card-title">{props.name}</h2>
                 <h2 className="text-blue-600 font-semibold">{props.locationData?.suburb}, {props.locationData?.state} {props.locationData?.postcode}</h2>
-                <h3 className="font-semibold">{props.locationData?.streetAddress}</h3>
+                <h3 className="">{props.locationData?.streetAddress}</h3>
 
 
 
-                <div className=" flex items-center gap-3 mt-3 -mb-3">
-                    <span className="">
+                <div className=" flex gap-3 mt-3 -mb-3">
+                    <span className="mt-0.5">
                         <HiBuildingStorefront />
                     </span>
                     <span className=" flex">
@@ -92,19 +92,19 @@ export function Card({ handleSubmit, ...props }: CardProps) {
 
                 {/* <RatingComp name={props.name} postId={props.postId!} user={user} coordinates={props.locationData?.coordinates} /> */}
 
-                <div className=" flex gap-3 items">
+                <div className=" flex gap-3 items-center">
                     <div className="flex items-center gap-3 ml-0.5">
                         <FaClock />
-                        <p className=" text-md font-bold">Opening hours:</p>
+                        <p className=" text-md">Opening hours:</p>
                     </div>
-                    <p className=" text-xs text-blue-600 underline italic cursor-pointer" onClick={() => setShowOpeningHours(!showOpeningHours)}>Show Opening Hours</p>
+                    <p className=" text-xs text-blue-600 underline italic cursor-pointer" onClick={() => setShowOpeningHours(!showOpeningHours)}>Show</p>
                 </div>
                 {showOpeningHours && <DispOpeningHours openingHours={props.openingHours!} />}
                 <div className=" flex items-center gap-3">
                     <span className="text-lg">
                         <PiBowlFoodFill />
                     </span>
-                    <p className=" font-bold">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
+                    <p className="">{[props.pickUp && "Pick-Up", props.delivery && "Delivery", props.dineIn && "Dine-In"].filter(Boolean).join(", ")}</p>
                 </div>
 
                 <div className=" flex mt-4 gap-1 flex-col">
