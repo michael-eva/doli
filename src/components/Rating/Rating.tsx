@@ -162,8 +162,8 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
 
     return (
         <div className="flex mt-3 flex-col gap-2 ">
-            <div className='flex items-center gap-2'>
-                <span className=' text-lg text-yellow-500'>
+            <div className='flex items-center gap-2.5'>
+                <span className=' text-lg text-yellow-500 -ml-0.5'>
                     <IoStar />
                 </span>
                 <div className=' flex items-center gap-1'>
