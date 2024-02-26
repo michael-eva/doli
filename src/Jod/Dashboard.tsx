@@ -1,37 +1,20 @@
 import { Link } from "react-router-dom"
 import { seededPosts } from "./dashBoardFunctions"
-import { needValidation } from "./dashBoardFunctions"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { getUnverifiedPosts } from "./API/getUnverifiedPosts"
+
+
+
 export default function Dashboard() {
-    const [serverResponse, setServerResponse] = useState("")
-
-    // const validatePost = needValidation().validationRequired
-
+    const [validationRequired, setValidationRequired] = useState("")
     const claimedPosts = seededPosts().claimedPosts
     const posts = seededPosts().seededPosts
-    //Fetching from netlify function:
-    async function getMembers() {
-        try {
-            // in the response is where you'd customise the data you want to fetch 
-            // eg: returning certain members instead of all
-            const response = await fetch('/.netlify/functions/getMembers');
-            if (!response.ok) {
-                throw new Error('Failed to fetch data from serverless function');
-            }
 
-            const data = await response.json();
-            console.log('Data from serverless function:', data);
-        } catch (error) {
-            console.error('Error fetching data:', error.message);
-        }
-    };
-    useEffect(() => {
-        getUnverifiedPosts
-    }, [])
-    const validationRequired = getUnverifiedPosts.length
-
-
+    getUnverifiedPosts().then(data => {
+        setValidationRequired(data.length)
+    }).catch(error => {
+        console.error(error)
+    })
     return (
         <>
             <div className=" flex justify-between max-w-xl m-auto">
@@ -51,8 +34,8 @@ export default function Dashboard() {
                     }
                 </div>
             </div>
-            <button className="btn btn-info" onClick={getMembers}>Get Members</button>
-            <button className="btn btn-info" onClick={getUnverifiedPosts}>Get Posts</button>
+            {/* <button className="btn btn-info" onClick={getMembers}>Get Members</button> */}
+            {/* <button className="btn btn-info" onClick={getUnverifiedPosts}>Get Posts</button> */}
         </>
     )
 }

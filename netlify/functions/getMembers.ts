@@ -21,7 +21,6 @@ exports.handler = async (event: any, context: any) => {
     const { error, data } = await supabase
         .from("members")
         .select("*");
-    console.log("Event:", event);
 
     if (error) {
         return console.error(error);

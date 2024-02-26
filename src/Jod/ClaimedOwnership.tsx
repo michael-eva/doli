@@ -32,6 +32,10 @@ export function ClaimedOwnership() {
         }
     }
 
+    useEffect(() => {
+        getUnclaimedPosts();
+    }, []);
+
 
     return (
         <div className=" flex flex-col items-center">
