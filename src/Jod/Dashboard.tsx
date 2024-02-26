@@ -9,12 +9,12 @@ export default function Dashboard() {
 
     const claimedPosts = seededPosts().claimedPosts
     const posts = seededPosts().seededPosts
-    async function getResponse(){
-        const response = await fetch('/.netlify-functions/hello')
-		.then(response => response.json()
-	)
-    console.log(response);
-    
+    async function getResponse() {
+        const response = await fetch('/.netlify/functions/hello')
+            .then(response => response.json()
+            )
+        console.log(response);
+
     }
     return (
         <>
