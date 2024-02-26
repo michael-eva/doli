@@ -157,7 +157,7 @@ export default function LocationSearch({
                 <input
                     value={value || ""}
                     onChange={handleInput}
-                    disabled={!ready || !allChecked}
+                    disabled={!ready}
                     placeholder={placeholder}
                     className={className}
                 />
