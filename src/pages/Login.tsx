@@ -53,11 +53,15 @@ export default function Login({ title }: LoginProps) {
         setLoginError("");
         setIsUser("");
         const existingUser = members.find(member => member.email === data.email);
-
+        const notVerified = members.find(member => member.email === data.email && member.isVerified === false)
         if (!existingUser) {
             setLoginError("An account with that email address doesn't exist");
             return;
         }
+        if (!notVerified) {
+            setLoginError("User account not verified. Please sign up again if a sign up email was sent more than 24 hours ago.")
+        }
+
 
         const { error } = await supabase.auth.signInWithPassword({ ...data });
         setIsSubmitting(true)
