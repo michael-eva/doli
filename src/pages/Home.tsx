@@ -113,24 +113,7 @@ export default function Home() {
         }
         setMembers(data);
     }
-    //Fetching from netlify function:
-    // const fetchData = async () => {
-    //     try {
-    //         // in the response is where you'd customise the data you want to fetch 
-    //         // eg: returning certain members instead of all
-    //         const response = await fetch('/.netlify/functions/getMembers');
-    //         if (!response.ok) {
-    //             throw new Error('Failed to fetch data from serverless function');
-    //         }
 
-    //         const data = await response.json();
-    //         console.log('Data from serverless function:', data);
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error.message);
-    //     }
-    // };
-
-    // fetchData();
 
     if (!isVerified) {
         const verifyUser = async () => {
