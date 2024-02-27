@@ -510,7 +510,7 @@ export default function SignUp() {
                                     }}
                                     className="input input-bordered"
                                     signUpData={primaryLocation}
-                                    suburbAndPostcode={true}
+                                // suburbAndPostcode={true}
                                 />
 
                             </div>
@@ -531,7 +531,7 @@ export default function SignUp() {
                                     }}
                                     className="input input-bordered"
                                     signUpData={secondaryLocation}
-                                    suburbAndPostcode={true}
+                                // suburbAndPostcode={true}
                                 />
                                 <p className=" text-xs my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
                             </div>
