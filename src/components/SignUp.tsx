@@ -24,7 +24,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
-    const [locationError, setLocationError] = useState<string>("")
+    // const [locationError, setLocationError] = useState<string>("")
     const existingEmail = errors.email?.message === "Email already exists in the system"
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
@@ -59,6 +59,7 @@ export default function SignUp() {
     };
 
     async function signUpAndInsertData(data: SignUpType) {
+        console.log(data);
         setIsSubmitting(true)
         try {
             const signUpResponse = await supabase.auth.signUp({
@@ -150,7 +151,7 @@ export default function SignUp() {
     }
     function hasSelectedLocation(primaryLocation: { postcode: any }) {
         if (!primaryLocation.postcode) {
-            setLocationError("*Location and postcode is required")
+            // setLocationError("*Location and postcode is required")
         }
     }
     async function handleNewSubmit(data: SignUpType) {
@@ -190,6 +191,7 @@ export default function SignUp() {
             // Proceed with sign up
             const response = await signUpAndInsertData(data);
             hasSelectedLocation(primaryLocation);
+            console.log(response);
 
             if (response && !response.error) {
                 supabase
@@ -217,6 +219,7 @@ export default function SignUp() {
             };
         } catch (error: any) {
             console.error('Error:', error.message);
+            return
         }
         console.log("new signup");
 
@@ -507,6 +510,7 @@ export default function SignUp() {
                                     }}
                                     className="input input-bordered"
                                     signUpData={primaryLocation}
+                                    suburbAndPostcode={true}
                                 />
 
                             </div>
@@ -527,6 +531,7 @@ export default function SignUp() {
                                     }}
                                     className="input input-bordered"
                                     signUpData={secondaryLocation}
+                                    suburbAndPostcode={true}
                                 />
                                 <p className=" text-xs my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
                             </div>
@@ -539,7 +544,7 @@ export default function SignUp() {
                                 <ForgotPassword />
                             </ToggleOn>
                         </Toggle>}
-                        {locationError && <div className=" text-red-600 mt-5">{locationError}</div>}
+                        {/* {locationError && <div className=" text-red-600 mt-5">{locationError}</div>} */}
                         <div className=" flex items-center gap-3">
                             <label className="cursor-pointer label ">
                                 <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
