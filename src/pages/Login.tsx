@@ -53,11 +53,11 @@ export default function Login({ title }: LoginProps) {
         setLoginError("");
         setIsUser("");
         const existingUser = members.find(member => member.email === data.email);
-
         if (!existingUser) {
             setLoginError("An account with that email address doesn't exist");
             return;
         }
+
 
         const { error } = await supabase.auth.signInWithPassword({ ...data });
         setIsSubmitting(true)

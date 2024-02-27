@@ -40,6 +40,7 @@ export default function SignUp() {
         state: "",
         country: "",
     });
+    const [isAgree, setIsAgree] = useState<boolean>(true)
     const [userNotVerified, setUserNotVerified] = useState<boolean>(false)
     async function updateAuthEmail(email: string) {
         try {
@@ -340,7 +341,6 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     }
-
     return (
         <>
             {hasSubmitted ?
@@ -356,15 +356,15 @@ export default function SignUp() {
                 </div >
                 :
                 <form onSubmit={handleSubmit((data) => getSubmitFunction(data as SignUpType))}>
-                    <div className="flex flex-col max-w-3xl m-auto shadow-lg px-14 md:px-24 pb-24 pt-10">
-                        <div className="mb-6">
-                            <h3 className=" text-xl font-semibold mb-3">
-                                {!user ? `Please enter your details:` : `Update user details:`}
+                    <div className="flex flex-col max-w-3xl m-auto shadow-lg px-8 md:px-24 pb-24 pt-10">
+                        <div className="">
+                            <h3 className=" text-xl font-semibold mb-3 text-center">
+                                {!user ? `New Member Onboarding:` : `Update user details:`}
                             </h3>
                         </div>
                         <div className=" flex mt-7 items-center gap-3">
                             {user ? <div className="flex flex-col w-full">
-                                <label>Email</label>
+                                <label>Email Address</label>
 
                                 <input
                                     type="text"
@@ -378,7 +378,7 @@ export default function SignUp() {
                             </div>
                                 :
                                 <div className="flex flex-col w-full">
-                                    <label>Email</label>
+                                    <label>Email Address</label>
                                     {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
                                     <input
                                         type="text"
@@ -418,15 +418,18 @@ export default function SignUp() {
                                 {errors.confirmPassword && <p className=" text-red-600">*{errors.confirmPassword.message?.toString()}</p>}
                             </div>
                         </div>}
-                        <div className="flex gap-3 mt-7 w-full mb-2">
+                        <div className=" mt-7">
+                            <p className=" text-center">We do need to know a little bit about you, but we won't ask for personal information we don't need... you are <span className=" font-bold">NOT</span> out product.</p>
+                        </div>
+                        <div className="flex gap-3 mt-7 w-full mb-2 items-end">
                             <div className="flex flex-col w-1/2">
-                                <label>Birth Month</label>
+                                <label>When were you born?</label>
                                 <select
-                                    defaultValue="- Select Month -"
+                                    defaultValue="Select"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthMonth', { required: 'Birth month is required' })}
                                 >
-                                    <option disabled>- Select Month -</option>
+                                    <option disabled>Select</option>
                                     {months.map(month => (
                                         <option key={nanoid()} value={month}>{month}</option>
                                     ))}
@@ -435,13 +438,13 @@ export default function SignUp() {
                                 {errors.birthMonth && <p className=" text-red-600">*{errors.birthMonth.message?.toString()}</p>}
                             </div>
                             <div className="flex flex-col w-1/2">
-                                <label>Birth Year</label>
+                                {/* <label>Birth Year</label> */}
                                 <select
-                                    defaultValue="- Select Year -"
+                                    defaultValue="Select"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthYear', { required: 'Birth year is required' })}
                                 >
-                                    <option disabled>- Select Year -</option>
+                                    <option disabled>Select</option>
                                     {years.map(year => (
                                         <option value={year} key={year}>{year}</option>
                                     ))}
@@ -450,20 +453,19 @@ export default function SignUp() {
                             </div>
 
                         </div>
-                        <div className="flex gap-3 mt-7 w-full mb-2">
+                        <div className="flex gap-3 mt-3 w-full mb-2">
 
                             <div className="flex flex-col w-1/2">
                                 <label>Gender</label>
                                 <select
-                                    defaultValue='- Select Gender -'
+                                    defaultValue='Select'
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('gender', { required: 'Gender is required' })}
                                 >
-                                    <option disabled>- Select Gender -</option>
+                                    <option disabled>Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="non-binary">Non-binary</option>
-                                    <option value="other">Other</option>
 
                                 </select>
                                 {errors.gender && <p className=" text-red-600">*{errors.gender.message?.toString()}</p>}
@@ -487,9 +489,9 @@ export default function SignUp() {
                                 />
                             </div>
                         </div>
-                        <div className=" md:flex gap-3 mt-7 w-full mb-2">
+                        <div className=" flex-col md:flex-row flex gap-3 mt-3 w-full mb-2">
                             <div className="flex flex-col md:w-1/2">
-                                <label>Primary Suburb</label>
+                                <label>Home</label>
                                 <LocationSearch
                                     types={['locality']}
                                     placeholder="Start typing in a suburb"
@@ -504,52 +506,29 @@ export default function SignUp() {
                                         });
                                     }}
                                     className="input input-bordered"
-                                    suburbAndPostcode={true}
                                     signUpData={primaryLocation}
                                 />
 
                             </div>
                             <div className="flex flex-col md:w-1/2">
-                                <div className="flex justify-between">
-                                    <label>Secondary Suburb</label>
-                                    <Toggle>
-                                        <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                        <ToggleOn>
-                                            <SimpleModal title="doli">An area you know as well as you know your own neighbourhood.</SimpleModal>
-                                        </ToggleOn>
-                                    </Toggle>
-                                </div>
-                                <div className="flex">
-
-
-                                    <LocationSearch
-                                        types={['locality']}
-                                        placeholder="Start typing in a suburb"
-                                        onSelect={(address, postcode, suburb, state, country, coordinates) => {
-                                            setSecondaryLocation({
-                                                address,
-                                                postcode,
-                                                suburb,
-                                                state,
-                                                country,
-                                                coordinates,
-                                            });
-                                        }}
-                                        className="input input-bordered"
-                                        suburbAndPostcode={true}
-                                        signUpData={secondaryLocation}
-                                    />
-                                </div>
-                                {/* {secondaryLocation.postcode && <button
-                                    className="btn btn-error btn-xs mt-4 m-auto "
-                                    onClick={() => setSecondaryLocation({
-                                        address: "",
-                                        postcode: "",
-                                        suburb: "",
-                                        state: "",
-                                        country: "",
-                                    })}
-                                >Remove Secondary Suburb</button>} */}
+                                <label>Home away from home*</label>
+                                <LocationSearch
+                                    types={['locality']}
+                                    placeholder="Start typing in a suburb"
+                                    onSelect={(address, postcode, suburb, state, country, coordinates) => {
+                                        setSecondaryLocation({
+                                            address,
+                                            postcode,
+                                            suburb,
+                                            state,
+                                            country,
+                                            coordinates,
+                                        });
+                                    }}
+                                    className="input input-bordered"
+                                    signUpData={secondaryLocation}
+                                />
+                                <p className=" text-xs my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
                             </div>
                         </div>
                         {user && <Toggle>
@@ -561,12 +540,22 @@ export default function SignUp() {
                             </ToggleOn>
                         </Toggle>}
                         {locationError && <div className=" text-red-600 mt-5">{locationError}</div>}
-                        {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                        <div className=" flex items-center gap-3">
+                            <label className="cursor-pointer label ">
+                                <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
+                            </label>
+                            <span className="label-text">I agree to the <span></span>
+                                <a className=" text-bold underline cursor-pointer" href="https://awkmxabdskcgxkzpqiru.supabase.co/storage/v1/object/public/website-documents/Terms%20of%20Service%20-%20doli.pdf" target="_blank">Terms of Service</a>
+                                <span></span> and <span></span>
+                                <a className="text-bold underline cursor-pointer" href="https://awkmxabdskcgxkzpqiru.supabase.co/storage/v1/object/public/website-documents/Privacy%20Policy.pdf" target="_blank">Privacy Policy.</a >
+                            </span>
+                        </div>
+                        {isSubmitting ? <button className="btn w-full btn-disabled mt-3">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
-                            <button className="btn btn-primary mt-7 w-full">Submit</button>
+                            <button className="btn btn-primary mt-3 w-full">Submit</button>
                         }
 
-                        {!user && <div className="mt-5">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
+                        {!user && <div className="mt-5 flex gap-1 justify-center md:justify-start">Already a member? <Link to="/login" className=" italic underline">Log in</Link></div>}
                     </div>
                 </form>
             }

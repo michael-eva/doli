@@ -3,6 +3,7 @@ import { isCoordinateWithinRadius } from "../components/Location/locationHelpers
 import { paginatePage } from "./pagniation";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
+    
 function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | null, currentPage: number, pageSize: number) {
     let filterPosts = [...posts];
 

@@ -81,6 +81,11 @@ export default function PostForm({ postData, }: CardProps) {
         checkbox4: false
     });
     const [allChecked, setAllChecked] = useState<boolean>(false);
+    useEffect(() => {
+        if (postData) {
+            setAllChecked(true)
+        }
+    }, [postData])
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
@@ -348,7 +353,8 @@ export default function PostForm({ postData, }: CardProps) {
                 <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))}>
                     <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-10 pb-24 pt-10">
                         <header className=" w-96">
-                            <div className=" py-4">
+
+                            {!postData ? <div className=" py-4">
                                 <p className=" mb-4"><span className=" font-bold">Awesome!</span> We’re super excited you decided to register. Before we get going, please confirm the following about your business.</p>
                                 <div className="text-xs leading-6 list-inside flex flex-col gap-2">
                                     <div className="flex gap-2 items-center">
@@ -388,7 +394,9 @@ export default function PostForm({ postData, }: CardProps) {
                                         <span>You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> :
+                                <p className=" mb-4 font-bold text-2xl">Edit Post:</p>
+                            }
                         </header>
                         <div className={`${!allChecked && "text-gray-300"}`}>
                             {!allChecked ?
@@ -647,7 +655,7 @@ export default function PostForm({ postData, }: CardProps) {
                             </div>}
                             {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
                             {locationError && <p className="text-red-600 mt-5">*Please select a business location.</p>}
-                            <div className=" flex items-center gap-3 mt-5">
+                            {!postData && <div className=" flex items-center gap-3 mt-5">
                                 <label className="cursor-pointer label ">
                                     <input type="checkbox" checked={isAgree} disabled={!allChecked} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
                                 </label>
@@ -656,7 +664,7 @@ export default function PostForm({ postData, }: CardProps) {
                                     <span></span> and <span></span>
                                     <a className="text-bold underline cursor-pointer" href="https://awkmxabdskcgxkzpqiru.supabase.co/storage/v1/object/public/website-documents/Privacy%20Policy.pdf" target="_blank">Privacy Policy.</a >
                                 </span>
-                            </div>
+                            </div>}
                             {isAgree && allChecked ? <div className=" flex gap-2 mt-7">
                                 {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                     :
