@@ -422,7 +422,7 @@ export default function SignUp() {
                             </div>
                         </div>}
                         <div className=" mt-7">
-                            <p className=" text-center">We do need to know a little bit about you, but we won't ask for personal information we don't need... you are <span className=" font-bold">NOT</span> out product.</p>
+                            <p className=" text-center">We do need to know a little bit about you, but we won't ask for personal information we don't need... you are <span className=" font-bold">NOT</span> our product.</p>
                         </div>
                         <label className="mt-7">When were you born?</label>
                         <div className="flex gap-3  w-full mb-2 items-end">
@@ -550,9 +550,7 @@ export default function SignUp() {
                                 <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
                             </label>
                             <span className="label-text">I agree to the <span></span>
-                                <a className=" text-bold underline cursor-pointer" href={`${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf`} target="_blank">Terms of Service</a>
-                                <span></span> and <span></span>
-                                <a className="text-bold underline cursor-pointer" href={`${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/website_documents/Privacy%20Policy.pdf`} target="_blank">Privacy Policy.</a >
+                                <a className=" text-bold underline cursor-pointer" href={`${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf`} target="_blank">Terms of Service.</a>
                             </span>
                         </div>
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-3">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
