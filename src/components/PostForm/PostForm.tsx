@@ -351,10 +351,11 @@ export default function PostForm({ postData, }: CardProps) {
         <div className="md:flex justify-center">
             <div>
                 <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))}>
-                    <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-24 pb-24 pt-10">
+                    <div className="md:max-w-3xl md:mr-10 shadow-lg md:px-10 pb-24 pt-10">
                         <header className=" w-96">
+
                             {!postData ? <div className=" py-4">
-                                <p className=" mb-4"><span className=" font-bold">Registration Criteria:</span> for a successful registration of your Business, you must...</p>
+                                <p className=" mb-4"><span className=" font-bold">Awesome!</span> We’re super excited you decided to register. Before we get going, please confirm the following about your business.</p>
                                 <div className="text-xs leading-6 list-inside flex flex-col gap-2">
                                     <div className="flex gap-2 items-center">
                                         <input
@@ -363,7 +364,7 @@ export default function PostForm({ postData, }: CardProps) {
                                             checked={checkboxes.checkbox1}
                                             onChange={() => handleRuleCheckboxChange('checkbox1')}
                                         />
-                                        <span>have food and/or beverages as the primary product offering.</span>
+                                        <span>Food and / or drinks are your <span className=" underline">primary</span> product offering.</span>
                                     </div>
                                     <div className="flex gap-2">
                                         <input
@@ -372,7 +373,7 @@ export default function PostForm({ postData, }: CardProps) {
                                             checked={checkboxes.checkbox2}
                                             onChange={() => handleRuleCheckboxChange('checkbox2')}
                                         />
-                                        <span>have a permanent physical address where community members can 'in person' visit and purchase your products directly on a retail basis.</span>
+                                        <span>You have a <span className=" underline">genuine and permanent</span> physical retail location. </span>
                                     </div>
                                     <div className="flex gap-2">
                                         <input
@@ -381,7 +382,7 @@ export default function PostForm({ postData, }: CardProps) {
                                             checked={checkboxes.checkbox3}
                                             onChange={() => handleRuleCheckboxChange('checkbox3')}
                                         />
-                                        <span>not own, operate or derive financial benefit from electronic gaming machines.</span>
+                                        <span>You do <span className=" underline">NOT</span> operate or derive financial benefit from electronic gaming machines.</span>
                                     </div>
                                     <div className="flex gap-2">
                                         <input
@@ -390,7 +391,7 @@ export default function PostForm({ postData, }: CardProps) {
                                             checked={checkboxes.checkbox4}
                                             onChange={() => handleRuleCheckboxChange('checkbox4')}
                                         />
-                                        <span>not be owned by a publicly listed entity, wholly or majority owned by non-Australia interest nor be a franchise.</span>
+                                        <span>You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
                                     </div>
                                 </div>
                             </div> :
@@ -398,10 +399,15 @@ export default function PostForm({ postData, }: CardProps) {
                             }
                         </header>
                         <div className={`${!allChecked && "text-gray-300"}`}>
-                            {!allChecked &&
+                            {!allChecked ?
                                 <div className="divider">
                                     <p className="text-blue-500">Please agree to the rules above to proceed</p>
                                 </div>
+                                :
+                                <div className=" max-w-full">
+                                    <p className="text-blue-500">Ok... let’s go! Make sure you complete all mandatory fields below.</p>
+                                </div>
+
                             }
                             <div className="flex flex-col mb-5 mt-7">
                                 <label htmlFor="">Business Name</label>
