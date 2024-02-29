@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
-import { sendVerificationEmail } from "../../netlify/functions/sendVerificationEmail"
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -124,38 +123,24 @@ export default function Validation() {
     }
     async function validateAndSendEmail(email: string) {
         try {
-            const response = await sendVerificationEmail({
-                queryStringParameters: {
-                    email: email
-                }
-            });;
-            console.log('Email sent:', response); // Handle the response as needed
+            const response = await fetch('/.netlify/functions/sendVerificationEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            if (response.ok) {
+                console.log('Email sent successfully');
+            } else {
+                console.error('Failed to send email:', response.status, response.statusText);
+                throw new Error('Failed to fetch data from serverless function');
+            }
         } catch (error) {
-            console.error('Error sending email:', error);
+            console.error('Error fetching data:', error);
         }
     }
-    // async function sendVerificationEmail(email: string) {
-    //     try {
-    //         const response = await fetch(`/.netlify/functions/sendVerificationEmail?email=${email}`, {
-    //             method: 'GET', // Adjust the method if needed (POST/GET)
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 // Add other headers (e.g., Authorization) if required
-    //             },
-    //         });
-
-    //         if (response.ok) {
-    //             // const data = await response.json();
-    //             // return data; // Return the response for further processing if needed
-    //             return
-    //         } else {
-    //             throw new Error('Failed to fetch data from serverless function');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         // Handle the error (e.g., show a user-friendly message)
-    //     }
-    // }
 
     return (
         <>
