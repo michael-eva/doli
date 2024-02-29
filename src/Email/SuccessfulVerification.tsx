@@ -1,6 +1,18 @@
 import { Body, Html, Container, Tailwind, Text, Button, Img, Heading, Head } from "@react-email/components";
 
 export default function SuccessfulVerification() {
+    const button = {
+        backgroundColor: "#656ee8",
+        borderRadius: "5px",
+        color: "#fff",
+        fontSize: "16px",
+        fontWeight: "bold",
+        textDecoration: "none",
+        textAlign: "center" as const,
+        display: "block",
+        width: "40%",
+        padding: "10px",
+    };
     return (
         <Html>
             <Head />
@@ -21,15 +33,3 @@ export default function SuccessfulVerification() {
 }
 
 
-const button = {
-    backgroundColor: "#656ee8",
-    borderRadius: "5px",
-    color: "#fff",
-    fontSize: "16px",
-    fontWeight: "bold",
-    textDecoration: "none",
-    textAlign: "center" as const,
-    display: "block",
-    width: "40%",
-    padding: "10px",
-};

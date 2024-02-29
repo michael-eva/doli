@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
-import SuccessfulVerification from "../Email/SuccessfulVerification"
-
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -51,7 +49,6 @@ type CardProps = {
 }
 export default function Validation() {
     const [posts, setPosts] = useState<CardProps[]>([])
-
 
     useEffect(() => {
         getCombinedData()
