@@ -1,0 +1,6 @@
+{
+    "name": "my-netlify-function",
+    "dependencies": {
+      "resend": "^3.2.0"
+    }
+  }
