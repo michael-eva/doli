@@ -122,26 +122,24 @@ export default function Validation() {
         }
     }
     async function validateAndSendEmail(email: string) {
-        console.log(email);
+        try {
+            const response = await fetch('/.netlify/functions/sendVerificationEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
 
-        // try {
-        //     const response = await fetch('/.netlify/functions/sendVerificationEmail', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify({ email }),
-        //     });
-
-        //     if (response.ok) {
-        //         console.log('Email sent successfully');
-        //     } else {
-        //         console.error('Failed to send email:', response.status, response.statusText);
-        //         throw new Error('Failed to fetch data from serverless function');
-        //     }
-        // } catch (error) {
-        //     console.error('Error fetching data:', error);
-        // }
+            if (response.ok) {
+                console.log('Email sent successfully');
+            } else {
+                console.error('Failed to send email:', response.status, response.statusText);
+                throw new Error('Failed to fetch data from serverless function');
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
 
     return (
