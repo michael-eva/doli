@@ -237,7 +237,6 @@ export default function PostForm({ postData, }: CardProps) {
         setIsSubmitting(false);
         formCleanup(shouldSetVerifiedFalse)
     }
-
     const handleNewFormSubmit = async (formData: CardProps) => {
         const noErrors = handleFormErrors(formData, { selectedLocation: selectedLocation.postcode })
         if (!noErrors) {
