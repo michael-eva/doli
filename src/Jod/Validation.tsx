@@ -119,6 +119,16 @@ export default function Validation() {
             console.error("Error:", error);
         }
     }
+    async function sendVerificationEmail(email: string) {
+        try {
+            const response = await fetch(`/.netlify/functions/sendVerificationEmail?email=${email}`)
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from serverless function');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <>
             <div className=" flex justify-center gap-10">
