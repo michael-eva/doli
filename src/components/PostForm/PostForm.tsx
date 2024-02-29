@@ -187,7 +187,7 @@ export default function PostForm({ postData, }: CardProps) {
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
