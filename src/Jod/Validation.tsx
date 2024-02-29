@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
+import { sendVerificationEmail } from "../../netlify/functions/sendVerificationEmail"
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -106,7 +107,7 @@ export default function Validation() {
                 .from("posts")
                 .update({ isVerified: true })
                 .eq("postId", postId);
-            sendVerificationEmail(userEmail)
+            validateAndSendEmail(userEmail)
             if (error) {
                 console.error("Error updating post:", error);
             } else {
@@ -121,16 +122,41 @@ export default function Validation() {
             console.error("Error:", error);
         }
     }
-    async function sendVerificationEmail(email: string) {
+    async function validateAndSendEmail(email: string) {
         try {
-            const response = await fetch(`/.netlify/functions/sendVerificationEmail?email=${email}`)
-            if (!response.ok) {
-                throw new Error('Failed to fetch data from serverless function');
-            }
+            const response = await sendVerificationEmail({
+                queryStringParameters: {
+                    email: email
+                }
+            });;
+            console.log('Email sent:', response); // Handle the response as needed
         } catch (error) {
-            console.error(error);
+            console.error('Error sending email:', error);
         }
     }
+    // async function sendVerificationEmail(email: string) {
+    //     try {
+    //         const response = await fetch(`/.netlify/functions/sendVerificationEmail?email=${email}`, {
+    //             method: 'GET', // Adjust the method if needed (POST/GET)
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 // Add other headers (e.g., Authorization) if required
+    //             },
+    //         });
+
+    //         if (response.ok) {
+    //             // const data = await response.json();
+    //             // return data; // Return the response for further processing if needed
+    //             return
+    //         } else {
+    //             throw new Error('Failed to fetch data from serverless function');
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         // Handle the error (e.g., show a user-friendly message)
+    //     }
+    // }
+
     return (
         <>
             <div className=" flex justify-center gap-10">
