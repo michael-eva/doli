@@ -1,4 +1,4 @@
-const RESEND_API_KEY = "re_UdCZMpjw_6cfmHXyNCZUBy5SFF4KrPdgF";
+const RESEND_API_KEY = process.env.VITE_REACT_APP_RESEND_API_KEY;
 
 export async function handler(event: any) {
   try {
