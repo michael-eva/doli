@@ -99,12 +99,14 @@ export default function Validation() {
         }
     };
     async function handleSubmit(postId: string) {
+        const user = posts.find(post => post.postId === postId)
+        const userEmail = user?.email
         try {
             const { error } = await supabase
                 .from("posts")
                 .update({ isVerified: true })
-                .eq("postId", postId);
-
+                .eq("postId", postId)
+            sendVerificationEmail(userEmail)
             if (error) {
                 console.error("Error updating post:", error);
             } else {
@@ -120,6 +122,7 @@ export default function Validation() {
         }
     }
     async function sendVerificationEmail(email: string) {
+        console.log(email);
         try {
             const response = await fetch(`/.netlify/functions/sendVerificationEmail?email=${email}`)
             if (!response.ok) {
