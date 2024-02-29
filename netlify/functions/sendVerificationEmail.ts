@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import SuccessfulVerification from '../src/Email/SuccessfulVerification';
+import SuccessfulVerification from '../../src/Email/SuccessfulVerification';
 
 const resend = new Resend(process.env.VITE_REACT_APP_RESEND_API_KEY);
 export async function handler(event: any, context: any) {

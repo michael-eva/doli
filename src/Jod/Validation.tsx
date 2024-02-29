@@ -99,12 +99,14 @@ export default function Validation() {
         }
     };
     async function handleSubmit(postId: string) {
+        const post = posts.find(post => post.postId === postId)
+        const userEmail = post?.email
         try {
             const { error } = await supabase
                 .from("posts")
                 .update({ isVerified: true })
                 .eq("postId", postId);
-
+            sendVerificationEmail(userEmail)
             if (error) {
                 console.error("Error updating post:", error);
             } else {
