@@ -248,7 +248,7 @@ export default function PostForm({ postData, }: CardProps) {
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: formData.openingHours })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: formData.openingHours, email: user?.email })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
