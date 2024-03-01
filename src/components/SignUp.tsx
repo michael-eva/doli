@@ -41,7 +41,6 @@ export default function SignUp() {
         country: "",
     });
     const [isAgree, setIsAgree] = useState<boolean>(true)
-    const [userNotVerified, setUserNotVerified] = useState<boolean>(false)
     async function updateAuthEmail(email: string) {
         try {
             const { error } = await supabase.auth.updateUser({
@@ -310,7 +309,6 @@ export default function SignUp() {
                     return
                 } else {
                     console.log("not verified", data);
-                    setUserNotVerified(true)
                 }
 
             } else {
