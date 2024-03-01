@@ -153,11 +153,13 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
     }
     const reviewEl = () => {
         if (filteredRatings?.length === 1) {
-            return `(${filteredRatings?.length} review)`
+            return `(reviewed by ${filteredRatings?.length} local)`
+            // return `(${filteredRatings?.length} review)`
         } else if (filteredRatings?.length === 0) {
             return null
         }
-        return `(${filteredRatings?.length} reviews)`
+        return `(reviews by ${filteredRatings?.length} locals)`
+        // return `(${filteredRatings?.length} reviews)`
     }
 
     return (
@@ -167,16 +169,19 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
                     <IoStar />
                 </span>
                 <div className=' flex items-center gap-1'>
-                    <span className=' font-bold'>Locals Rate:</span>
-                    {name && <span className=' text-xs'>{displayRating() === 0 ? <span>No local ratings recorded</span> : <span className='ml-2 font-bold'>{displayRating()} / 5.0</span>}</span>}
-                    <span className=' text-gray-500 text-xs italic'>{reviewEl()}</span>
+                    {/* <span className=' font-bold'>Locals Rate:</span> */}
+                    {name && <span className=''>{displayRating() === 0 ? <span>No local ratings yet</span> : <span className=' font-bold'>{displayRating()} / 5.0</span>}</span>}
+                    <span className=' text-gray-500'>{reviewEl()}</span>
                 </div>
             </div>
             {name && <div>
                 <Toggle>
-                    <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline ml-7">
-                        Add a rating
+                    <ToggleButton className="text-xs font-bold text-blue-600 cursor-pointer ml-7">
+                        RATE US!
                     </ToggleButton>
+                    {/* <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline ml-7">
+                        Add a rating
+                    </ToggleButton> */}
                     <ToggleOn>
                         <CustomModal>
                             {ratingModalEl()}
