@@ -1,9 +1,8 @@
 const RESEND_API_KEY = process.env.VITE_REACT_APP_RESEND_API_KEY;
 
-export async function handler(event: any) {
+export async function handler(event: { body: string; }) {
   try {
-const requestBody = JSON.parse(event.body)
-const email = requestBody.email
+    const { email } = JSON.parse(event.body);
     const response = await sendEmail(email);
 
     if (response.ok) {
@@ -14,10 +13,10 @@ const email = requestBody.email
         body: JSON.stringify(data),
       };
     } else {
-      throw new Error('Failed to fetch data from Resend API');
+      throw new Error('Failed to send email');
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error sending email:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal Server Error' }),
@@ -25,7 +24,7 @@ const email = requestBody.email
   }
 }
 
-async function sendEmail(email: string): Promise<Response> {
+async function sendEmail(email: string) {
   const url = 'https://api.resend.com/emails';
   const payload = {
     from: 'doli <noreply@doli.com.au>',
