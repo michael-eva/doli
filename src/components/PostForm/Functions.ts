@@ -24,6 +24,12 @@ const hasSelectedLocation = (selectedLocation: any) => {
     }
     return false
 }
+function determineRejectionStatus(formData: CardProps, postData: CardProps){
+    const isNameChanged = formData.name !== postData?.name;
+    const isDescriptionChanged = formData.description !== postData?.description;
+    const isImageChanged = formData.imgUrl && formData.imgUrl.length > 0;
+    return isNameChanged || isDescriptionChanged || isImageChanged ? false : true
+}
 function determineVerificationStatus(formData: CardProps, postData?: CardProps) {
     if (postData?.isVerified === false) {
         return false
@@ -46,4 +52,4 @@ function countChars(name: string) {
     return inputLength
 }
 
-export { determineVerificationStatus, handleErrors, countChars }
+export { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus }

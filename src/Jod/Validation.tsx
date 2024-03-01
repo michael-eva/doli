@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
+import CustomModal from "../components/Modals/CustomModal"
+import { useForm } from "react-hook-form"
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -49,6 +51,9 @@ type CardProps = {
 }
 export default function Validation() {
     const [posts, setPosts] = useState<CardProps[]>([])
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [postId, setPostId] = useState<string>("")
+    const { register, handleSubmit, formState: { errors } } = useForm()
 
     useEffect(() => {
         getCombinedData()
@@ -60,7 +65,8 @@ export default function Validation() {
             const { data: postsData, error: postsError } = await supabase
                 .from("posts")
                 .select("*")
-                .eq("isVerified", false);
+                .eq("isVerified", false)
+                .eq("isRejected", false)
 
             if (postsError) {
                 console.error("Error fetching posts data:", postsError);
@@ -98,15 +104,15 @@ export default function Validation() {
             console.error("Error fetching combined data:", error);
         }
     };
-    async function handleSubmit(postId: string) {
+    async function handleAcceptSubmit(postId: string) {
         const post = posts.find(post => post.postId === postId)
         const userEmail = post?.email
         try {
             const { error } = await supabase
                 .from("posts")
-                .update({ isVerified: true })
+                .update({ isVerified: true, isRejected: false })
                 .eq("postId", postId);
-            validateAndSendEmail(userEmail)
+            sendVerification(userEmail)
             if (error) {
                 console.error("Error updating post:", error);
             } else {
@@ -121,7 +127,7 @@ export default function Validation() {
             console.error("Error:", error);
         }
     }
-    async function validateAndSendEmail(email: string) {
+    async function sendVerification(email: string) {
         try {
             const response = await fetch('/.netlify/functions/sendVerificationEmail', {
                 method: 'POST',
@@ -141,6 +147,71 @@ export default function Validation() {
             console.error('Error fetching data:', error);
         }
     }
+    async function handleReject(postId: string) {
+        setShowModal(true)
+        setPostId(postId)
+    }
+    async function sendRejection(email: string, reason: string) {
+        try {
+            const response = await fetch('/.netlify/functions/sendRejectEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, reason }),
+            });
+
+            if (response.ok) {
+                console.log('Email sent successfully');
+            } else {
+                console.error('Failed to send email:', response.status, response.statusText);
+                throw new Error('Failed to fetch data from serverless function');
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    async function onSubmit(data: any) {
+        const post = posts.find(post => post.postId === postId)
+        const userEmail = post?.email
+        try {
+            const { error } = await supabase
+                .from("posts")
+                .update({ isVerified: false, isRejected: true })
+                .eq("postId", postId);
+            sendRejection(userEmail, data.reason)
+            if (error) {
+                console.error("Error updating post:", error);
+            } else {
+                getCombinedData()
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+        setShowModal(false)
+    };
+
+    function modalEl() {
+        return (
+            <CustomModal setShowModal={setShowModal}>
+                <header>
+                    <p className="text-xl font-bold">Enter reason for rejection:</p>
+                </header>
+                {errors.reason && (
+                    <p className=" text-red-600">*{errors.reason.message?.toString()}</p>
+                )}
+                <form onSubmit={handleSubmit(onSubmit)} className="pt-5">
+                    <textarea
+                        className="textarea textarea-bordered w-full"
+                        style={{ height: "80px" }}
+                        {...register("reason", { required: "Please enter a reason why it's being rejected." })}
+                    ></textarea>
+                    <button className="btn btn-success" >Submit</button>
+                    {/* <button className="btn btn-success" onSubmit={() => sendRejection("evamichael100@gmail.com", `${reason}`)}>Submit</button> */}
+                </form>
+            </CustomModal>
+        )
+    }
 
     return (
         <>
@@ -152,12 +223,13 @@ export default function Validation() {
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
-                                <Card {...item} isJod={true} handleSubmit={handleSubmit} />
+                                <Card {...item} isJod={true} handleSubmit={handleAcceptSubmit} handleReject={handleReject} />
                             </div>
                         );
                     })}
                 </div>
             </div>
+            {showModal && modalEl()}
         </>
     )
 

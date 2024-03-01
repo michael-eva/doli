@@ -19,7 +19,7 @@ import { CiLink } from "react-icons/ci";
 
 
 
-export function Card({ handleSubmit, ...props }: CardProps) {
+export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
     // export function Card({ isVerified, handleSubmit, isJod, onDelete, postId, id, imgUrl, name, locationData, type, selectedTags, description, openingHours, contact, pickUp, delivery, dineIn, website }: CardProps) {
 
     const maxDescriptionHeight = 160;
@@ -35,6 +35,9 @@ export function Card({ handleSubmit, ...props }: CardProps) {
     };
     const isManageListingsPage = location.pathname === '/manage-listings'
     const badgePicker = () => {
+        if (props.isRejected) {
+            return <div className="badge badge-error badge-outline">Rejected</div>
+        }
         if (props.isVerified) {
             return <div className="badge badge-success badge-outline">Verified</div>
         } else {
@@ -150,7 +153,9 @@ export function Card({ handleSubmit, ...props }: CardProps) {
                         className=" m-2 px-5 py-2 rounded-lg bg-green-400 text-xs hover:bg-gray-500 hover:text-white"
                         onClick={() => handleSubmit(props.postId)}
                     >Verify</button>
-                    <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white">Reject</button>
+                    <button className=" m-2 px-5 py-2 rounded-lg  bg-red-400 text-xs hover:bg-red-500  hover:text-white"
+                        onClick={() => handleReject(props.postId)}
+                    >Reject</button>
 
                 </div>
             }

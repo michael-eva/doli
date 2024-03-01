@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom"
 import { seededPosts } from "./dashBoardFunctions"
-import { useState } from "react"
-import { getUnverifiedPosts } from "./API/getUnverifiedPosts"
+import { useEffect, useState } from "react"
+import supabase from "../config/supabaseClient"
+// import { getUnverifiedPosts } from "./API/getUnverifiedPosts"
 
 
 
@@ -10,11 +11,29 @@ export default function Dashboard() {
     const claimedPosts = seededPosts().claimedPosts
     const posts = seededPosts().seededPosts
 
-    getUnverifiedPosts().then(data => {
-        setValidationRequired(data.length)
-    }).catch(error => {
-        console.error(error)
-    })
+    // getUnverifiedPosts().then(data => {
+    //     setValidationRequired(data.length)
+    // }).catch(error => {
+    //     console.error(error)
+    // })
+
+    async function getUnverifiedPosts() {
+        const { data, error } = await supabase
+            .from("posts")
+            .select("*")
+            .eq("isVerified", false)
+            .eq("isRejected", false)
+
+        if (error) {
+            console.error(error);
+        }
+        if (data) {
+            setValidationRequired(data.length.toString())
+        }
+    }
+    useEffect(() => {
+        getUnverifiedPosts()
+    }, [])
     return (
         <>
             <div className=" flex justify-between max-w-xl m-auto">

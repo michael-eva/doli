@@ -18,7 +18,7 @@ import ToggleButton from "../Toggle/ToggleButton.tsx";
 import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
-import { determineVerificationStatus, handleErrors, countChars } from "./Functions.ts";
+import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus } from "./Functions.ts";
 
 type imgPath = {
     path: string
@@ -183,11 +183,12 @@ export default function PostForm({ postData, }: CardProps) {
         }
         setIsSubmitting(true);
         const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
+        const shouldSetRejecFalse = determineRejectionStatus(formData, postData)
 
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email, isRejected: shouldSetRejecFalse })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
