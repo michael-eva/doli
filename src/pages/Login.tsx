@@ -84,13 +84,13 @@ export default function Login({ title }: LoginProps) {
     }
 
     return (
-        <div className="shadow-2xl max-w-xl px-14 md:px-24 pb-20 pt-12 m-auto md:mt-24 rounded-lg">
+        <div className="shadow-2xl max-w-xl px-10 md:px-24 pb-12 pt-12 m-auto rounded-lg">
             {location.state && (
                 <p className=" mb-5 text-red-600 italic">*{location.state.message}</p>
             )}
             <form onSubmit={handleSubmit((data) => handleFormSubmit(data as LoginData))}>
-                <div className="  gap-9 flex flex-col ">
-                    <p className=" text-lg font-semibold pb-5">{`${title ? title : "Please enter your login details:"}`}</p>
+                <div className="  gap-2 md:gap-5 flex flex-col ">
+                    <p className=" text-lg font-semibold text-center">{`${title ? title : "Please enter your login details:"}`}</p>
                     {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
                     <div className="md:flex">
                         <label className="label">
@@ -119,9 +119,9 @@ export default function Login({ title }: LoginProps) {
                     </div>
                     {errors.password && <p className=" text-red-600">*{errors.password.message?.toString()}</p>}
                     <div>
-                        {isSubmitting ? <button className="btn w-full btn-disabled mt-7">Loggin in...<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                        {isSubmitting ? <button className="btn w-full btn-disabled mt-4">Loggin in...<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
-                            <button className="btn btn-primary mt-7 w-full">Login</button>
+                            <button className="btn btn-primary w-full mt-4">Login</button>
                         }
                         <Toggle>
                             <ToggleButton className=" text-sm underline italic cursor-pointer">
@@ -134,7 +134,7 @@ export default function Login({ title }: LoginProps) {
                     </div>
                 </div>
             </form>
-            <div className="flex flex-col items-center gap-5 mt-9">
+            <div className="flex flex-col items-center gap-2 mt-4">
                 <p>Not yet a member?</p>
                 <Link to="/member-register" className="btn w-48 btn-success">Sign up here</Link>
             </div>
