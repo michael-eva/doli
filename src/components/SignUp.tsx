@@ -356,7 +356,7 @@ export default function SignUp() {
                     </div>
                 </div >
                 :
-                <form onSubmit={handleSubmit((data) => getSubmitFunction(data as SignUpType))}>
+                <form onSubmit={handleSubmit((data) => getSubmitFunction(data as SignUpType))} className=" pb-10">
                     <div className="flex flex-col max-w-3xl m-auto shadow-lg px-8 md:px-24 pb-24 pt-10">
                         <div className="">
                             <h3 className=" text-xl font-semibold mb-3 text-center">
