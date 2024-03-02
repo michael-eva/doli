@@ -97,7 +97,7 @@ export default function ManageListings() {
         if (posts?.length > 0) {
 
             return (
-                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
+                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center pb-10">
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
