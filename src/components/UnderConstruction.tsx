@@ -1,6 +1,6 @@
 export default function UnderConstruction() {
     return (
-        <div className=" flex justify-center mt-20">
+        <div className=" flex justify-center mt-20 min-h-screen">
             <div className="flex flex-col md:items-center">
                 <p className=" px-11 text-2xl md:text-3xl">We're working on something special here,</p>
                 <p className=" px-11 text-xl md:text-3xl">but it's not quite ready yet</p>

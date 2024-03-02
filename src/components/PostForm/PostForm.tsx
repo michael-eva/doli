@@ -660,9 +660,9 @@ export default function PostForm({ postData, }: CardProps) {
                             <input type="checkbox" checked={isAgree} disabled={!allChecked} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
                         </label>
                         <span className="label-text">I agree to the <span></span>
-                            <a className=" text-bold underline cursor-pointer" href="https://awkmxabdskcgxkzpqiru.supabase.co/storage/v1/object/public/website-documents/Terms%20of%20Service%20-%20doli.pdf" target="_blank">Terms of Service</a>
+                            <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
                             <span></span> and <span></span>
-                            <a className="text-bold underline cursor-pointer" href="https://awkmxabdskcgxkzpqiru.supabase.co/storage/v1/object/public/website-documents/Privacy%20Policy.pdf" target="_blank">Privacy Policy.</a >
+                            <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
                         </span>
                     </div>}
                     {isAgree && allChecked ? <div className=" flex gap-2 mt-7">
