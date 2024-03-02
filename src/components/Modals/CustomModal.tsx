@@ -12,7 +12,7 @@ export default function CustomModal({ children, setShowModal }: ModalType) {
     return (
         <div className="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-40">
             <div className="modal-box">
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => setShowModal(false)}>✕</button>
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => { toggle(); setShowModal(false) }}>✕</button>
                 {children}
             </div>
         </div >
