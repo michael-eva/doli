@@ -115,7 +115,7 @@ export default function NavBar() {
             </div>
             <div className={`${isMobile ? "navbar-center" : "navbar-end"} m-auto flex items-center`}>
                 <div className="menu menu-horizontal flex items-center md:gap-10 gap-5">
-                    <SearchComp />
+                    {/* <SearchComp /> */}
                     {user ?
                         <>
                             <div className="md:hidden text-2xl">

@@ -222,7 +222,7 @@ export default function Home() {
     // }, []);
     return (
         <>
-            <div className=" max-w-7xl md:m-auto mb-10 ">
+            <div className=" max-w-7xl md:m-auto pb-10 ">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
@@ -257,7 +257,7 @@ export default function Home() {
                                                 <span>Businesses</span>
                                             </p>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                {members.length} <span>Members</span>
+                                                {members?.length} <span>Members</span>
                                             </p>
                                         </>
                                     ) : (

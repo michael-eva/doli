@@ -2,18 +2,13 @@ import { IoFastFoodOutline } from "react-icons/io5";
 import { MdOutlineTableRestaurant } from "react-icons/md";
 import { GiPokerHand } from "react-icons/gi";
 import { LiaBuildingSolid } from "react-icons/lia";
-import userData from "../seed/userData.json"
-import { processUserArray } from "../seed/SeedUser";
-import testUserData from "../seed/testUserData.json"
+
 
 export default function About() {
 
     return (
         <>
-            <div className=" flex gap-10 p-4 justify-center">
-                {/* <div>
-                <img src="/images/about-pic.jpeg" alt="" width={650} />
-            </div> */}
+            <div className=" flex p-4 justify-center mb-auto">
                 <div className="md:max-w-xl flex flex-col">
                     <header className=" ">
                         <p><span className=" text-xl font-semibold text" style={{ color: "#53a1aa" }}>Community</span> is at the heart of our guiding principles, and we have some simple criteria by which we manage our listings:</p>
