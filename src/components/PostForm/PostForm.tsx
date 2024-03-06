@@ -188,7 +188,7 @@ export default function PostForm({ postData, }: CardProps) {
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email, isRejected: shouldSetRejecFalse })
+                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email, isRejected: shouldSetRejecFalse, updated_at: new Date().toISOString() })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -250,7 +250,7 @@ export default function PostForm({ postData, }: CardProps) {
             const postId = nanoid()
             const { error: insertError } = await supabase
                 .from('posts')
-                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: formData.openingHours, email: user?.email })
+                .insert({ ...formData, postId: postId, id: user?.id, selectedTags: selectedTags, isVerified: false, openingHours: formData.openingHours, email: user?.email, updated_at: new Date().toISOString() })
 
             if (insertError) {
                 console.error('Error inserting post:', insertError);
