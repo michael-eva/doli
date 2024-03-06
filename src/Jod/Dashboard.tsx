@@ -3,6 +3,7 @@ import { seededPosts } from "./dashBoardFunctions"
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 // import { getUnverifiedPosts } from "./API/getUnverifiedPosts"
+import { seedUpdatedAt } from "./dashBoardFunctions"
 
 
 
@@ -10,13 +11,6 @@ export default function Dashboard() {
     const [validationRequired, setValidationRequired] = useState("")
     const claimedPosts = seededPosts().claimedPosts
     const posts = seededPosts().seededPosts
-
-    // getUnverifiedPosts().then(data => {
-    //     setValidationRequired(data.length)
-    // }).catch(error => {
-    //     console.error(error)
-    // })
-
     async function getUnverifiedPosts() {
         const { data, error } = await supabase
             .from("posts")
@@ -53,7 +47,7 @@ export default function Dashboard() {
                     }
                 </div>
             </div>
-            {/* <button className="btn btn-info" onClick={getMembers}>Get Members</button> */}
+            <button className="btn btn-info" onClick={seedUpdatedAt}>Add updated at</button>
             {/* <button className="btn btn-info" onClick={getUnverifiedPosts}>Get Posts</button> */}
         </>
     )
