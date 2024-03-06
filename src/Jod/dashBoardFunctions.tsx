@@ -65,37 +65,3 @@ export function needValidation() {
     }, [])
     return { validationRequired }
 }
-
-//function to take all posts and assign created_at value to updated_at
-
-export async function seedUpdatedAt() {
-    async function getPosts() {
-        const { error, data } = await supabase
-            .from("posts")
-            .select("created_at, updated_at, postId")
-        if (error) {
-            console.error(error);
-            return;
-        }
-        return data;
-    }
-
-    const posts = await getPosts();
-
-    if (posts) {
-        for (const post of posts) {
-            const { error: updateError } = await supabase
-                .from("posts")
-                .update({ updated_at: post.created_at })
-                .eq("postId", post.postId);
-
-            if (updateError) {
-                console.error(updateError);
-            }
-        }
-
-        console.log("All updated_at values updated successfully.");
-    }
-}
-
-

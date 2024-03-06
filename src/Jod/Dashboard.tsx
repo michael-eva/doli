@@ -3,7 +3,6 @@ import { seededPosts } from "./dashBoardFunctions"
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 // import { getUnverifiedPosts } from "./API/getUnverifiedPosts"
-import { seedUpdatedAt } from "./dashBoardFunctions"
 
 
 
@@ -47,7 +46,7 @@ export default function Dashboard() {
                     }
                 </div>
             </div>
-            <button className="btn btn-info" onClick={seedUpdatedAt}>Add updated at</button>
+            {/* <button className="btn btn-info" onClick={seedUpdatedAt}>Add updated at</button> */}
             {/* <button className="btn btn-info" onClick={getUnverifiedPosts}>Get Posts</button> */}
         </>
     )
