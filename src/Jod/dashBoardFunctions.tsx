@@ -83,20 +83,18 @@ export async function seedUpdatedAt() {
     const posts = await getPosts();
 
     if (posts) {
-        console.log(posts);
+        for (const post of posts) {
+            const { error: updateError } = await supabase
+                .from("posts")
+                .update({ updated_at: post.created_at })
+                .eq("postId", post.postId);
 
-        // for (const post of posts) {
-        //     const { error: updateError } = await supabase
-        //         .from("posts")
-        //         .update({ updated_at: post.created_at })
-        //         .eq("postId", post.postId);
+            if (updateError) {
+                console.error(updateError);
+            }
+        }
 
-        //     if (updateError) {
-        //         console.error(updateError);
-        //     }
-        // }
-
-        // console.log("All updated_at values updated successfully.");
+        console.log("All updated_at values updated successfully.");
     }
 }
 
