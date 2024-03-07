@@ -21,6 +21,7 @@ import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./pages/UpdateEmail"
 import { MdOutlineEmail } from "react-icons/md";
 import Footer from "./components/Footer"
+import AboutPage from "./Jod/AboutPage"
 
 
 
@@ -54,7 +55,7 @@ function App() {
           </Route>
           <Route path="member-register" element={<SignUp />} />
           <Route path="login" element={<Login />} />
-          <Route path="about" element={<About />} />
+          <Route path="about" element={<AboutPage />} />
           <Route path="specials" element={<Specials />} />
           <Route path="wholesale" element={<Wholesale />} />
           <Route path="reset-password" element={<ResetPassword />} />
