@@ -4,7 +4,7 @@ import LocationSearch from "../components/Location/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
@@ -13,6 +13,15 @@ import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "../Functions/filterOrders";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -23,7 +32,7 @@ export default function Home() {
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
     const deliveryFilter = searchParams.get("deliveryMethod")
-    const { register } = useForm()
+    const { register, watch, control } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState<MemberType[]>()
@@ -222,7 +231,7 @@ export default function Home() {
     // }, []);
     return (
         <>
-            <div className=" max-w-7xl md:m-auto pb-10 ">
+            <div className=" max-w-7xl md:mx-auto pb-10 ">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
@@ -295,7 +304,7 @@ export default function Home() {
                         <div className="flex gap-10 justify-center mt-14">
                             <div className="flex flex-col">
                                 <div className="">
-                                    <LocationSearch className="border-2 p-2 rounded" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
+                                    <LocationSearch className="border-2 p-2 rounded-lg max-h-11" setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} types={['locality']} placeholder="Search by suburb" suburbAndPostcode={false} />
                                 </div>
                                 <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
                                     <input
@@ -319,9 +328,26 @@ export default function Home() {
                                     </span>
                                 </label>
                             </div>
-                            <div className="flex flex-col dropdown-bottom">
+                            <div >
                                 {/* <label> Select Type:</label> */}
-                                <select
+                                <Select value={typeFilter || ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
+                                    <SelectTrigger className=" border-2 border-black h-11 w-52">
+                                        <div className={`${typeFilter ? "" : "text-gray-500"}`}>
+                                            <SelectValue placeholder="Select Type of Business" />
+                                        </div>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {/* <SelectLabel>Type of Business</SelectLabel> */}
+                                            {businessType.map(item => (
+                                                <SelectItem key={item} value={item}>{item}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+
+                                {/* <div className="flex flex-col dropdown-bottom">
+                                 <select
                                     {...register('type')}
                                     className=" border-2 p-2.5 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams('type', e.target.value)}
@@ -333,10 +359,26 @@ export default function Home() {
                                             key={item}
                                             value={item}>{item}</option>
                                     ))}
-                                </select>
+                                </select> */}
+
                             </div>
                             <div className="flex flex-col dropdown-bottom">
-                                <select
+                                <Select value={deliveryFilter || ""} onValueChange={(selectedOption) => genNewSearchParams('deliveryMethod', selectedOption)}>
+                                    <SelectTrigger className=" border-2 border-black h-11 w-52">
+                                        <div className={`${deliveryFilter ? "" : "text-gray-500"}`}>
+                                            <SelectValue placeholder="Select Delivery Method" />
+                                        </div>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {/* <SelectLabel>Select Delivery Method</SelectLabel> */}
+                                            <SelectItem value="delivery">Delivery</SelectItem>
+                                            <SelectItem value="dineIn">Dine-In</SelectItem>
+                                            <SelectItem value="pickUp">Pick-Up</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                {/* <select
                                     name="deliveryMethod"
                                     className="border-2 p-2.5 rounded cursor-pointer"
                                     onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
@@ -346,17 +388,24 @@ export default function Home() {
                                     <option value="delivery" >Delivery</option>
                                     <option value="dineIn" >Dine-In</option>
                                     <option value="pickUp" >Pick-Up</option>
-                                </select>
+                                </select> */}
                             </div>
                             <div className="flex flex-col">
                                 {/* <label htmlFor="">Enter Search Term:</label> */}
-                                <input type="text"
+                                <Input
+                                    type="text"
+                                    placeholder="General Search"
+                                    className="border-2 border-black h-11"
+                                    value={searchFilter || ""}
+                                    onChange={(e) => genNewSearchParams("search", e.target.value)}
+                                />
+                                {/* <input type="text"
                                     className="border-2 p-2 rounded"
                                     placeholder='General Search'
                                     {...register("search")}
                                     onChange={(e) => genNewSearchParams("search", e.target.value)}
                                     value={searchFilter || ""}
-                                />
+                                /> */}
                             </div>
                         </div>
 
@@ -392,7 +441,7 @@ export default function Home() {
                                 </div>
                             ))
                         ) : isFilter ? (
-                            <div className="my-6">
+                            <div className=" mt-10">
                                 <p className="text-3xl font-thin">Sorry, no results found.</p>
                                 <p className="text-2xl font-thin">Please try a different search criteria.</p>
                             </div>
