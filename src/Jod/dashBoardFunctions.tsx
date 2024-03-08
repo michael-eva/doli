@@ -16,7 +16,7 @@ export function seededPosts() {
         try {
             const { data, error } = await supabase
                 .from("posts")
-                .select("email, name, hasOwner")
+                .select("email, name, hasOwner, created_at")
                 .in("hasOwner", [true, false]);
 
             if (error) {
@@ -25,7 +25,6 @@ export function seededPosts() {
 
             if (data) {
                 setSeededPosts(data.length);
-
                 const unclaimed = data.filter(post => post.hasOwner === false);
                 setUnclaimedPosts(unclaimed);
             }
@@ -43,25 +42,32 @@ export function seededPosts() {
 
 }
 
-export function needValidation() {
-    const [validationRequired, setValidationRequired] = useState<number>()
-    const getPosts = async () => {
+// export function getMonthlyCounts() {
+//     const [monthlyCounts, setMonthlyCounts] = useState("")
+//     const getPosts = async () => {
 
-        const { data: postsData, error: postsError } = await supabase
-            .from("posts")
-            .select("*")
-            .eq("isVerified", false);
-
-        if (postsError) {
-            console.error("Error fetching posts data:", postsError);
-        }
-        if (postsData) {
-
-            setValidationRequired(postsData.length)
-        }
-    }
-    useEffect(() => {
-        getPosts()
-    }, [])
-    return { validationRequired }
-}
+//         const { data: postsData, error: postsError } = await supabase
+//             .from("posts")
+//             .select("created_at")
+//             .order("created_at"); // Ensure the data is ordered by timestamp
+//         if (postsError) {
+//             console.error("Error fetching posts data:", postsError);
+//         }
+//         if (postsData) {
+//             const monthlyCounts = {};
+//             for (const post of postsData) {
+//                 const createdAt = new Date(post.created_at);
+//                 const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
+//                 if (!monthlyCounts[monthYear]) {
+//                     monthlyCounts[monthYear] = 0;
+//                 }
+//                 monthlyCounts[monthYear]++;
+//             }
+//             setMonthlyCounts(monthlyCounts)
+//         }
+//     }
+//     useEffect(() => {
+//         getPosts()
+//     }, []);
+//     return { monthlyCounts }
+// }
