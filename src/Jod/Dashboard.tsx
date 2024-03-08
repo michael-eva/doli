@@ -44,7 +44,7 @@ export default function Dashboard() {
                 console.error("Error fetching posts data:", postsError);
             }
             if (postsData) {
-                const monthlyCounts = {};
+                const monthlyCounts: any = {};
                 for (const post of postsData) {
                     const createdAt = new Date(post.created_at);
                     const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
@@ -69,7 +69,7 @@ export default function Dashboard() {
                 console.error(error);
             }
             if (data) {
-                const monthlyCounts = {};
+                const monthlyCounts: any = {};
                 for (const member of data) {
                     const createdAt = new Date(member.created_at);
                     const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
