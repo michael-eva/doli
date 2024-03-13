@@ -155,7 +155,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                     <section className="mt-4 flex gap-8 justify-center">
                                         <div className=" text-4xl text-blue-500">
                                             <a
-                                                href={`fb-messenger://share/?link=${'doli.com.au/?search=beer'})}&app_id=${encodeURIComponent(META_ID)}`}
+                                                href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'})}&app_id=${encodeURIComponent(META_ID)}`}
                                                 // href={`fb-messenger://share/?link=${'doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
