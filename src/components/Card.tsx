@@ -139,6 +139,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                         </a>
                     )}
                     {isMobile &&
+
                         <Toggle>
                             <ToggleButton className=" flex gap-4 items-center">
                                 <span >
