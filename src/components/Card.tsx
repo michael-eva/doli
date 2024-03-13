@@ -138,37 +138,36 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </span>
                         </a>
                     )}
-                    {isMobile && user?.email === "evamichael100@gmail.com" || user?.email === "michaelfiguringouttheworld@gmail.com" &&
-
-                        <Toggle>
-                            <ToggleButton className=" flex gap-4 items-center">
-                                <span >
-                                    <FaShareAlt />
-                                </span>
-                                <span className="text-blue-600">
-                                    Share
-                                </span>
-                            </ToggleButton>
-                            <ToggleOn>
-                                <CustomModal>
-                                    <h1 className=" text-xl">Share listing via:</h1>
-                                    <section className="mt-4 flex gap-8 justify-center">
-                                        <div className=" text-4xl text-blue-500">
-                                            <a
-                                                // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
-                                                href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
-                                                // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                                                rel="noopener noreferrer"
-                                            // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
-                                            >
-                                                <FaFacebookMessenger />
-                                            </a></div>
-                                        <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
-                                        <div className=" text-4xl"><MdEmail /></div>
-                                    </section>
-                                </CustomModal>
-                            </ToggleOn>
-                        </Toggle>
+                    {/* {isMobile &&
+                        // <Toggle>
+                        //     <ToggleButton className=" flex gap-4 items-center">
+                        //         <span >
+                        //             <FaShareAlt />
+                        //         </span>
+                        //         <span className="text-blue-600">
+                        //             Share
+                        //         </span>
+                        //     </ToggleButton>
+                        //     <ToggleOn>
+                        //         <CustomModal>
+                        //             <h1 className=" text-xl">Share listing via:</h1>
+                        //             <section className="mt-4 flex gap-8 justify-center">
+                        //                 <div className=" text-4xl text-blue-500">
+                        //                     <a
+                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
+                        //                         href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
+                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
+                        //                         rel="noopener noreferrer"
+                        //                     // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
+                        //                     >
+                        //                         <FaFacebookMessenger />
+                        //                     </a></div>
+                        //                 <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                        //                 <div className=" text-4xl"><MdEmail /></div>
+                        //             </section>
+                        //         </CustomModal>
+                        //     </ToggleOn>
+                        // </Toggle>
 
                         // <div className=" flex gap-4 items-center">
                         //     <span className="">
@@ -180,9 +179,9 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                         //     >Share
                         //     </a>
                         // </div>
-                    }
+                    } */}
                 </div>
-            </div>
+            </div >
             {
                 (user?.id === props.id || user?.email === props.adminEmail) ? <div className="flex items-center justify-around bg-gray-100">
                     <button
