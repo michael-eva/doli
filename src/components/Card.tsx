@@ -154,9 +154,11 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                     <h1 className=" text-xl">Share listing via:</h1>
                                     <section className="mt-4 flex gap-8 justify-center">
                                         <div className=" text-4xl text-blue-500">
-                                            <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
+                                            <a
+                                                href={`fb-messenger://share/?link=${'doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                            // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
                                             >
                                                 <FaFacebookMessenger />
                                             </a></div>
