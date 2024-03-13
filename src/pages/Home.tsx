@@ -418,10 +418,10 @@ export default function Home() {
                     </>
                 }
                 <div className="flex justify-between">
-                    <p className={`${isMobile ? "px-7" : ""}`}>
+                    <p className={`${isMobile ? "py-2 px-7" : ""}`}>
                         {startIndex} - {endIndex} of {filterPosts.length} results
                     </p>
-                    {isMobile && <p className={`${isMobile ? "px-7" : ""}`} >
+                    {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{members?.length} <span>Members</span></p>
                     </p>}
                 </div>

@@ -1,16 +1,17 @@
 import LocationSearch from '../Location/LocationSearch';
 import { FilterFieldsType } from '../../Types/index';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from '../ui/select';
 
 export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFieldsType) {
 
     return (
         <>
-            <div className="collapse bg-white collapse-arrow">
-                <input type="checkbox" className="peer" />
-                <div className="collapse-title bg-primary text-primary-content peer-checked:text-primary-content">
+            <div className="collapse bg-white collapse-arrow border-[#4f9ea8] border-2">
+                <input type="checkbox" />
+                <div className="collapse-title text-black bg-[#e0f3f6]">
                     Filters
                 </div>
-                <div className="collapse-content bg-primary text-base-content peer-checked:bg-slate-300 ">
+                <div className="collapse-content text-base-content bg-[#e0f3f67c] ">
                     <div className="flex flex-wrap justify-between md:hidden">
                         <div className="flex flex-col">
                             <div className="flex flex-col mt-4 w-72">
@@ -25,7 +26,7 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                                     onChange={handleCheckboxChange}
                                 />
                                 <span
-                                    className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+                                    className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-[#3d86f2]' : 'bg-[#CCCCCE]'
                                         }`}
                                 >
                                     <span
@@ -39,7 +40,7 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                             </label>
                         </div>
 
-                        <div className="flex flex-col mt-4 dropdown-bottom w-64">
+                        {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
                             <label> Select Type:</label>
                             <select
                                 {...register('type')}
@@ -55,6 +56,23 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                                         value={item}>{item}</option>
                                 ))}
                             </select>
+                        </div> */}
+                        <div className=' bg-white rounded-lg mt-4'>
+                            <Select value={typeFilter || ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
+                                <SelectTrigger className=" h-11 w-72 ">
+                                    <div className={`${typeFilter ? "" : "text-gray-500"}`}>
+                                        <SelectValue placeholder="Select Type of Business" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {/* <SelectLabel>Type of Business</SelectLabel> */}
+                                        {businessType?.map(item => (
+                                            <SelectItem key={item} value={item}>{item}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                         {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
                             <label htmlFor="">Select Delivery Method:</label>
@@ -71,15 +89,15 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                             </select>
                         </div> */}
                         <div className="flex flex-col mt-4">
-                            <label htmlFor="">Enter Search Term:</label>
                             <input type="text"
                                 className="input input-bordered w-72"
-                                placeholder='eg: Beer'
-                                {...register("search")}
+                                placeholder='General Search'
+                                // {...register("search")}
                                 onChange={(e) => genNewSearchParams("search", e.target.value)}
                                 value={searchFilter || ""}
                             />
                         </div>
+
                         {nearbyFilter || searchFilter || (typeFilter && typeFilter !== "all") || locationFilter ? <button className="btn btn-sm btn-error w-36 m-auto mt-4" onClick={clearFilters}>Clear filters</button> : ""}
                     </div >
                 </div>
