@@ -10,9 +10,9 @@ import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 import { CardProps } from "../Types";
 import { HiBuildingStorefront } from "react-icons/hi2";
-import { FaInfoCircle, FaMailBulk, FaMailchimp, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaInfoCircle, FaInstagram, FaMailBulk, FaMailchimp, FaWhatsapp } from "react-icons/fa";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
-import { FaClock } from "react-icons/fa6";
+import { FaClock, FaSquareXTwitter } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
 import { PiBowlFoodFill } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
@@ -138,36 +138,39 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </span>
                         </a>
                     )}
-                    {/* {isMobile &&
-                        // <Toggle>
-                        //     <ToggleButton className=" flex gap-4 items-center">
-                        //         <span >
-                        //             <FaShareAlt />
-                        //         </span>
-                        //         <span className="text-blue-600">
-                        //             Share
-                        //         </span>
-                        //     </ToggleButton>
-                        //     <ToggleOn>
-                        //         <CustomModal>
-                        //             <h1 className=" text-xl">Share listing via:</h1>
-                        //             <section className="mt-4 flex gap-8 justify-center">
-                        //                 <div className=" text-4xl text-blue-500">
-                        //                     <a
-                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         rel="noopener noreferrer"
-                        //                     // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
-                        //                     >
-                        //                         <FaFacebookMessenger />
-                        //                     </a></div>
-                        //                 <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
-                        //                 <div className=" text-4xl"><MdEmail /></div>
-                        //             </section>
-                        //         </CustomModal>
-                        //     </ToggleOn>
-                        // </Toggle>
+                    {isMobile &&
+                        <Toggle>
+                            <ToggleButton className=" flex gap-4 items-center">
+                                <span >
+                                    <FaShareAlt />
+                                </span>
+                                <span className="text-blue-600">
+                                    Share
+                                </span>
+                            </ToggleButton>
+                            <ToggleOn>
+                                <CustomModal>
+                                    <h1 className=" text-xl">Share listing via:</h1>
+                                    <section className="mt-4 flex gap-5 justify-center">
+                                        <div className=" text-4xl text-blue-500">
+                                            <a
+                                                // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
+                                                href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
+                                                // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
+                                                rel="noopener noreferrer"
+                                            // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
+                                            >
+                                                <FaFacebookMessenger />
+                                            </a></div>
+                                        <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                                        <div className=" text-4xl text-[#e952bf]"><FaInstagram /></div>
+                                        <div className=" text-4xl"><FaSquareXTwitter /></div>
+                                        <div className=" text-4xl text-blue-500"><FaFacebook /></div>
+                                        <div className=" text-4xl"><MdEmail /></div>
+                                    </section>
+                                </CustomModal>
+                            </ToggleOn>
+                        </Toggle>
 
                         // <div className=" flex gap-4 items-center">
                         //     <span className="">
@@ -179,7 +182,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                         //     >Share
                         //     </a>
                         // </div>
-                    } */}
+                    }
                 </div>
             </div >
             {
