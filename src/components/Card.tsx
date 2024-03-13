@@ -16,6 +16,9 @@ import { FaClock } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
 import { PiBowlFoodFill } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
+import { CiShare1 } from "react-icons/ci";
+import { FaShareAlt } from "react-icons/fa";
+
 
 
 
@@ -29,6 +32,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
     const isMobile = useMediaQuery({ maxWidth: 640 })
     const truncatedDescription = props.description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = props.description.length > maxDescriptionHeight;
+    const META_ID = "785444670112157"
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -129,6 +133,18 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </span>
                         </a>
                     )}
+                    <div className=" flex gap-4 items-center">
+
+                        <span className="">
+                            <FaShareAlt />
+                        </span>
+                        <a>Share</a>
+                        <a
+                            href={`fb-messenger://share/?link=${encodeURIComponent('doli.com.au')}&app_id=${encodeURIComponent(META_ID)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >Send</a>
+                    </div>
                 </div>
             </div>
             {
