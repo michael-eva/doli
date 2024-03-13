@@ -50,9 +50,9 @@ export default function LocationSearch({
     const ref = useOnclickOutside(() => {
         clearSuggestions();
     });
-    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (val: string) => {
 
-        setValue(e.target.value);
+        setValue(val)
     };
     useEffect(() => {
         if (inputClear) {
@@ -62,6 +62,7 @@ export default function LocationSearch({
     }, [inputClear])
 
     const handleSelect = (suggestion: Suggestion) => () => {
+        console.log(suggestion);
 
         setValue(suggestion.description, false);
         clearSuggestions();
@@ -107,37 +108,6 @@ export default function LocationSearch({
 
         });
     };
-    //This function is to stop the dropdown auto appearing when there is data in being pushed to the components.
-    // const displaySuggestions = () => {
-    //     if (status === "OK") {
-    //         if (postData === undefined) {
-    //             if (!signUpData) {
-    //                 return (
-    //                     <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
-    //                 )
-    //             }
-    //         }
-    //         if (postData && postData?.locationData?.formatted_address != value) {
-    //             return (
-    //                 <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
-    //             )
-    //         }
-    //         if (signUpData && signUpData.address != value) {
-    //             return (
-    //                 <ul className=" border-2 border-gray-300 rounded-md bg-gray-50">{renderSuggestions()}</ul>
-    //             )
-    //         }
-    //     }
-    // }
-
-    const renderSuggestions = () =>
-        data.map((suggestion) => {
-            return (<li key={suggestion.place_id} onClick={handleSelect(suggestion)} className="gap-2 flex items-center cursor-pointer hover:text-indigo-600 p-2 border-t border-gray-300 hover:bg-indigo-50" >
-                <IoLocationOutline />
-                <p className=" text-md font-bold">{suggestion.structured_formatting.main_text},</p>
-                <p className=" text-sm">{suggestion.structured_formatting.secondary_text}</p>
-            </li >)
-        })
 
     const renderTestSuggestions = () =>
         data.map((suggestion) => ({
@@ -174,7 +144,7 @@ export default function LocationSearch({
             {displaySuggestions()} */}
             <div className="border-2 rounded-lg">
 
-                <Select value={value} options={renderTestSuggestions()} setValue={setValue} />
+                <Select value={value} options={renderTestSuggestions()} setValue={setValue} handleSelect={handleSelect} handleInput={handleInput} />
             </div>
             {suburbAndPostcode &&
                 <div className="flex flex-col w-1/2">

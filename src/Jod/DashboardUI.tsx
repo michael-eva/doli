@@ -8,14 +8,17 @@ import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { ResponsiveBar } from "@nivo/bar"
 import { SVGProps } from "react"
 import { JSX } from "react/jsx-runtime"
-
+type BarChartType = {
+    name: string,
+    count: number
+}
 type DashboardType = {
-    validationRequired: number,
+    validationRequired: string | undefined,
     seededPosts: number,
     claimedPosts: number,
-    monthlyListingCount: number,
-    monthlyMemberCount: number,
-    monthlyRatingCount: number
+    monthlyListingCount: BarChartType[],
+    monthlyMemberCount: BarChartType[],
+    monthlyRatingCount: BarChartType[]
 }
 
 export default function NewDashboard({ validationRequired, seededPosts, claimedPosts, monthlyListingCount, monthlyMemberCount, monthlyRatingCount }: DashboardType) {

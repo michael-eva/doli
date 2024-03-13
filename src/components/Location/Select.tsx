@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 
-export default ({ value, options, setValue, handleInput, isLoading }) => {
+export default ({ value, options, isLoading, handleSelect, handleInput }) => {
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     // const [isLoading, setIsLoading] = useState(false);
-    console.log(options);
+    console.log(value);
+
     return (
         <>
             <Select
@@ -19,8 +20,7 @@ export default ({ value, options, setValue, handleInput, isLoading }) => {
                 isClearable={isClearable}
                 isSearchable={isSearchable}
                 options={options}
-                // onChange={ }
-                onInputChange={(input) => setValue(input)}
+                onInputChange={(input) => handleInput(input)}
             />
         </>
     );

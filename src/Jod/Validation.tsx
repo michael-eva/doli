@@ -3,6 +3,9 @@ import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
 import CustomModal from "../components/Modals/CustomModal"
 import { useForm } from "react-hook-form"
+import { getCombinedData } from "./utils/getCombinedData"
+import { sendVerification, sendRejection } from "./utils/resend"
+import { rejectPost, validatePost } from "./utils/utils"
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -55,142 +58,34 @@ export default function Validation() {
     const [postId, setPostId] = useState<string>("")
     const { register, handleSubmit, formState: { errors } } = useForm()
 
+    async function getData() {
+        const post = await getCombinedData()
+        setPosts(post)
+    }
     useEffect(() => {
-        getCombinedData()
+        getData()
     }, [])
-
-    const getCombinedData = async () => {
-        try {
-            // Fetch posts data
-            const { data: postsData, error: postsError } = await supabase
-                .from("posts")
-                .select("*")
-                .eq("isVerified", false)
-                .eq("isRejected", false)
-
-            if (postsError) {
-                console.error("Error fetching posts data:", postsError);
-            }
-
-            if (postsData) {
-                // Process posts data
-                const parsedPostsData = postsData.map((post) => ({
-                    ...post,
-                    selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-                    openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
-                }));
-
-                // Fetch locations data
-                const { data: locationsData, error: locationsError } = await supabase
-                    .from("locations")
-                    .select("*");
-
-                if (locationsError) {
-                    console.error("Error fetching locations data:", locationsError);
-                }
-
-                if (locationsData) {
-                    // Merge postsData and locationsData based on postId
-                    const mergedData = parsedPostsData.map((post) => ({
-                        ...post,
-                        locationData: locationsData.find((location) => location.postId === post.postId),
-                    }));
-
-                    // Set the merged data in the posts state
-                    setPosts(mergedData);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching combined data:", error);
-        }
-    };
     async function handleAcceptSubmit(postId: string) {
         const post = posts.find(post => post.postId === postId)
         const userEmail = post?.email
-        try {
-            const { error } = await supabase
-                .from("posts")
-                .update({ isVerified: true, isRejected: false })
-                .eq("postId", postId);
-            sendVerification(userEmail)
-            if (error) {
-                console.error("Error updating post:", error);
-            } else {
-                setPosts((prevPosts) =>
-                    prevPosts.map((post) =>
-                        post.postId === postId ? { ...post, isVerified: true } : post
-                    )
-                );
-                getCombinedData()
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
-    async function sendVerification(email: string) {
-        try {
-            const response = await fetch('/.netlify/functions/sendVerificationEmail', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            if (response.ok) {
-                console.log('Email sent successfully');
-            } else {
-                console.error('Failed to send email:', response.status, response.statusText);
-                throw new Error('Failed to fetch data from serverless function');
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+        const isSent = await validatePost(postId)
+        if (!isSent) return
+        sendVerification(userEmail)
+        getData()
     }
     async function handleReject(postId: string) {
         setShowModal(true)
         setPostId(postId)
     }
-    async function sendRejection(email: string, reason: string) {
-        try {
-            const response = await fetch('/.netlify/functions/sendRejectEmail', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, reason }),
-            });
-
-            if (response.ok) {
-                console.log('Email sent successfully');
-            } else {
-                console.error('Failed to send email:', response.status, response.statusText);
-                throw new Error('Failed to fetch data from serverless function');
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-    async function onSubmit(data: any) {
+    async function onRejectSubmit(data: any) {
         const post = posts.find(post => post.postId === postId)
         const userEmail = post?.email
-        try {
-            const { error } = await supabase
-                .from("posts")
-                .update({ isVerified: false, isRejected: true })
-                .eq("postId", postId);
-            sendRejection(userEmail, data.reason)
-            if (error) {
-                console.error("Error updating post:", error);
-            } else {
-                getCombinedData()
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        const isSent = await rejectPost(postId)
+        if (!isSent) return
+        getData()
+        sendRejection(userEmail, data.reason)
         setShowModal(false)
     };
-
     function modalEl() {
         return (
             <CustomModal setShowModal={setShowModal}>
@@ -200,7 +95,7 @@ export default function Validation() {
                 {errors.reason && (
                     <p className=" text-red-600">*{errors.reason.message?.toString()}</p>
                 )}
-                <form onSubmit={handleSubmit(onSubmit)} className="pt-5">
+                <form onSubmit={handleSubmit(onRejectSubmit)} className="pt-5">
                     <textarea
                         className="textarea textarea-bordered w-full"
                         style={{ height: "80px" }}
