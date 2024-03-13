@@ -60,6 +60,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
         }
 
     }
+
     return (
         <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "330px" }}>
 
@@ -138,12 +139,12 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                         <span className="">
                             <FaShareAlt />
                         </span>
-                        <a>Share</a>
-                        <a
-                            href={`fb-messenger://share/?link=${encodeURIComponent('doli.com.au')}&app_id=${encodeURIComponent(META_ID)}`}
+                        <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                        >Send</a>
+                        // onClick={() => console.log(props)}
+                        >Share
+                        </a>
                     </div>
                 </div>
             </div>
