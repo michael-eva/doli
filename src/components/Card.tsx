@@ -10,7 +10,7 @@ import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 import { CardProps } from "../Types";
 import { HiBuildingStorefront } from "react-icons/hi2";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaMailBulk, FaMailchimp, FaWhatsapp } from "react-icons/fa";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
@@ -18,6 +18,10 @@ import { PiBowlFoodFill } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
 import { CiShare1 } from "react-icons/ci";
 import { FaShareAlt } from "react-icons/fa";
+import CustomModal from "./Modals/CustomModal";
+import { FaFacebookMessenger } from "react-icons/fa";
+import { IoLogoWhatsapp } from "react-icons/io";
+import { MdEmail } from "react-icons/md";
 
 
 
@@ -134,18 +138,45 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </span>
                         </a>
                     )}
-                    <div className=" flex gap-4 items-center">
+                    {isMobile &&
+                        <Toggle>
+                            <ToggleButton className=" flex gap-4 items-center">
+                                <span >
+                                    <FaShareAlt />
+                                </span>
+                                <span className="text-blue-600">
+                                    Share
+                                </span>
+                            </ToggleButton>
+                            <ToggleOn>
+                                <CustomModal>
+                                    <h1 className=" text-xl">Share listing via:</h1>
+                                    <section className="mt-4 flex gap-8 justify-center">
+                                        <div className=" text-4xl text-blue-500">
+                                            <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <FaFacebookMessenger />
+                                            </a></div>
+                                        <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                                        <div className=" text-4xl"><MdEmail /></div>
+                                    </section>
+                                </CustomModal>
+                            </ToggleOn>
+                        </Toggle>
 
-                        <span className="">
-                            <FaShareAlt />
-                        </span>
-                        <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        // onClick={() => console.log(props)}
-                        >Share
-                        </a>
-                    </div>
+                        // <div className=" flex gap-4 items-center">
+                        //     <span className="">
+                        //         <FaShareAlt />
+                        //     </span>
+                        //     <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
+                        //         target="_blank"
+                        //         rel="noopener noreferrer"
+                        //     >Share
+                        //     </a>
+                        // </div>
+                    }
                 </div>
             </div>
             {
