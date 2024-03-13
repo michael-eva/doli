@@ -156,8 +156,8 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                         <div className=" text-4xl text-blue-500">
                                             <a
                                                 // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
-                                                href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                                                target="_blank"
+                                                href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
+                                                // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
                                                 rel="noopener noreferrer"
                                             // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
                                             >
