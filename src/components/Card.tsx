@@ -152,16 +152,16 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             <CustomModal>
                                 <h1 className=" text-xl">Tell a friend via:</h1>
                                 <section className="mt-4 flex gap-5 justify-center">
+
                                     {isMobile && <div className=" text-4xl text-blue-500">
-                                        <a
-                                            // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
+                                        {/* ***CURRENTLY NOT WORKING*** */}
+                                        {/* <a
                                             href={`fb-messenger://share/?link='https://doli.com.au/?search=${encodeURIWithPlus(props.name)}&app_id=${encodeURIComponent(META_ID)}`}
-                                            // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
                                             rel="noopener noreferrer"
-                                        // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
-                                        >
-                                            <FaFacebookMessenger />
-                                        </a></div>}
+                                        > */}
+                                        <FaFacebookMessenger />
+                                        {/* </a> */}
+                                    </div>}
                                     <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
                                     <div className=" text-4xl text-[#e952bf]"><FaInstagram /></div>
                                     <div className=" text-4xl"><FaSquareXTwitter /></div>
