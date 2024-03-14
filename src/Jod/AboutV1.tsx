@@ -29,7 +29,7 @@ export default function AboutV1() {
             <header></header>
             <body className="container max-w-3xl">
                 <section className="space-y-8 my-10">
-                    <p><span className="md:text-3xl text-xl text-[#4d9da8] font-bold">doli</span> <span className=" text-xl">(<span className=" text-[#4d9da8]">d</span>irectory <span className=" text-[#4d9da8]">o</span>f <span className=" text-[#4d9da8]">l</span>ocal <span className=" text-[#4d9da8]">i</span>ndependents) -</span> is the home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community.  </p>
+                    <p><span className="md:text-3xl text-xl text-[#4d9da8] font-bold">doli</span> <span className=" text-xl">(<span className=" text-[#4d9da8] font-bold">d</span>irectory <span className=" text-[#4d9da8] font-bold">o</span>f <span className=" text-[#4d9da8] font-bold">l</span>ocal <span className=" text-[#4d9da8] font-bold">i</span>ndependents)</span> is the home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community.  </p>
                     <div>
                         <p className=" md:text-2xl text-xl text-[#4d9da8]"><strong>Great food and drink are central to all healthy communities </strong></p>
                         <p >but not all businesses are the same, so before you part with your hard earned, use the mobile friendly doli website or look for our doli logo in a business’s window, to confirm it’s going into the pockets of owners and neighbours that are as invested in your community as you are.</p>
@@ -73,7 +73,7 @@ export default function AboutV1() {
                 </section>
                 <section className="space-y-4 my-10">
                     <p>So, whether you’re in your own neighbourhood looking to try something new, or out and about in someone else’s, <span className=" font-bold text-[#4d9da8]">if you’re hungry or thirsty, ask a local and doli it.</span> </p>
-                    <p>And whilst you don’t have to be a Member to doli it,<span className=" font-bold text-[#4d9da8]"> community requires participation to truly thrive… </span>so c’mon, become a Member and give your favourite local {rating()}</p>
+                    <p>And whilst you don’t have to be a Member to doli it,<span className=" font-bold text-[#4d9da8]"> community requires participation to truly thrive… </span>so c’mon, become a Member and give your favourite local some {rating()}</p>
                 </section>
                 <section className="md:text-2xl text-xl font-bold pb-10">
                     <p>Cheers, Team doli</p>
