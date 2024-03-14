@@ -16,8 +16,6 @@ export default function Dashboard() {
                 monthlyRatingCount={monthlyRating}
             /> */}
             <AboutV1 />
-            <AboutPage />
-
         </>
     )
 }
