@@ -150,7 +150,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </ToggleButton>
                             <ToggleOn>
                                 <CustomModal>
-                                    <h1 className=" text-xl">Share listing via:</h1>
+                                    <h1 className=" text-xl">Tell a friend via:</h1>
                                     <section className="mt-4 flex gap-5 justify-center">
                                         <div className=" text-4xl text-blue-500">
                                             <a
