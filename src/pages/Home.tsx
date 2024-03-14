@@ -74,7 +74,7 @@ export default function Home() {
                 .from("posts")
                 .select("*")
                 .eq("isVerified", true)
-                .order("created_at", { ascending: false });
+                .order("updated_at", { ascending: false });
 
             if (postsError) {
                 console.error("Error fetching posts data:", postsError);
