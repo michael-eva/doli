@@ -43,5 +43,5 @@ export type CardProps = {
     contact?: string,
     website?: string,
     [key: string]: any,
-    adminEmail: string,
+    adminEmail?: string,
 }

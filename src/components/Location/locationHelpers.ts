@@ -2,8 +2,8 @@ import { getGeocode } from "use-places-autocomplete";
 
 
 type LatLngLiteral = {
-    latitude: number;
-    longitude: number;
+    latitude: number|undefined;
+    longitude: number|undefined;
 };
 
 export function isCoordinateWithinRadius(
@@ -11,8 +11,8 @@ export function isCoordinateWithinRadius(
     center: LatLngLiteral,
     radius: number
 ): boolean {
-    const targetLatLng = new google.maps.LatLng(target.latitude, target.longitude);
-    const centerLatLng = new google.maps.LatLng(center.latitude, center.longitude);
+    const targetLatLng = new google.maps.LatLng(target.latitude!, target.longitude);
+    const centerLatLng = new google.maps.LatLng(center.latitude!, center.longitude);
 
     const distance = google.maps.geometry.spherical.computeDistanceBetween(targetLatLng, centerLatLng);
 

@@ -1,19 +1,21 @@
 import supabase from "@/config/supabaseClient";
 import { useState, useEffect } from "react";
 import { transformMonthlyCountsToArray } from "./utils";
+import { getUnverifiedMembers } from "@/lib/getUnverifiedMembers";
 type SeededPostsType = {
     name: string,
     email: string,
     hasOwner: boolean
 }
 
-export function getMonthlyData(){
+export function getDashboardData(){
     const [validationRequired, setValidationRequired] = useState<string | undefined>("")
     const [monthlyListings, setMonthlyListingCounts] = useState("")
     const [monthlyRating, setMonthlyRatingCounts] = useState("")
     const [monthlyMember, setMonthlyMemberCounts] = useState("")
     const [seededPosts, setSeededPosts] = useState<number>(0);
     const [unClaimedPosts, setUnclaimedPosts] = useState<SeededPostsType[]>([]);
+    const [unverifiedMembers, setUnverifiedMembers] = useState<number>(0)
 
     async function getMonthlySignUps() {
         const { data, error } = await supabase
@@ -94,6 +96,14 @@ export function getMonthlyData(){
             setMonthlyListingCounts(monthlyCounts)
         }
     }
+    async function getUnverifiedUsers(){
+        try {
+            const unverifiedMembers = await getUnverifiedMembers("id");
+            setUnverifiedMembers(unverifiedMembers.length);
+        } catch (error) {
+            console.error("Error fetching unverified members:", error);
+        }
+    }
     const getUnclaimedPosts = async () => {
         try {
             const { data, error } = await supabase
@@ -120,6 +130,7 @@ export function getMonthlyData(){
         getUnverifiedPosts()
         getMonthlyListings()
         getUnclaimedPosts()
+        getUnverifiedUsers()
     },[])
     const claimedPosts = seededPosts - unClaimedPosts.length
     return {
@@ -128,6 +139,7 @@ export function getMonthlyData(){
         monthlyListings: transformMonthlyCountsToArray(monthlyListings), 
         validationRequired, 
         claimedPosts, 
-        posts:seededPosts 
+        posts:seededPosts,
+        unverifiedMembers
     }
 }

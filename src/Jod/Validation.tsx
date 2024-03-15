@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import supabase from "../config/supabaseClient"
 import { Card } from "../components/Card"
 import CustomModal from "../components/Modals/CustomModal"
 import { useForm } from "react-hook-form"
@@ -59,8 +58,8 @@ export default function Validation() {
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     async function getData() {
-        const post = await getCombinedData()
-        setPosts(post)
+        const posts: any = await getCombinedData()
+        setPosts(posts)
     }
     useEffect(() => {
         getData()

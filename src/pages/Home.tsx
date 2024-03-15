@@ -4,7 +4,7 @@ import LocationSearch from "../components/Location/LocationSearch";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useSearchParams } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import CardSkeleton from "../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import FilterFields from "../components/Mobile/FilterFields";
@@ -12,8 +12,7 @@ import Pagination from "../components/Pagination";
 import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
-import { filterOrders } from "../Functions/filterOrders";
-// import LocationSearch from "@/components/Location/TestLocationSearch";
+import { filterOrders } from "@/lib/filterOrders";
 import {
     Select,
     SelectContent,
@@ -23,6 +22,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
+import { getVerifiedPosts } from "@/lib/getVerifiedPosts";
+import { getLocationData } from "@/lib/getPostLocation";
+import { getVerifiedMembers } from "@/lib/getVerifiedMembers";
+import { deletePost } from "@/lib/deletePost";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -33,7 +36,7 @@ export default function Home() {
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
     const deliveryFilter = searchParams.get("deliveryMethod")
-    const { register, watch, control } = useForm()
+    const { register } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState<MemberType[]>()
@@ -45,8 +48,53 @@ export default function Home() {
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length);
-    const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
 
+    async function fetchCombinedData() {
+        try {
+            const verifiedPosts = await getVerifiedPosts();
+            const locationData = await getLocationData()
+            const parsedPostsData = verifiedPosts.map((post) => ({
+                ...post,
+                selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
+                openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
+            }));
+            const mergedData = parsedPostsData.map((post) => ({
+                ...post,
+                locationData: locationData.find((location) => location.postId === post.postId),
+            }));
+            setPosts(mergedData)
+
+        } catch (error) {
+            console.error("Error fetching verified posts:", error);
+        }
+    }
+    function verifyInvitedUsers() {
+        const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
+        async function getMembers() {
+            try {
+                const verifiedMembers = await getVerifiedMembers("id, isVerified")
+                setMembers(verifiedMembers)
+
+            } catch (error) {
+                console.error("Error fetching verified members:", error);
+
+            }
+        }
+        if (!isVerified) {
+            const verifyUser = async () => {
+                const { error } = await supabase
+                    .from("members")
+                    .update({ isVerified: true, email: user?.email })
+                    .eq("id", user?.id)
+
+                if (error) {
+                    console.error(error);
+                }
+            }
+            verifyUser()
+        }
+        getMembers()
+    }
     useEffect(() => {
         if (user) {
             RetrieveOwner(user.email, user);
@@ -57,8 +105,8 @@ export default function Home() {
     }
     useEffect(() => {
         setIsLoading(true); // Set loading to true when fetching data
-        getMembers()
-        getCombinedData()
+        verifyInvitedUsers()
+        fetchCombinedData()
             .then(() => setIsLoading(false)) // Set loading to false once data is fetched
             .catch((error) => {
                 console.error(error);
@@ -67,86 +115,9 @@ export default function Home() {
 
     }, [typeFilter, locationFilter, searchFilter]);
 
-    const getCombinedData = async () => {
-        try {
-            // Fetch posts data
-            const { data: postsData, error: postsError } = await supabase
-                .from("posts")
-                .select("*")
-                .eq("isVerified", true)
-                .order("updated_at", { ascending: false });
-
-            if (postsError) {
-                console.error("Error fetching posts data:", postsError);
-            }
-
-            if (postsData) {
-                // Process posts data
-                const parsedPostsData = postsData.map((post) => ({
-                    ...post,
-                    selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
-                    openingHours: JSON.parse(post.openingHours).map((tag: any) => tag),
-                }));
-
-                // Fetch locations data
-                const { data: locationsData, error: locationsError } = await supabase
-                    .from("locations")
-                    .select("*");
-
-                if (locationsError) {
-                    console.error("Error fetching locations data:", locationsError);
-                }
-
-                if (locationsData) {
-                    // Merge postsData and locationsData based on postId
-                    const mergedData = parsedPostsData.map((post) => ({
-                        ...post,
-                        locationData: locationsData.find((location) => location.postId === post.postId),
-                    }));
-
-                    // Set the merged data in the posts state
-                    setPosts(mergedData);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching combined data:", error);
-        }
-    };
-    const getMembers = async () => {
-        const { error, data }: { error: any, data: any } = await supabase
-            .from("members")
-            .select("id, isVerified")
-        // .eq("isVerified", true)
-
-        if (error) {
-            return console.error(error);
-        }
-        setMembers(data);
-    }
-
-
-    if (!isVerified) {
-        const verifyUser = async () => {
-            const { error } = await supabase
-                .from("members")
-                .update({ isVerified: true, email: user?.email })
-                .eq("id", user?.id)
-
-            if (error) {
-                console.error(error);
-            }
-        }
-        verifyUser()
-    }
-    const deletePost = async (postId: string) => {
-        const { error } = await supabase
-            .from("posts")
-            .delete()
-            .eq('postId', postId)
-        if (error) {
-            console.error(error);
-        }
-        getCombinedData()
+    async function deleteListing(postId: string) {
+        await deletePost(postId)
+        fetchCombinedData()
     }
     const genNewSearchParams = (key: string, value: string) => {
         const sp = new URLSearchParams(searchParams)
@@ -438,7 +409,7 @@ export default function Home() {
                         filterPosts?.length > 0 ? (
                             paginatePageVar.map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10">
-                                    <Card {...item} onDelete={deletePost} />
+                                    <Card {...item} onDelete={deleteListing} />
                                 </div>
                             ))
                         ) : isFilter ? (

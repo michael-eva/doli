@@ -58,7 +58,6 @@ export default function SignUp() {
     };
 
     async function signUpAndInsertData(data: SignUpType) {
-        console.log(data);
         setIsSubmitting(true)
         try {
             const signUpResponse = await supabase.auth.signUp({
@@ -190,7 +189,6 @@ export default function SignUp() {
             // Proceed with sign up
             const response = await signUpAndInsertData(data);
             hasSelectedLocation(primaryLocation);
-            console.log(response);
 
             if (response && !response.error) {
                 supabase
@@ -208,7 +206,7 @@ export default function SignUp() {
                     .then(
                         ({ error }) => {
                             if (error) {
-                                console.log(error)
+                                console.error(error)
                             }
                             reset()
                         },
@@ -308,7 +306,7 @@ export default function SignUp() {
                     });
                     return
                 } else {
-                    console.log("not verified", data);
+                    console.log("not verified");
                 }
 
             } else {

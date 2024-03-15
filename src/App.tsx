@@ -15,13 +15,12 @@ import EditPost from "./pages/EditPost"
 import Wholesale from "./pages/Wholesale"
 import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
-import Dashboard from "./Jod/Dashboard"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./pages/UpdateEmail"
 import { MdOutlineEmail } from "react-icons/md";
 import Footer from "./components/Footer"
-import AboutPage from "./Jod/AboutPage"
+import Dashboard from "./Jod/Dashboard"
 
 
 
@@ -55,7 +54,6 @@ function App() {
           </Route>
           <Route path="member-register" element={<SignUp />} />
           <Route path="login" element={<Login />} />
-          {/* <Route path="about" element={<AboutPage />} /> */}
           <Route path="about" element={<About />} />
           <Route path="specials" element={<Specials />} />
           <Route path="wholesale" element={<Wholesale />} />
