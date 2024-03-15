@@ -24,8 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { getVerifiedPosts } from "@/lib/getVerifiedPosts";
 import { getLocationData } from "@/lib/getPostLocation";
-import { getVerifiedMembers } from "@/lib/getVerifiedMembers";
 import { deletePost } from "@/lib/deletePost";
+import { getAllMembers } from "@/lib/getAllMembers";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
@@ -72,12 +72,11 @@ export default function Home() {
         const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
         async function getMembers() {
             try {
-                const verifiedMembers = await getVerifiedMembers("id, isVerified")
-                setMembers(verifiedMembers)
+                const members = await getAllMembers("id, isVerified")
+                setMembers(members)
 
             } catch (error) {
                 console.error("Error fetching verified members:", error);
-
             }
         }
         if (!isVerified) {
