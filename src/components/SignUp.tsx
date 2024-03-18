@@ -340,19 +340,29 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     }
+    useEffect(() => {
+        if (primaryLocation.suburb && secondaryLocation.suburb) {
+            checkLocationError();
+        }
+    }, [primaryLocation.suburb, secondaryLocation.suburb]);
 
-    if (primaryLocation.suburb) {
+    function checkLocationError() {
+        setLocationError("");
         if (primaryLocation.suburb === secondaryLocation.suburb) {
-            setLocationError("*Value needs to be different from Home suburb")
+            setLocationError("*Value needs to be different from Home suburb");
             setSecondaryLocation({
                 address: "",
                 postcode: "",
                 suburb: "",
                 state: "",
                 country: "",
-            })
+            });
+            return;
         }
+        return true;
     }
+
+
     return (
         <>
             {hasSubmitted ?

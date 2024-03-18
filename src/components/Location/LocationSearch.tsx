@@ -50,7 +50,6 @@ export default function LocationSearch({
         clearSuggestions();
     });
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-
         setValue(e.target.value);
     };
     useEffect(() => {
