@@ -504,6 +504,7 @@ export default function SignUp() {
                                             coordinates,
                                         });
                                     }}
+                                    isRequired={true}
                                     className="input input-bordered"
                                     signUpData={primaryLocation}
                                 // suburbAndPostcode={true}
@@ -525,6 +526,7 @@ export default function SignUp() {
                                             coordinates,
                                         });
                                     }}
+                                    isRequired={false}
                                     className="input input-bordered"
                                     signUpData={secondaryLocation}
                                 // suburbAndPostcode={true}

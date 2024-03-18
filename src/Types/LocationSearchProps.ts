@@ -23,5 +23,6 @@ export type LocationSearchProps = {
         state: string,
     },
     className?: string,
-    allChecked: boolean
+    allChecked: boolean,
+    isRequired: boolean
 }

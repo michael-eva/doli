@@ -23,7 +23,8 @@ export default function LocationSearch({
     setInputClear,
     suburbAndPostcode,
     className,
-    allChecked
+    allChecked,
+    isRequired
 }: LocationSearchProps) {
     const [postcode, setPostcode] = useState<string>("");
     const {
@@ -154,13 +155,25 @@ export default function LocationSearch({
         <div ref={ref} className="flex flex-col gap-5">
             <div className=" flex flex-col w-full">
 
-                <input
-                    value={value || ""}
-                    onChange={handleInput}
-                    disabled={!ready}
-                    placeholder={placeholder}
-                    className={className}
-                />
+                {!isRequired ?
+                    <input
+                        value={value || ""}
+                        onChange={handleInput}
+                        disabled={!ready}
+                        placeholder={placeholder}
+                        className={className}
+                    />
+                    :
+                    <input
+                        value={value || ""}
+                        onChange={handleInput}
+                        disabled={!ready}
+                        placeholder={placeholder}
+                        className={className}
+                        required
+                    />
+
+                }
             </div>
             {displaySuggestions()}
             {suburbAndPostcode &&

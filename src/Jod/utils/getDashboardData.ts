@@ -39,6 +39,8 @@ export function getDashboardData(){
             setMonthlyMemberCounts(monthlyCounts)
         }
     }
+    console.log(monthlyMember);
+    
     async function getMonthlyRatings(){
 
         const { data, error } = await supabase
