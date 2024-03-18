@@ -10,18 +10,21 @@ import DispOpeningHours from "./Opening-Hours/DispOpeningHours";
 import { useMediaQuery } from "react-responsive";
 import { CardProps } from "../Types";
 import { HiBuildingStorefront } from "react-icons/hi2";
-import { FaInfoCircle, FaMailBulk, FaMailchimp, FaWhatsapp } from "react-icons/fa";
-import { PiDotsThreeOutlineFill } from "react-icons/pi";
-import { FaClock } from "react-icons/fa6";
+import { FaFacebook, FaInfoCircle, FaWhatsapp } from "react-icons/fa";
+import { FaClock, FaSquareXTwitter } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
 import { PiBowlFoodFill } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
-import { CiShare1 } from "react-icons/ci";
 import { FaShareAlt } from "react-icons/fa";
 import CustomModal from "./Modals/CustomModal";
 import { FaFacebookMessenger } from "react-icons/fa";
-import { IoLogoWhatsapp } from "react-icons/io";
 import { MdEmail } from "react-icons/md";
+import { FacebookShareButton } from 'react-share';
+import { WhatsappShareButton } from 'react-share';
+import { FacebookMessengerShareButton } from 'react-share';
+import { TwitterShareButton } from 'react-share';
+import { EmailShareButton } from 'react-share';
+
 
 
 
@@ -138,48 +141,41 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             </span>
                         </a>
                     )}
-                    {/* {isMobile &&
-                        // <Toggle>
-                        //     <ToggleButton className=" flex gap-4 items-center">
-                        //         <span >
-                        //             <FaShareAlt />
-                        //         </span>
-                        //         <span className="text-blue-600">
-                        //             Share
-                        //         </span>
-                        //     </ToggleButton>
-                        //     <ToggleOn>
-                        //         <CustomModal>
-                        //             <h1 className=" text-xl">Share listing via:</h1>
-                        //             <section className="mt-4 flex gap-8 justify-center">
-                        //                 <div className=" text-4xl text-blue-500">
-                        //                     <a
-                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/dashboard'}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         href={`fb-messenger://share/?link=${'https://doli.com.au/?search=loc'}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         // href={`fb-messenger://share/?link=${'https://doli.com.au/?search=' + encodeURIComponent(`${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                        //                         rel="noopener noreferrer"
-                        //                     // onClick={() => console.log('doli.com.au/?search=' + encodeURIComponent(`${props.name}`))}
-                        //                     >
-                        //                         <FaFacebookMessenger />
-                        //                     </a></div>
-                        //                 <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
-                        //                 <div className=" text-4xl"><MdEmail /></div>
-                        //             </section>
-                        //         </CustomModal>
-                        //     </ToggleOn>
-                        // </Toggle>
+                    {user?.email === "evamichael100@gmail.com" && <Toggle>
+                        <ToggleButton className=" flex gap-4 items-center">
+                            <span >
+                                <FaShareAlt />
+                            </span>
+                            <span className="text-blue-600 cursor-pointer">
+                                Share
+                            </span>
+                        </ToggleButton>
+                        <ToggleOn>
+                            <CustomModal>
+                                <h1 className=" text-xl">Tell a friend via:</h1>
+                                <section className="mt-4 flex gap-5 justify-center">
 
-                        // <div className=" flex gap-4 items-center">
-                        //     <span className="">
-                        //         <FaShareAlt />
-                        //     </span>
-                        //     <a href={`fb-messenger://share/?link=${encodeURIComponent(`doli.com.au/search=${props.name}`)}&app_id=${encodeURIComponent(META_ID)}`}
-                        //         target="_blank"
-                        //         rel="noopener noreferrer"
-                        //     >Share
-                        //     </a>
-                        // </div>
-                    } */}
+                                    {isMobile && <div className=" text-4xl text-blue-500">
+                                        <FacebookMessengerShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} appId={META_ID}>
+                                            <FaFacebookMessenger />
+                                        </FacebookMessengerShareButton>
+                                    </div>}
+                                    <WhatsappShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
+                                        <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                                    </WhatsappShareButton>
+                                    <TwitterShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
+                                        <div className=" text-4xl"><FaSquareXTwitter /></div>
+                                    </TwitterShareButton>
+                                    <FacebookShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`}>
+                                        <div className=" text-4xl text-blue-500"><FaFacebook /></div>
+                                    </FacebookShareButton>
+                                    <EmailShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} subject="I found a cool spot!" body="Check out this local business: ">
+                                        <div className=" text-4xl"><MdEmail /></div>
+                                    </EmailShareButton>
+                                </section>
+                            </CustomModal>
+                        </ToggleOn>
+                    </Toggle>}
                 </div>
             </div >
             {
