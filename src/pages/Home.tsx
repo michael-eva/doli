@@ -43,9 +43,9 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : undefined
-    const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : undefined;
-    const decodedLocationFilter = locationFilter ? decodeURIComponent(locationFilter) : undefined
+    const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : null
+    const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : null;
+    const decodedLocationFilter = locationFilter ? decodeURIComponent(locationFilter) : null
     const { filterPosts, paginatePageVar } = filterOrders(posts, decodedTypeFilter, deliveryFilter, isChecked, locationFilter, decodedLocationFilter, decodedSearchFilter, currentPage, pageSize)
     const isFilter = typeFilter || searchFilter || deliveryFilter || locationFilter || nearbyFilter ? true : false
     const user = useUser();
@@ -207,7 +207,7 @@ export default function Home() {
     // }, []);
     return (
         <>
-            <div className=" max-w-7xl md:mx-auto pb-10 ">
+            <div className=" max-w-5xl md:mx-auto pb-10 ">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
@@ -222,17 +222,17 @@ export default function Home() {
                 {!isMobile &&
                     <>
                         <div className="flex items-center ">
-                            <div className="w-1/3 ml-11">
+                            <div className="w-1/3">
                                 {/* <div className=" border-4 shadow-xl p-6 rounded flex flex-col items-center "> */}
-                                <div className=" rounded flex flex-col items-center ">
-                                    <h2 className=" text-5xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
+                                <div className=" flex flex-col ">
+                                    <h2 className=" text-4xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
                                     <p className=" text-2xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                                 </div>
                             </div>
                             {/* <div className="w-1/3">
                                 <img src="images/cropped_logo.png" alt="" width={350} style={{ minHeight: "200px", minWidth: '200px' }} />
                             </div> */}
-                            <div className="flex w-1/3 flex-col pl-32">
+                            <div className="flex w-1/3 flex-col pl-24">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
                                     {posts.length > 0 || members ? (
