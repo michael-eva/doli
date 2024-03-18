@@ -72,6 +72,8 @@ export default function Home() {
     }
     function verifyInvitedUsers() {
         const isVerified = members?.some(member => (member.isVerified === true && member.id === user?.id))
+        console.log(isVerified);
+
         async function getMembers() {
             try {
                 const members = await getAllMembers("id, isVerified")
@@ -212,7 +214,7 @@ export default function Home() {
                             <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                         </div>
                         <div className="px-4">
-                            <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={typeFilter} businessType={businessType} searchFilter={searchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
+                            <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={decodedTypeFilter} businessType={businessType} searchFilter={decodedSearchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
                         </div>
                     </div>
                 }

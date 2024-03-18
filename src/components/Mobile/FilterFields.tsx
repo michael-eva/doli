@@ -2,7 +2,7 @@ import LocationSearch from '../Location/LocationSearch';
 import { FilterFieldsType } from '../../Types/index';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from '../ui/select';
 
-export default function FilterFields({ clearFilters, register, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFieldsType) {
+export default function FilterFields({ clearFilters, genNewSearchParams, typeFilter, businessType, searchFilter, locationFilter, setInputClear, inputClear, isChecked, onSelect, handleCheckboxChange, nearbyFilter }: FilterFieldsType) {
 
     return (
         <>
@@ -39,24 +39,6 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                                 </span>
                             </label>
                         </div>
-
-                        {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                            <label> Select Type:</label>
-                            <select
-                                {...register('type')}
-                                className="select select-bordered w-72"
-                                onChange={(e) => genNewSearchParams('type', e.target.value)}
-                                value={typeFilter || ""}
-                                defaultChecked="All Types"
-                            >
-                                <option value="all">All Types</option>
-                                {businessType?.map(item => (
-                                    <option
-                                        key={item}
-                                        value={item}>{item}</option>
-                                ))}
-                            </select>
-                        </div> */}
                         <div className=' bg-white rounded-lg mt-4'>
                             <Select value={typeFilter || ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
                                 <SelectTrigger className=" h-11 w-72 ">
@@ -74,25 +56,10 @@ export default function FilterFields({ clearFilters, register, genNewSearchParam
                                 </SelectContent>
                             </Select>
                         </div>
-                        {/* <div className="flex flex-col mt-4 dropdown-bottom w-64">
-                            <label htmlFor="">Select Delivery Method:</label>
-                            <select
-                                name="deliveryMethod"
-                                className="select select-bordered w-72"
-                                onChange={(e) => genNewSearchParams("deliveryMethod", e.target.value)}
-                                value={deliveryFilter || ""}
-                            >
-                                <option value="all" selected>All Methods</option>
-                                <option value="delivery" >Delivery</option>
-                                <option value="dineIn" >Dine-In</option>
-                                <option value="pickUp" >Pick-Up</option>
-                            </select>
-                        </div> */}
                         <div className="flex flex-col mt-4">
                             <input type="text"
                                 className="input input-bordered w-72"
                                 placeholder='General Search'
-                                // {...register("search")}
                                 onChange={(e) => genNewSearchParams("search", e.target.value)}
                                 value={searchFilter || ""}
                             />
