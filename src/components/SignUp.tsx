@@ -24,7 +24,7 @@ export default function SignUp() {
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 1899 }, (_, index) => currentYear - index);
-    // const [locationError, setLocationError] = useState<string>("")
+    const [locationError, setLocationError] = useState<string>("")
     const existingEmail = errors.email?.message === "Email already exists in the system"
     const [primaryLocation, setPrimaryLocation] = useState({
         address: "",
@@ -340,6 +340,19 @@ export default function SignUp() {
         }
         setIsSubmitting(false)
     }
+
+    if (primaryLocation.suburb) {
+        if (primaryLocation.suburb === secondaryLocation.suburb) {
+            setLocationError("*Value needs to be different from Home suburb")
+            setSecondaryLocation({
+                address: "",
+                postcode: "",
+                suburb: "",
+                state: "",
+                country: "",
+            })
+        }
+    }
     return (
         <>
             {hasSubmitted ?
@@ -512,6 +525,7 @@ export default function SignUp() {
 
                             </div>
                             <div className="flex flex-col md:w-1/2">
+                                {locationError && <p className=" text-red-600">{locationError}</p>}
                                 <label>Home away from home*</label>
                                 <LocationSearch
                                     types={['locality']}
@@ -529,7 +543,6 @@ export default function SignUp() {
                                     isRequired={false}
                                     className="input input-bordered"
                                     signUpData={secondaryLocation}
-                                // suburbAndPostcode={true}
                                 />
                                 <p className=" text-xs my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
                             </div>
