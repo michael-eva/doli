@@ -140,8 +140,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                 Visit Website
                             </span>
                         </a>
-                    )}
-                    {user?.email === "evamichael100@gmail.com" && <Toggle>
+                    )}<Toggle>
                         <ToggleButton className=" flex gap-4 items-center">
                             <span >
                                 <FaShareAlt />
@@ -155,14 +154,12 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                 <h1 className=" text-xl">Tell a friend via:</h1>
                                 <section className="mt-4 flex gap-5 justify-center">
 
-                                    <div className=" text-4xl text-blue-500">
+                                    {!isMobile && <div className=" text-4xl text-blue-500">
                                         <FacebookMessengerShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} appId={META_ID}>
                                             <FaFacebookMessenger />
                                         </FacebookMessengerShareButton>
-
-
-                                    </div>
-                                    <a href="fb-messenger://share?link=https://doli.com.au" target="_blank">Share via Messenger</a>
+                                    </div>}
+                                    {isMobile && <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank"><FaFacebookMessenger /></a>}
                                     <WhatsappShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
                                         <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
                                     </WhatsappShareButton>
@@ -178,7 +175,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                 </section>
                             </CustomModal>
                         </ToggleOn>
-                    </Toggle>}
+                    </Toggle>
                 </div>
             </div >
             {
