@@ -154,7 +154,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                 <h1 className=" text-xl">Tell a friend via:</h1>
                                 <section className="mt-4 flex gap-5 justify-center">
 
-                                    {!isMobile && <div className=" text-4xl text-blue-500">
+                                    {!isMobile && <div className="flex text-3xl text-blue-500">
                                         <FacebookMessengerShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} appId={META_ID}>
                                             <FaFacebookMessenger />
                                         </FacebookMessengerShareButton>
