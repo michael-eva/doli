@@ -4,8 +4,10 @@ import { paginatePage } from "./pagniation";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
     
-function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | null, currentPage: number, pageSize: number) {
+function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | undefined, currentPage: number, pageSize: number) {
     let filterPosts = [...posts];
+    // const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : null
+    const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : null;
 
     if (typeFilter && typeFilter !== "all") {
         filterPosts = filterPosts.filter((post) => post.type === typeFilter);

@@ -13,7 +13,6 @@ import { CardProps, MemberType } from "../Types";
 import { RetrieveOwner } from "../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "../Functions/filterOrders";
-// import LocationSearch from "@/components/Location/TestLocationSearch";
 import {
     Select,
     SelectContent,
@@ -33,14 +32,16 @@ export default function Home() {
     const locationFilter = searchParams.get("location")
     const nearbyFilter = searchParams.get("coordinates")
     const deliveryFilter = searchParams.get("deliveryMethod")
-    const { register, watch, control } = useForm()
+    const { register } = useForm()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [members, setMembers] = useState<MemberType[]>()
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const { filterPosts, paginatePageVar } = filterOrders(posts, typeFilter, deliveryFilter, isChecked, locationFilter, nearbyFilter, searchFilter, currentPage, pageSize)
+    const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : undefined
+    const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : undefined;
+    const { filterPosts, paginatePageVar } = filterOrders(posts, decodedTypeFilter, deliveryFilter, isChecked, locationFilter, nearbyFilter, decodedSearchFilter, currentPage, pageSize)
     const isFilter = typeFilter || searchFilter || deliveryFilter || locationFilter || nearbyFilter ? true : false
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
@@ -153,7 +154,7 @@ export default function Home() {
         if (value === null) {
             sp.delete(key)
         } else {
-            sp.set(key, value)
+            sp.set(encodeURIComponent(key), encodeURIComponent(value))
         }
         setSearchParams(`?${sp.toString()}`)
         setCurrentPage(1)
@@ -230,6 +231,7 @@ export default function Home() {
     //     //   userEmails.forEach((email) => test(email))
     //     // );
     // }, []);
+
     return (
         <>
             <div className=" max-w-7xl md:mx-auto pb-10 ">
@@ -331,7 +333,7 @@ export default function Home() {
                             </div>
                             <div >
                                 {/* <label> Select Type:</label> */}
-                                <Select value={typeFilter || ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
+                                <Select value={typeFilter ? decodedTypeFilter : ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
                                     <SelectTrigger className=" border-2 border-black h-11 w-52">
                                         <div className={`${typeFilter ? "" : "text-gray-500"}`}>
                                             <SelectValue placeholder="Select Type of Business" />
@@ -397,7 +399,7 @@ export default function Home() {
                                     type="text"
                                     placeholder="General Search"
                                     className="border-2 border-black h-11"
-                                    value={searchFilter || ""}
+                                    value={searchFilter ? decodedSearchFilter : ""}
                                     onChange={(e) => genNewSearchParams("search", e.target.value)}
                                 />
                                 {/* <input type="text"

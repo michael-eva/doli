@@ -23,6 +23,12 @@ import { FaFacebookMessenger } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { MdEmail } from "react-icons/md";
 import { encodeURIWithPlus } from "@/lib/utils";
+import { FacebookShareButton } from 'react-share';
+import { WhatsappShareButton } from 'react-share';
+import { FacebookMessengerShareButton } from 'react-share';
+import { TwitterShareButton } from 'react-share';
+import { EmailShareButton } from 'react-share';
+
 
 
 
@@ -144,7 +150,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                             <span >
                                 <FaShareAlt />
                             </span>
-                            <span className="text-blue-600">
+                            <span className="text-blue-600 cursor-pointer">
                                 Share
                             </span>
                         </ToggleButton>
@@ -154,19 +160,22 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                 <section className="mt-4 flex gap-5 justify-center">
 
                                     {isMobile && <div className=" text-4xl text-blue-500">
-                                        {/* ***CURRENTLY NOT WORKING*** */}
-                                        {/* <a
-                                            href={`fb-messenger://share/?link='https://doli.com.au/?search=${encodeURIWithPlus(props.name)}&app_id=${encodeURIComponent(META_ID)}`}
-                                            rel="noopener noreferrer"
-                                        > */}
-                                        <FaFacebookMessenger />
-                                        {/* </a> */}
+                                        <FacebookMessengerShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} appId={META_ID}>
+                                            <FaFacebookMessenger />
+                                        </FacebookMessengerShareButton>
                                     </div>}
-                                    <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
-                                    <div className=" text-4xl text-[#e952bf]"><FaInstagram /></div>
-                                    <div className=" text-4xl"><FaSquareXTwitter /></div>
-                                    <div className=" text-4xl text-blue-500"><FaFacebook /></div>
-                                    <div className=" text-4xl"><MdEmail /></div>
+                                    <WhatsappShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
+                                        <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                                    </WhatsappShareButton>
+                                    <TwitterShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
+                                        <div className=" text-4xl"><FaSquareXTwitter /></div>
+                                    </TwitterShareButton>
+                                    <FacebookShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`}>
+                                        <div className=" text-4xl text-blue-500"><FaFacebook /></div>
+                                    </FacebookShareButton>
+                                    <EmailShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} subject="I found a cool spot!" body="Check out this local business: ">
+                                        <div className=" text-4xl"><MdEmail /></div>
+                                    </EmailShareButton>
                                 </section>
                             </CustomModal>
                         </ToggleOn>
