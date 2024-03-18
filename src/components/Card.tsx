@@ -159,11 +159,14 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                             <FaFacebookMessenger />
                                         </FacebookMessengerShareButton>
                                     </div>}
-                                    {isMobile && <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank">
-                                        <div className="flex text-3xl text-blue-500">
-                                            <FaFacebookMessenger />
+                                    {isMobile &&
+                                        <div className="flex  items-center text-3xl text-blue-500">
+                                            <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank">
+
+                                                <FaFacebookMessenger />
+                                            </a>
                                         </div>
-                                    </a>}
+                                    }
                                     <WhatsappShareButton url={`https://doli.com.au/?search=${encodeURIComponent(props.name)}`} title={"Check out this local business: "}>
                                         <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
                                     </WhatsappShareButton>
