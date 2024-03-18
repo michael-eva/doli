@@ -45,7 +45,8 @@ export default function Home() {
     const [inputClear, setInputClear] = useState<boolean>(false)
     const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : undefined
     const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : undefined;
-    const { filterPosts, paginatePageVar } = filterOrders(posts, decodedTypeFilter, deliveryFilter, isChecked, locationFilter, nearbyFilter, decodedSearchFilter, currentPage, pageSize)
+    const decodedLocationFilter = locationFilter ? decodeURIComponent(locationFilter) : undefined
+    const { filterPosts, paginatePageVar } = filterOrders(posts, decodedTypeFilter, deliveryFilter, isChecked, locationFilter, decodedLocationFilter, decodedSearchFilter, currentPage, pageSize)
     const isFilter = typeFilter || searchFilter || deliveryFilter || locationFilter || nearbyFilter ? true : false
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
@@ -214,7 +215,7 @@ export default function Home() {
                             <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                         </div>
                         <div className="px-4">
-                            <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={decodedTypeFilter} businessType={businessType} searchFilter={decodedSearchFilter} locationFilter={locationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
+                            <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={decodedTypeFilter} businessType={businessType} searchFilter={decodedSearchFilter} locationFilter={decodedLocationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} />
                         </div>
                     </div>
                 }
