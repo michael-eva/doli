@@ -50,14 +50,6 @@ export default function Home() {
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length);
-
-    // console.log("nearby filter:", nearbyFilter);
-    // console.log("location filter:", locationFilter);
-    // console.log("decoded nearby filter:", decodedLocationFilter);
-
-
-
-
     const { allMembers } = useSupabase("id")
 
     async function fetchCombinedData() {
@@ -279,7 +271,7 @@ export default function Home() {
                         {startIndex} - {endIndex} of {filterPosts.length} results
                     </p>
                     {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
-                        <p className=" font-bold font-raleway" >{members?.length} <span>Members</span></p>
+                        <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
                     </p>}
                 </div>
                 <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
