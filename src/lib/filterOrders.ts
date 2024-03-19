@@ -4,11 +4,11 @@ import { paginatePage } from "./pagniation";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
     
-function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | null, currentPage: number, pageSize: number) {
+function filterOrders(posts: CardProps[], decodedTypeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, decodedLocationFilter: string | null, decodedSearchFilter: string | null, currentPage: number, pageSize: number) {
     let filterPosts = [...posts];
 
-    if (typeFilter && typeFilter !== "all") {
-        filterPosts = filterPosts.filter((post) => post.type === typeFilter);
+    if (decodedTypeFilter && decodedTypeFilter !== "all") {
+        filterPosts = filterPosts.filter((post) => post.type === decodedTypeFilter);
     }
     if (deliveryFilter && deliveryFilter !== "all") {
         filterPosts = filterPosts.filter(post => post[deliveryFilter] === true)
@@ -21,8 +21,10 @@ function filterOrders(posts: CardProps[], typeFilter: string | null | undefined,
         });
     }
 
-    if (isChecked && nearbyFilter) {
-        const [latitude, longitude] = nearbyFilter.split('+')
+    if (isChecked && decodedLocationFilter) {
+        console.log("hello");
+        
+        const [latitude, longitude] = decodedLocationFilter.split('+')
         filterPosts = filterPosts.filter((post) =>
             isCoordinateWithinRadius(
                 { latitude: post.locationData?.coordinates?.latitude, longitude: post.locationData?.coordinates?.longitude },
@@ -32,7 +34,9 @@ function filterOrders(posts: CardProps[], typeFilter: string | null | undefined,
 
         );
     }
-    if (searchFilter && searchFilter.trim() !== "") {
+    if (decodedSearchFilter && decodedSearchFilter.trim() !== "") {
+        console.log("hello");
+        
         filterPosts = filterPosts.filter((post) => {
             const columnsToSearch = ["description", "selectedTags", "type", "state", "suburb", "name"];
 
@@ -43,11 +47,11 @@ function filterOrders(posts: CardProps[], typeFilter: string | null | undefined,
                     return value.some(
                         (tag: any) =>
                             typeof tag.label === "string" &&
-                            containsSearchText(tag.label, searchFilter)
+                            containsSearchText(tag.label, decodedSearchFilter)
                     );
                 }
 
-                return typeof value === "string" && containsSearchText(value, searchFilter);
+                return typeof value === "string" && containsSearchText(value, decodedSearchFilter);
             });
         });
     }

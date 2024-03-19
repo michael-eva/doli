@@ -44,12 +44,19 @@ export default function Home() {
     const [inputClear, setInputClear] = useState<boolean>(false)
     const decodedTypeFilter = typeFilter ? decodeURIComponent(typeFilter) : null
     const decodedSearchFilter = searchFilter ? decodeURIComponent(searchFilter) : null;
-    const decodedLocationFilter = locationFilter ? decodeURIComponent(locationFilter) : null
+    const decodedLocationFilter = nearbyFilter ? decodeURIComponent(nearbyFilter) : null
     const { filterPosts, paginatePageVar } = filterOrders(posts, decodedTypeFilter, deliveryFilter, isChecked, locationFilter, decodedLocationFilter, decodedSearchFilter, currentPage, pageSize)
     const isFilter = typeFilter || searchFilter || deliveryFilter || locationFilter || nearbyFilter ? true : false
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
     const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length);
+
+    // console.log("nearby filter:", nearbyFilter);
+    // console.log("location filter:", locationFilter);
+    // console.log("decoded nearby filter:", decodedLocationFilter);
+
+
+
 
     const { allMembers } = useSupabase("id")
 
