@@ -487,6 +487,16 @@ export default function SignUp() {
                                     placeholder="Select Month"
                                     onChange={(selectedOption) => setValue('birthMonth', selectedOption?.value)}
                                     value={watch("birthMonth") && { value: watch("birthMonth"), label: watch("birthMonth") }}
+                                    styles={{
+                                        control: (provided) => ({
+                                            ...provided,
+                                            height: '48px', // Adjust the height as needed
+                                        }),
+                                        singleValue: (provided) => ({
+                                            ...provided,
+                                            lineHeight: '48px', // Match the height to center the text vertically
+                                        }),
+                                    }}
                                 />
                                 {errors.birthMonth && <p className="text-red-600">*{errors.birthMonth.message?.toString()}</p>}
                             </div>
@@ -510,6 +520,16 @@ export default function SignUp() {
                                     placeholder="Select Year"
                                     onChange={(selectedOption) => setValue('birthYear', selectedOption?.value)}
                                     value={watch("birthYear") && { value: watch("birthYear"), label: watch("birthYear") }}
+                                    styles={{
+                                        control: (provided) => ({
+                                            ...provided,
+                                            height: '48px', // Adjust the height as needed
+                                        }),
+                                        singleValue: (provided) => ({
+                                            ...provided,
+                                            lineHeight: '48px', // Match the height to center the text vertically
+                                        }),
+                                    }}
                                 />
                                 {errors.birthYear && <p className=" text-red-600">*{errors.birthYear.message?.toString()}</p>}
                             </div>
@@ -540,6 +560,16 @@ export default function SignUp() {
                                     placeholder="Select"
                                     onChange={(selectedOption) => setValue('gender', selectedOption?.value)}
                                     value={watch("gender") && { value: watch("gender"), label: watch("gender") }}
+                                    styles={{
+                                        control: (provided) => ({
+                                            ...provided,
+                                            height: '48px', // Adjust the height as needed
+                                        }),
+                                        singleValue: (provided) => ({
+                                            ...provided,
+                                            lineHeight: '48px', // Match the height to center the text vertically
+                                        }),
+                                    }}
                                 />
                                 {errors.gender && <p className=" text-red-600">*{errors.gender.message?.toString()}</p>}
                             </div>
@@ -555,7 +585,7 @@ export default function SignUp() {
                                 </div>
                                 <input
                                     type="text"
-                                    className="input input-bordered "
+                                    className="input input-bordered"
                                     name="country"
                                     value="Australia"
                                     disabled
