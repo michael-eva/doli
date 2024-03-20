@@ -15,11 +15,13 @@ import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form"
 import LocationSearch from "./Location/LocationSearch"
 import { SignUpType } from "../Types"
+// import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import Select from "react-select"
 
 export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [hasSubmitted, setHasSubmitted] = useState<boolean>(false)
-    const { register, setValue, handleSubmit, formState: { errors }, setError, watch, clearErrors, reset } = useForm()
+    const { register, setValue, handleSubmit, formState: { errors }, setError, watch, clearErrors, reset, getValues } = useForm()
     const user = useUser()
     const navigate = useNavigate()
     const currentYear = new Date().getFullYear();
@@ -361,6 +363,7 @@ export default function SignUp() {
         }
         return true;
     }
+    console.log(watch("birthMonth"));
 
 
     return (
@@ -445,27 +448,53 @@ export default function SignUp() {
                         </div>
                         <label className="mt-7">When were you born?</label>
                         <div className="flex gap-3  w-full mb-2 items-end">
-                            <div className="flex flex-col w-1/2">
+                            {/* <div className="flex flex-col w-1/2">
                                 <select
-                                    defaultValue="Select Month"
+                                    defaultValue=" Select Month"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthMonth', { required: 'Birth month is required' })}
-                                    required
                                 >
                                     <option disabled>Select Month</option>
-                                    {months.map(month => (
-                                        <option key={nanoid()} value={month}>{month}</option>
+                                    {months.map((month) => (
+                                        <option key={nanoid()} value={month}>
+                                            {month}
+                                        </option>
                                     ))}
-
                                 </select>
-                                {errors.birthMonth && <p className=" text-red-600">*{errors.birthMonth.message?.toString()}</p>}
-                            </div>
+                                {errors.birthMonth && <p className="text-red-600">*{errors.birthMonth.message}</p>}
+                            </div> */}
+                            {/* <div className="flex flex-col w-1/2">
+                                <Select >
+                                    <SelectTrigger className=" h-11"  >
+                                        <SelectValue placeholder="Select Month" />
+                                    </SelectTrigger>
+                                    <SelectContent  >
+                                        <SelectGroup >
+                                            {months.map((month) => (
+                                                <SelectItem key={month} value={month} {...register('birthMonth', { required: 'Birth month is required' })}>
+                                                    {month}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                {errors.birthMonth && <p className="text-red-600">*{errors.birthMonth.message}</p>}
+                            </div> */}
                             <div className="flex flex-col w-1/2">
-                                {/* <label>Birth Year</label> */}
-                                <select
+                                <Select
+                                    {...register('birthMonth', { required: 'Birth month is required' })}
+                                    options={months.map(month => ({ value: month, label: month }))}
+                                    placeholder="Select Month"
+                                    onChange={(selectedOption) => setValue('birthMonth', selectedOption?.value)}
+                                    value={watch("birthMonth") && { value: watch("birthMonth"), label: watch("birthMonth") }}
+                                />
+                                {errors.birthMonth && <p className="text-red-600">*{errors.birthMonth.message?.toString()}</p>}
+                            </div>
+
+                            <div className="flex flex-col w-1/2">
+                                {/* <select
                                     defaultValue="Select Year"
                                     className="select select-bordered w-full max-w-xs"
-                                    // {...register('birthYear', { required: 'Birth year is required' })}
                                     {...register('birthYear', {
                                         required: 'Birth year is required',
                                     })}
@@ -474,7 +503,14 @@ export default function SignUp() {
                                     {years.map(year => (
                                         <option value={year} key={year}>{year}</option>
                                     ))}
-                                </select>
+                                </select> */}
+                                <Select
+                                    {...register('birthYear', { required: 'Birth year is required' })}
+                                    options={years.map(year => ({ value: year, label: year }))}
+                                    placeholder="Select Year"
+                                    onChange={(selectedOption) => setValue('birthYear', selectedOption?.value)}
+                                    value={watch("birthYear") && { value: watch("birthYear"), label: watch("birthYear") }}
+                                />
                                 {errors.birthYear && <p className=" text-red-600">*{errors.birthYear.message?.toString()}</p>}
                             </div>
 
@@ -483,7 +519,7 @@ export default function SignUp() {
 
                             <div className="flex flex-col w-1/2">
                                 <label>Gender</label>
-                                <select
+                                {/* <select
                                     defaultValue='Select'
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('gender', { required: 'Gender is required' })}
@@ -493,7 +529,18 @@ export default function SignUp() {
                                     <option value="female">Female</option>
                                     <option value="non-binary">Non-binary</option>
 
-                                </select>
+                                </select> */}
+                                <Select
+                                    {...register('gender', { required: 'Gender is required' })}
+                                    options={[
+                                        { value: 'Male', label: 'Male' },
+                                        { value: 'Female', label: 'Female' },
+                                        { value: 'Other', label: 'Other' },
+                                    ]}
+                                    placeholder="Select"
+                                    onChange={(selectedOption) => setValue('gender', selectedOption?.value)}
+                                    value={watch("gender") && { value: watch("gender"), label: watch("gender") }}
+                                />
                                 {errors.gender && <p className=" text-red-600">*{errors.gender.message?.toString()}</p>}
                             </div>
                             <div className="flex flex-col w-1/2">
