@@ -1,4 +1,4 @@
-import { CardProps } from "../Types";
+import { CardProps } from "../../../Types";
 
 function paginatePage(currentPage: number, pageSize: number, filterPosts: CardProps[]) {
     const startIndex = (currentPage - 1) * pageSize;

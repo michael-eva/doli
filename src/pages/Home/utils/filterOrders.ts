@@ -1,11 +1,29 @@
-import { CardProps } from "../Types";
-import { isCoordinateWithinRadius } from "../components/Location/locationHelpers";
-import { paginatePage } from "./pagniation";
+import { CardProps } from "../../../Types";
+import { isCoordinateWithinRadius } from "../../../components/Location/locationHelpers";
+import { paginatePage } from "@/pages/Home/utils/pagniation";
+import { useFilters } from "./filterFunctions";
+import { useEffect, useState } from "react";
+import { fetchCombinedData } from "./fetchCombinedData";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
+
+function filterOrders( isChecked: boolean, currentPage: number, pageSize: number) {
+// function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | undefined, currentPage: number, pageSize: number) {
+    const [posts, setPosts] = useState<CardProps[]>()
+    const {deliveryFilter, locationFilter, decodedLocationFilter, searchFilter, decodedTypeFilter} = useFilters()
+    useEffect(() => {
+        const fetchData = async () => {
+            const mergedData = await fetchCombinedData();
+            if (mergedData) {
+                setPosts(mergedData);
+            }
+        };
+        
+        fetchData();
+    }, []);
     
-function filterOrders(posts: CardProps[], decodedTypeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, decodedLocationFilter: string | null, decodedSearchFilter: string | null, currentPage: number, pageSize: number) {
-    let filterPosts = [...posts];
+    let filterPosts = [...posts|| []];
+
 
     if (decodedTypeFilter && decodedTypeFilter !== "all") {
         filterPosts = filterPosts.filter((post) => post.type === decodedTypeFilter);
@@ -22,8 +40,6 @@ function filterOrders(posts: CardProps[], decodedTypeFilter: string | null | und
     }
 
     if (isChecked && decodedLocationFilter) {
-        console.log("hello");
-        
         const [latitude, longitude] = decodedLocationFilter.split('+')
         filterPosts = filterPosts.filter((post) =>
             isCoordinateWithinRadius(
@@ -34,9 +50,7 @@ function filterOrders(posts: CardProps[], decodedTypeFilter: string | null | und
 
         );
     }
-    if (decodedSearchFilter && decodedSearchFilter.trim() !== "") {
-        console.log("hello");
-        
+    if (searchFilter && searchFilter.trim() !== "") {
         filterPosts = filterPosts.filter((post) => {
             const columnsToSearch = ["description", "selectedTags", "type", "state", "suburb", "name"];
 
@@ -47,11 +61,11 @@ function filterOrders(posts: CardProps[], decodedTypeFilter: string | null | und
                     return value.some(
                         (tag: any) =>
                             typeof tag.label === "string" &&
-                            containsSearchText(tag.label, decodedSearchFilter)
+                            containsSearchText(tag.label, searchFilter)
                     );
                 }
 
-                return typeof value === "string" && containsSearchText(value, decodedSearchFilter);
+                return typeof value === "string" && containsSearchText(value, searchFilter);
             });
         });
     }

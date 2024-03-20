@@ -2,7 +2,7 @@
 import SignUp from "./components/SignUp"
 import NavBar from "./components/NavBar"
 import { Routes, Route } from "react-router-dom"
-import Home from "./pages/Home"
+import Home from "./pages/Home/Home"
 import Login from "./pages/Login"
 import ManageListings from "./pages/ManageListings"
 import About from "./pages/About"

@@ -366,7 +366,7 @@ export default function SignUp() {
     return (
         <>
             {hasSubmitted ?
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 mt-36 justify-center bg-green-100">
+                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 justify-center bg-green-100">
                     <div className="flex items-center flex-col gap-5">
                         <div style={{ fontSize: "50px" }}>
                             <IoCheckmarkCircleOutline style={{ color: 'green' }} />
@@ -450,6 +450,7 @@ export default function SignUp() {
                                     defaultValue="Select Month"
                                     className="select select-bordered w-full max-w-xs"
                                     {...register('birthMonth', { required: 'Birth month is required' })}
+                                    required
                                 >
                                     <option disabled>Select Month</option>
                                     {months.map(month => (
@@ -464,7 +465,10 @@ export default function SignUp() {
                                 <select
                                     defaultValue="Select Year"
                                     className="select select-bordered w-full max-w-xs"
-                                    {...register('birthYear', { required: 'Birth year is required' })}
+                                    // {...register('birthYear', { required: 'Birth year is required' })}
+                                    {...register('birthYear', {
+                                        required: 'Birth year is required',
+                                    })}
                                 >
                                     <option disabled>Select Year</option>
                                     {years.map(year => (

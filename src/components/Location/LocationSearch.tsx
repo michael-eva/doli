@@ -58,7 +58,6 @@ export default function LocationSearch({
             setInputClear(false)
         }
     }, [inputClear])
-
     const handleSelect = (suggestion: Suggestion) => () => {
 
         setValue(suggestion.description, false);

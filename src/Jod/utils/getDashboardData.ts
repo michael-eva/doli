@@ -1,7 +1,7 @@
 import supabase from "@/config/supabaseClient";
 import { useState, useEffect } from "react";
 import { transformMonthlyCountsToArray } from "./utils";
-import { getUnverifiedMembers } from "@/lib/getUnverifiedMembers";
+import { getUnverifiedMembers } from "@/lib/Supabase/getUnverifiedMembers";
 type SeededPostsType = {
     name: string,
     email: string,
