@@ -363,7 +363,6 @@ export default function SignUp() {
         }
         return true;
     }
-    console.log(watch("birthMonth"));
 
 
     return (

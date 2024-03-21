@@ -7,18 +7,20 @@ import { fetchCombinedData } from "./fetchCombinedData";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
 
-function filterOrders( isChecked: boolean, currentPage: number, pageSize: number) {
-// function filterOrders(posts: CardProps[], typeFilter: string | null | undefined, deliveryFilter: string | null, isChecked: boolean, locationFilter: string | null, nearbyFilter: string | null, searchFilter: string | undefined, currentPage: number, pageSize: number) {
+export function filterOrders( isChecked: boolean, currentPage: number, pageSize: number) {
     const [posts, setPosts] = useState<CardProps[]>()
     const {deliveryFilter, locationFilter, decodedLocationFilter, searchFilter, decodedTypeFilter} = useFilters()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true); // Set loading state to true before fetching data
             const mergedData = await fetchCombinedData();
             if (mergedData) {
                 setPosts(mergedData);
             }
+            setIsLoading(false); // Set loading state to false after fetching data
         };
-        
+
         fetchData();
     }, []);
     
@@ -70,7 +72,5 @@ function filterOrders( isChecked: boolean, currentPage: number, pageSize: number
         });
     }
 
-    return { filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts) }
+    return { filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading }
 };
-
-export { filterOrders }

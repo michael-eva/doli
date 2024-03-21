@@ -10,38 +10,25 @@ import { RetrieveOwner } from "../../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "./utils/filterOrders";
 import { deletePost } from "@/lib/deletePost";
-import { useSupabase } from "@/lib/Supabase/getAllMembers";
-import { fetchCombinedData } from "./utils/fetchCombinedData";
-import { isFilterApplied, useFilters } from "./utils/filterFunctions";
+import { useSupabase } from "@/lib/Supabase/getAllRecords";
+import { isFilterApplied } from "./utils/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
 
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
-    const [posts, setPosts] = useState<CardProps[]>([])
-    //clearFilters() using setSearchParams
     const [searchParams, setSearchParams] = useSearchParams()
-    const [isLoading, setIsLoading] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const { locationFilter, typeFilter, searchFilter, genNewSearchParams } = useFilters()
-    const { filterPosts, paginatePageVar } = filterOrders(isChecked, currentPage, pageSize)
+    const { filterPosts, paginatePageVar, isLoading } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length);
+    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts?.length);
     const { allMembers } = useSupabase("id")
 
-    async function fetchData() {
-        try {
-            const mergedData = await fetchCombinedData()
-            setPosts(mergedData)
-        } catch (error) {
-            console.error("Error fetching verified posts:", error);
-        }
-    }
     const isVerified = allMembers?.some(member => (member.id === user?.id && member.isVerified === true))
     function verifyInvitedUsers() {
         if (!isVerified) {
@@ -67,16 +54,6 @@ export default function Home() {
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
-    useEffect(() => {
-        setIsLoading(true); // Set loading to true when fetching data
-        fetchData()
-            .then(() => setIsLoading(false)) // Set loading to false once data is fetched
-            .catch((error) => {
-                console.error(error);
-                setIsLoading(false); // Ensure loading is turned off on error too
-            });
-
-    }, [typeFilter, locationFilter, searchFilter]);
 
     async function deleteListing(postId: string) {
         await deletePost(postId)
@@ -101,7 +78,6 @@ export default function Home() {
                             <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                         </div>
                         <div className="px-4">
-                            {/* <FilterFields nearbyFilter={nearbyFilter} clearFilters={clearFilters} isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} register={register} genNewSearchParams={genNewSearchParams} typeFilter={decodedTypeFilter} businessType={businessType} searchFilter={decodedSearchFilter} locationFilter={decodedLocationFilter} setInputClear={setInputClear} inputClear={inputClear} onSelect={handleLocationSelect} /> */}
                             <HomeFilters isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} inputClear={inputClear} setInputClear={setInputClear} clearFilters={clearFilters} />
                         </div>
                     </div>
@@ -118,10 +94,10 @@ export default function Home() {
                             <div className="flex w-1/3 flex-col pl-24">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                    {posts.length > 0 || allMembers ? (
+                                    {filterPosts?.length > 0 && allMembers ? (
                                         <>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                {isFilter ? filterPosts.length : posts.length}{" "}
+                                                {filterPosts?.length}{" "}
                                                 <span>Businesses</span>
                                             </p>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
@@ -145,7 +121,7 @@ export default function Home() {
                 }
                 <div className="flex justify-between">
                     <p className={`${isMobile ? "py-2 px-7" : ""}`}>
-                        {startIndex} - {endIndex} of {filterPosts.length} results
+                        {startIndex} - {endIndex} of {filterPosts?.length} results
                     </p>
                     {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
@@ -174,7 +150,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
-                {filterPosts.length > 2 && <Pagination totalItems={filterPosts.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {filterPosts?.length > 2 && <Pagination totalItems={filterPosts?.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );
