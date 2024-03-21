@@ -631,7 +631,7 @@ export default function SignUp() {
                                             coordinates,
                                         });
                                     }}
-                                    isRequired={false}
+                                    isRequired={true}
                                     className="input input-bordered"
                                     signUpData={secondaryLocation}
                                 />
