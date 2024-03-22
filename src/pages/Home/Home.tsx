@@ -10,7 +10,7 @@ import { RetrieveOwner } from "../../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "./utils/filterOrders";
 import { deletePost } from "@/lib/deletePost";
-import { useSupabase } from "@/lib/Supabase/getAllRecords";
+import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords";
 import { isFilterApplied } from "./utils/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
 

@@ -1,5 +1,5 @@
 
-import SignUp from "./components/SignUp"
+import SignUp from "./pages/SignUp/SignUp"
 import NavBar from "./components/NavBar"
 import { Routes, Route } from "react-router-dom"
 import Home from "./pages/Home/Home"
@@ -17,7 +17,7 @@ import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
-import UpdateEmail from "./pages/UpdateEmail"
+import UpdateEmail from "./components/Modals/UpdateEmail"
 import { MdOutlineEmail } from "react-icons/md";
 import Footer from "./components/Footer"
 import Dashboard from "./Jod/Dashboard"

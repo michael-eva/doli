@@ -1,4 +1,4 @@
-import { getLocationData } from "@/lib/Supabase/getPostLocation";
+import { getLocationData } from "@/lib/Supabase/AllRecords/getPostLocation";
 import { getVerifiedPosts } from "@/lib/Supabase/getVerifiedPosts";
 
  export async function fetchCombinedData() {
