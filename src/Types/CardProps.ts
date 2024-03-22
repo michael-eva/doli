@@ -19,7 +19,7 @@ export type CardProps = {
     id?: string,
     postId?: string,
     imgUrl?: string | null,
-    name: string,
+    name?: string,
     locality?: string,
     state?: string,
     postcode?: string,
@@ -29,7 +29,7 @@ export type CardProps = {
         value: string,
         label: string
     }],
-    description: string,
+    description?: string,
     openingHours?: [{
         id: string,
         day: string,

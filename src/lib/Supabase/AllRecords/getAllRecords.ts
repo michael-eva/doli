@@ -33,7 +33,8 @@ export function useSupabase(select: string){
 
     useEffect(()=>{
         getAllMembers()
+        getAllPosts()
     },[])
 
-    return {allMembers, getAllPosts}
+    return {allMembers, allPosts}
 }
