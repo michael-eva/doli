@@ -20,7 +20,7 @@ export default function Home() {
     const [searchParams, setSearchParams] = useSearchParams()
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageSize = 8
+    const pageSize = 9
     const [inputClear, setInputClear] = useState<boolean>(false)
     const { filterPosts, paginatePageVar, isLoading } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
