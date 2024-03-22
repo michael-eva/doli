@@ -57,11 +57,8 @@ export default function Login({ title }: LoginProps) {
             setLoginError("An account with that email address doesn't exist");
             return;
         }
-
-
         const { error } = await supabase.auth.signInWithPassword({ ...data });
         setIsSubmitting(true)
-
         if (error) {
             console.log(error);
             setIsUser("Password is incorrect");
@@ -69,15 +66,12 @@ export default function Login({ title }: LoginProps) {
             setIsSubmitting(false)
             return;
         }
-
         setIsSubmitting(false)
         toast.success("Logged in successfully");
-
         setTimeout(() => {
 
             navigate("/");
         }, 1000);
-
         reset()
         setLoginError("");
         setIsUser("");
