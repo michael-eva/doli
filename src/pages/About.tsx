@@ -1,10 +1,9 @@
 import { GiPokerHand } from "react-icons/gi";
-import { IoFastFoodOutline } from "react-icons/io5";
 import { LiaBuildingSolid } from "react-icons/lia";
 import { MdOutlineTableRestaurant } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
-import { FaRegStar } from "react-icons/fa";
 import StarRatings from "react-star-ratings";
+import { Helmet } from 'react-helmet'
 
 const rating = () => {
     return (
@@ -26,6 +25,10 @@ const rating = () => {
 export default function AboutV1() {
     return (
         <>
+            <Helmet>
+                <title>doli | About</title>
+                <meta name="description" content="About us" />
+            </Helmet>
             <header></header>
             <body className="container max-w-3xl">
                 <section className="space-y-8 my-10">

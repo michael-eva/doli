@@ -21,6 +21,7 @@ import UpdateEmail from "./components/Modals/UpdateEmail"
 import { MdOutlineEmail } from "react-icons/md";
 import Footer from "./components/Footer"
 import Dashboard from "./Jod/Dashboard"
+import { Helmet } from "react-helmet"
 
 
 
@@ -36,11 +37,15 @@ function App() {
           </a>
         </div>
         <NavBar />
+        <Helmet>
+          <title>doli</title>
+          <meta name="description" content="your local food and drinks directory" />
+        </Helmet>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/update-email" element={<UpdateEmail />} />
           <Route element={<AuthRequired />}>
-            <Route path="post-listing" element={<PostForm postData={undefined} />} />
+            <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
             <Route path="manage-listings" element={<ManageListings />} />
             <Route path="update-details" element={<SignUp />} />
             <Route path="manage-listings" element={<ManageListings />} />

@@ -3,6 +3,7 @@ import supabase from "../config/supabaseClient";
 import { useParams } from "react-router";
 import PostForm from "../components/PostForm/PostForm";
 import { CardProps } from "../Types";
+import { Helmet } from 'react-helmet'
 
 export default function EditPost() {
     const { postId } = useParams<{ postId: string }>()
@@ -60,6 +61,12 @@ export default function EditPost() {
     };
 
     return (
-        <PostForm postData={singlePost} />
+        <>
+            <Helmet>
+                <title>doli | Edit Post</title>
+                <meta name="description" content="Edit your listing" />
+            </Helmet>
+            <PostForm postData={singlePost} />
+        </>
     )
 }

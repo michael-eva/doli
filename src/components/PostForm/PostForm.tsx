@@ -19,6 +19,7 @@ import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
 import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl } from "./utils.ts";
+import { Helmet } from 'react-helmet'
 
 type LocationData = {
     address: string,
@@ -341,381 +342,387 @@ export default function PostForm({ postData, }: CardProps) {
     };
 
     return (
-        <div className="flex md:justify-center">
-            <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
-                <header className=" max-w-md">
-                    {!postData ?
-                        <div className=" py-4 flex flex-col">
-                            <p className=" mb-4 text-center"><span className=" font-bold">Awesome!</span> We’re super excited you decided to register. Before we get going, please confirm the following about your business.</p>
-                            <div className="text-xs leading-6 list-inside flex flex-col gap-2">
-                                <div className="flex gap-2 items-center">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox checkbox-accent checkbox-sm"
-                                        checked={checkboxes.checkbox1}
-                                        onChange={() => handleRuleCheckboxChange('checkbox1')}
-                                    />
-                                    <span>Food and / or drinks are your <span className=" underline">primary</span> product offering.</span>
+        <>
+            <Helmet>
+                <title>doli | Register Business</title>
+                <meta name="description" content="Register your business" />
+            </Helmet>
+            <div className="flex md:justify-center">
+                <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
+                    <header className=" max-w-md">
+                        {!postData ?
+                            <div className=" py-4 flex flex-col">
+                                <p className=" mb-4 text-center"><span className=" font-bold">Awesome!</span> We’re super excited you decided to register. Before we get going, please confirm the following about your business.</p>
+                                <div className="text-xs leading-6 list-inside flex flex-col gap-2">
+                                    <div className="flex gap-2 items-center">
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox checkbox-accent checkbox-sm"
+                                            checked={checkboxes.checkbox1}
+                                            onChange={() => handleRuleCheckboxChange('checkbox1')}
+                                        />
+                                        <span>Food and / or drinks are your <span className=" underline">primary</span> product offering.</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox checkbox-accent checkbox-sm"
+                                            checked={checkboxes.checkbox2}
+                                            onChange={() => handleRuleCheckboxChange('checkbox2')}
+                                        />
+                                        <span>You have a <span className=" underline">genuine and permanent</span> physical retail location. </span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox checkbox-accent checkbox-sm"
+                                            checked={checkboxes.checkbox3}
+                                            onChange={() => handleRuleCheckboxChange('checkbox3')}
+                                        />
+                                        <span>You do <span className=" underline">NOT</span> operate or derive financial benefit from electronic gaming machines.</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox checkbox-accent checkbox-sm"
+                                            checked={checkboxes.checkbox4}
+                                            onChange={() => handleRuleCheckboxChange('checkbox4')}
+                                        />
+                                        <span>You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
+                                    </div>
                                 </div>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox checkbox-accent checkbox-sm"
-                                        checked={checkboxes.checkbox2}
-                                        onChange={() => handleRuleCheckboxChange('checkbox2')}
-                                    />
-                                    <span>You have a <span className=" underline">genuine and permanent</span> physical retail location. </span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox checkbox-accent checkbox-sm"
-                                        checked={checkboxes.checkbox3}
-                                        onChange={() => handleRuleCheckboxChange('checkbox3')}
-                                    />
-                                    <span>You do <span className=" underline">NOT</span> operate or derive financial benefit from electronic gaming machines.</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox checkbox-accent checkbox-sm"
-                                        checked={checkboxes.checkbox4}
-                                        onChange={() => handleRuleCheckboxChange('checkbox4')}
-                                    />
-                                    <span>You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
-                                </div>
+                            </div> :
+                            <p className=" mb-4 font-bold text-2xl">Edit Post:</p>
+                        }
+                    </header>
+                    <div className={`${!allChecked && "text-gray-300"}`}>
+                        {!allChecked ?
+                            <div className="divider">
+                                <p className="text-blue-500">Please agree to the rules above to proceed</p>
                             </div>
-                        </div> :
-                        <p className=" mb-4 font-bold text-2xl">Edit Post:</p>
-                    }
-                </header>
-                <div className={`${!allChecked && "text-gray-300"}`}>
-                    {!allChecked ?
-                        <div className="divider">
-                            <p className="text-blue-500">Please agree to the rules above to proceed</p>
-                        </div>
-                        :
-                        <div className=" my-4">
-                            <p className="text-blue-500">Ok... let’s go! Make sure you complete all mandatory fields below.</p>
-                        </div>
-
-                    }
-                    <div className="flex flex-col mb-5 mt-7">
-                        <label htmlFor="">Business Name</label>
-                        {errors.name && <p className=" text-red-600">*{errors.name.message?.toString()}</p>}
-                        <input
-                            type="text"
-                            className="input input-bordered w-full max-w-xs"
-                            {...register("name", { required: "Business name is required" })}
-                            disabled={!allChecked}
-                        />
-                    </div>
-
-                    <div className="flex flex-col mb-5">
-                        <label htmlFor="">Author Email</label>
-                        <input
-                            type="text"
-                            value={user?.email}
-                            className="input input-bordered w-full max-w-xs"
-                            disabled
-                        />
-                    </div>
-                    <div className="flex flex-col mb-5">
-                        <div className="flex items-center gap-5">
-                            <label htmlFor="">Admin Email (optional)</label>
-                            <Toggle>
-                                <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                                <ToggleOn>
-                                    <SimpleModal title="doli" >Add an admin who can edit the post on the authors behalf.</SimpleModal>
-                                </ToggleOn>
-                            </Toggle>
-                        </div>
-                        {errors.adminEmail && <p className=" text-red-600">*{errors.adminEmail.message?.toString()}</p>}
-                        <input
-                            type="text"
-                            className="input input-bordered w-full max-w-xs"
-                            {...register("adminEmail")}
-                            disabled={!allChecked}
-                        />
-                        <div>
-                            {watch('adminEmail') && <button
-                                className=" btn btn-error btn-xs" onClick={() => setValue("adminEmail", null)}
-                            >Remove admin</button>}
-                        </div>
-                    </div>
-
-                    <div className="divider "></div>
-
-                    <div className="flex flex-col mb-5">
-                        <label> Select Type:</label>
-                        {errors.type && <p className=" text-red-600">*{errors.type.message?.toString()}</p>}
-                        <select
-                            className="select select-bordered w-full max-w-xs"
-                            {...register("type", { required: "Type of business is required" })}
-                            defaultValue="Select Type"
-                            disabled={!allChecked}
-                        >
-                            <option disabled>Select Type</option>
-                            {businessType.map(item => (
-                                <option key={item}>{item}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex flex-col mb-5">
-                        <h2>About</h2>
-                        {errors.description && <p className=" text-red-600">*{errors.description.message?.toString()}</p>}
-                        <textarea
-                            className="textarea textarea-bordered w-full h-48"
-                            placeholder="Tell us about your business. What makes it unique, special, or just plain awesome at what you do. Maybe you have a signature dish or award-winning tipple… maybe there’s a brilliant back story or maybe it’s home to a cast of lovable, colourful characters. Remember we’re all about community so it's ok to be friendly and its ok to be personal."
-                            {...register("description", {
-                                required: "A description is required",
-                            })}
-                            disabled={!allChecked}
-                            maxLength={500}
-                            style={{ whiteSpace: 'pre-wrap' }}
-                        >
-                        </textarea>
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            <span className={countChars(getValues("description")) >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
-                                {countChars(getValues("description")) || 0}/500
-                            </span>
-
-                        </div>
-                    </div>
-                    <div className="flex flex-col mb-5 ">
-                        <p >Delivery Method</p>
-                        {deliveryMethodError && <p className="text-red-600">*Please select at least one option.</p>}
-                        <div className="flex gap-3">
-                            <div className="flex">
-                                <input
-                                    {...register("pickUp")}
-                                    type="checkbox"
-                                    className="checkbox checkbox-xs mr-2 mt-1"
-                                    disabled={!allChecked}
-                                />
-                                <label>Pick-Up</label>
+                            :
+                            <div className=" my-4">
+                                <p className="text-blue-500">Ok... let’s go! Make sure you complete all mandatory fields below.</p>
                             </div>
-                            <div className="flex">
-                                <input
-                                    {...register("delivery")}
-                                    type="checkbox"
-                                    className="checkbox checkbox-xs mr-2 mt-1"
-                                    disabled={!allChecked}
-                                />
-                                <label>Delivery</label>
-                            </div>
-                            <div className="flex">
-                                <input
-                                    {...register("dineIn")}
-                                    type="checkbox"
-                                    className="checkbox checkbox-xs mr-2 mt-1"
-                                    disabled={!allChecked}
-                                />
-                                <label>Dine-In</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col mb-5">
-                        <label >Opening Hours:</label>
-                        {openingHoursError && <div className=" text-red-600 mt-5">
-                            {openingHoursError}
-                        </div>}
-                        <OpeningHours register={register} watch={watch} errors={errors} allChecked={allChecked} />
-                    </div>
-                    <div className="flex mb-2">
-                        <label >Choose up to 5 options that best describe your business:</label>
-                    </div>
-                    <Select
-                        value={selectedTags}
-                        onChange={handleTagChange}
-                        options={transformedTags}
-                        isMulti={true}
-                        isDisabled={!allChecked}
-                    />
-                    <div className="flex flex-col md:flex-row mt-7 gap-4">
-                        <div className="flex flex-col md:w-1/2">
-                            <label>Website <small>(Optional)</small></label>
-                            <input
-                                type="website"
-                                className="input input-bordered "
-                                {...register("website")}
-                                disabled={!allChecked}
-                            />
-                        </div>
-                        <div className="flex flex-col md:w-1/2">
-                            <label>Contact Number <small>(Optional)</small></label>
+
+                        }
+                        <div className="flex flex-col mb-5 mt-7">
+                            <label htmlFor="">Business Name</label>
+                            {errors.name && <p className=" text-red-600">*{errors.name.message?.toString()}</p>}
                             <input
                                 type="text"
-                                className="input input-bordered"
-                                {...register("contact")}
+                                className="input input-bordered w-full max-w-xs"
+                                {...register("name", { required: "Business name is required" })}
                                 disabled={!allChecked}
                             />
                         </div>
-                    </div>
-                    {postData ?
-                        <>
-                            <div className="flex flex-col gap-5">
-                                {!show ? <img
-                                    src={previewUrl}
-                                    alt="Cover"
-                                    style={{ height: '225px', width: '300px' }}
-                                    className=" mt-5 rounded-lg"
+
+                        <div className="flex flex-col mb-5">
+                            <label htmlFor="">Author Email</label>
+                            <input
+                                type="text"
+                                value={user?.email}
+                                className="input input-bordered w-full max-w-xs"
+                                disabled
+                            />
+                        </div>
+                        <div className="flex flex-col mb-5">
+                            <div className="flex items-center gap-5">
+                                <label htmlFor="">Admin Email (optional)</label>
+                                <Toggle>
+                                    <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
+                                    <ToggleOn>
+                                        <SimpleModal title="doli" >Add an admin who can edit the post on the authors behalf.</SimpleModal>
+                                    </ToggleOn>
+                                </Toggle>
+                            </div>
+                            {errors.adminEmail && <p className=" text-red-600">*{errors.adminEmail.message?.toString()}</p>}
+                            <input
+                                type="text"
+                                className="input input-bordered w-full max-w-xs"
+                                {...register("adminEmail")}
+                                disabled={!allChecked}
+                            />
+                            <div>
+                                {watch('adminEmail') && <button
+                                    className=" btn btn-error btn-xs" onClick={() => setValue("adminEmail", null)}
+                                >Remove admin</button>}
+                            </div>
+                        </div>
+
+                        <div className="divider "></div>
+
+                        <div className="flex flex-col mb-5">
+                            <label> Select Type:</label>
+                            {errors.type && <p className=" text-red-600">*{errors.type.message?.toString()}</p>}
+                            <select
+                                className="select select-bordered w-full max-w-xs"
+                                {...register("type", { required: "Type of business is required" })}
+                                defaultValue="Select Type"
+                                disabled={!allChecked}
+                            >
+                                <option disabled>Select Type</option>
+                                {businessType.map(item => (
+                                    <option key={item}>{item}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col mb-5">
+                            <h2>About</h2>
+                            {errors.description && <p className=" text-red-600">*{errors.description.message?.toString()}</p>}
+                            <textarea
+                                className="textarea textarea-bordered w-full h-48"
+                                placeholder="Tell us about your business. What makes it unique, special, or just plain awesome at what you do. Maybe you have a signature dish or award-winning tipple… maybe there’s a brilliant back story or maybe it’s home to a cast of lovable, colourful characters. Remember we’re all about community so it's ok to be friendly and its ok to be personal."
+                                {...register("description", {
+                                    required: "A description is required",
+                                })}
+                                disabled={!allChecked}
+                                maxLength={500}
+                                style={{ whiteSpace: 'pre-wrap' }}
+                            >
+                            </textarea>
+                            <div className="label">
+                                <span className="label-text-alt"></span>
+                                <span className={countChars(getValues("description")) >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
+                                    {countChars(getValues("description")) || 0}/500
+                                </span>
+
+                            </div>
+                        </div>
+                        <div className="flex flex-col mb-5 ">
+                            <p >Delivery Method</p>
+                            {deliveryMethodError && <p className="text-red-600">*Please select at least one option.</p>}
+                            <div className="flex gap-3">
+                                <div className="flex">
+                                    <input
+                                        {...register("pickUp")}
+                                        type="checkbox"
+                                        className="checkbox checkbox-xs mr-2 mt-1"
+                                        disabled={!allChecked}
+                                    />
+                                    <label>Pick-Up</label>
+                                </div>
+                                <div className="flex">
+                                    <input
+                                        {...register("delivery")}
+                                        type="checkbox"
+                                        className="checkbox checkbox-xs mr-2 mt-1"
+                                        disabled={!allChecked}
+                                    />
+                                    <label>Delivery</label>
+                                </div>
+                                <div className="flex">
+                                    <input
+                                        {...register("dineIn")}
+                                        type="checkbox"
+                                        className="checkbox checkbox-xs mr-2 mt-1"
+                                        disabled={!allChecked}
+                                    />
+                                    <label>Dine-In</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col mb-5">
+                            <label >Opening Hours:</label>
+                            {openingHoursError && <div className=" text-red-600 mt-5">
+                                {openingHoursError}
+                            </div>}
+                            <OpeningHours register={register} watch={watch} errors={errors} allChecked={allChecked} />
+                        </div>
+                        <div className="flex mb-2">
+                            <label >Choose up to 5 options that best describe your business:</label>
+                        </div>
+                        <Select
+                            value={selectedTags}
+                            onChange={handleTagChange}
+                            options={transformedTags}
+                            isMulti={true}
+                            isDisabled={!allChecked}
+                        />
+                        <div className="flex flex-col md:flex-row mt-7 gap-4">
+                            <div className="flex flex-col md:w-1/2">
+                                <label>Website <small>(Optional)</small></label>
+                                <input
+                                    type="website"
+                                    className="input input-bordered "
+                                    {...register("website")}
+                                    disabled={!allChecked}
                                 />
-                                    :
-                                    <>{previewUrl && <img
+                            </div>
+                            <div className="flex flex-col md:w-1/2">
+                                <label>Contact Number <small>(Optional)</small></label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    {...register("contact")}
+                                    disabled={!allChecked}
+                                />
+                            </div>
+                        </div>
+                        {postData ?
+                            <>
+                                <div className="flex flex-col gap-5">
+                                    {!show ? <img
                                         src={previewUrl}
                                         alt="Cover"
                                         style={{ height: '225px', width: '300px' }}
                                         className=" mt-5 rounded-lg"
-                                    />}
-                                        <div className="cover-photo">
-                                            <h2 className="mt-1">Update Cover Photo</h2>
-                                            <p className="text-xs">Max image size of 300KB</p>
+                                    />
+                                        :
+                                        <>{previewUrl && <img
+                                            src={previewUrl}
+                                            alt="Cover"
+                                            style={{ height: '225px', width: '300px' }}
+                                            className=" mt-5 rounded-lg"
+                                        />}
+                                            <div className="cover-photo">
+                                                <h2 className="mt-1">Update Cover Photo</h2>
+                                                <p className="text-xs">Max image size of 300KB</p>
 
-                                            {errors.imgUrl && (
-                                                <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                                            )}
-                                            <input
-                                                type="file"
-                                                className="file-input file-input-bordered w-full"
-                                                {...register("imgUrl", {
-                                                    required: "Cover photo is required",
-                                                    validate: {
-                                                        maxSize: (value) =>
-                                                            !value ||
-                                                            value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                            "File size exceeds the limit of 300KB",
-                                                    },
-                                                })}
-                                                onChange={handleFileChange}
-                                                accept="image/*"
-                                            />
+                                                {errors.imgUrl && (
+                                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    className="file-input file-input-bordered w-full"
+                                                    {...register("imgUrl", {
+                                                        required: "Cover photo is required",
+                                                        validate: {
+                                                            maxSize: (value) =>
+                                                                !value ||
+                                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                                                "File size exceeds the limit of 300KB",
+                                                        },
+                                                    })}
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
 
-                                        </div>
-                                    </>
-                                }
-                                {!show ? <p onClick={() => setShow(!show)}
-                                    className="btn btn-primary w-"
-                                >Update Cover Photo</p>
-                                    :
-                                    <p onClick={() => { setPreviewUrl(postData.imgUrl); setShow(!show) }}
+                                            </div>
+                                        </>
+                                    }
+                                    {!show ? <p onClick={() => setShow(!show)}
                                         className="btn btn-primary w-"
-                                    >Cancel</p>
-                                }
-                            </div>
-                        </>
+                                    >Update Cover Photo</p>
+                                        :
+                                        <p onClick={() => { setPreviewUrl(postData.imgUrl); setShow(!show) }}
+                                            className="btn btn-primary w-"
+                                        >Cancel</p>
+                                    }
+                                </div>
+                            </>
 
-                        :
-                        <div className="cover-photo">
-                            <h2 className="mt-7">Add Cover Photo</h2>
-                            <p className="text-xs">Max image size of 300KB</p>
-                            {errors.imgUrl && (
-                                <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                            )}
-                            <input
-                                type="file"
-                                className="file-input file-input-bordered w-full"
-                                {...register("imgUrl", {
-                                    required: "Cover photo is required",
-                                    validate: {
-                                        maxSize: (value) =>
-                                            !value ||
-                                            value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                            "File size exceeds the limit of 300KB",
-                                    },
-                                })}
-                                onChange={handleFileChange}
-                                accept="image/*"
-                                disabled={!allChecked}
-                            />
-                            {previewUrl && <img
-                                src={previewUrl}
-                                alt="Cover"
-                                style={{ height: '225px', width: '300px' }}
-                                className=" mt-5 rounded-lg"
-                            />}
-                        </div>
-                    }
-
-                    <div className="divider"></div>
-                    <label htmlFor="">Address</label>
-                    <LocationSearch allChecked={allChecked} className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" isRequired={true} />
-                    {openingHoursError && <div className=" text-red-600 mt-5">
-                        {openingHoursError}
-                    </div>}
-                    {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
-                    {locationError && <p className="text-red-600 mt-5">*Please select a business location.</p>}
-                    {!postData && <div className=" flex items-center gap-3 mt-5">
-                        <label className="cursor-pointer label ">
-                            <input type="checkbox" checked={isAgree} disabled={!allChecked} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
-                        </label>
-                        <span className="label-text">I agree to the <span></span>
-                            <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
-                            <span></span> and <span></span>
-                            <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
-                        </span>
-                    </div>}
-                    {isAgree && allChecked ? <div className=" flex gap-2 mt-7">
-                        {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                             :
-                            <button className="btn btn-primary w-full">Submit</button>
+                            <div className="cover-photo">
+                                <h2 className="mt-7">Add Cover Photo</h2>
+                                <p className="text-xs">Max image size of 300KB</p>
+                                {errors.imgUrl && (
+                                    <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
+                                )}
+                                <input
+                                    type="file"
+                                    className="file-input file-input-bordered w-full"
+                                    {...register("imgUrl", {
+                                        required: "Cover photo is required",
+                                        validate: {
+                                            maxSize: (value) =>
+                                                !value ||
+                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                                "File size exceeds the limit of 300KB",
+                                        },
+                                    })}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    disabled={!allChecked}
+                                />
+                                {previewUrl && <img
+                                    src={previewUrl}
+                                    alt="Cover"
+                                    style={{ height: '225px', width: '300px' }}
+                                    className=" mt-5 rounded-lg"
+                                />}
+                            </div>
                         }
-                    </div> :
 
-                        <div className=" flex gap-2 mt-7">
-                            <button className="btn w-full btn-disabled">Submit</button>
-                        </div>
-                    }
-                </div>
-            </form >
-            {
-                !isMobile && <div >
-                    <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
-                        <input
-                            type='checkbox'
-                            name='autoSaver'
-                            className='sr-only'
-                            checked={isChecked}
-                            onChange={handleCheckboxChange}
-                        />
-                        <span
-                            className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
-                                }`}
-                        >
-                            <span
-                                className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
-                                    }`}
-                            ></span>
-                        </span>
-                        <span className='label flex items-center text-sm font-medium'>
-                            Show Preview
-                        </span>
-                    </label>
-                    {isChecked && (
-                        <div style={{ width: '50%' }}>
+                        <div className="divider"></div>
+                        <label htmlFor="">Address</label>
+                        <LocationSearch allChecked={allChecked} className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" isRequired={true} />
+                        {openingHoursError && <div className=" text-red-600 mt-5">
+                            {openingHoursError}
+                        </div>}
+                        {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
+                        {locationError && <p className="text-red-600 mt-5">*Please select a business location.</p>}
+                        {!postData && <div className=" flex items-center gap-3 mt-5">
+                            <label className="cursor-pointer label ">
+                                <input type="checkbox" checked={isAgree} disabled={!allChecked} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
+                            </label>
+                            <span className="label-text">I agree to the <span></span>
+                                <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
+                                <span></span> and <span></span>
+                                <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
+                            </span>
+                        </div>}
+                        {isAgree && allChecked ? <div className=" flex gap-2 mt-7">
+                            {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                                :
+                                <button className="btn btn-primary w-full">Submit</button>
+                            }
+                        </div> :
 
-                            <PreviewCard
-                                imgUrl={previewUrl}
-                                name={watch().name}
-                                suburb={selectedLocation.suburb}
-                                state={selectedLocation.state}
-                                postcode={selectedLocation.postcode}
-                                address={selectedLocation.address}
-                                type={watch().type}
-                                products={selectedTags?.map(tag => tag?.label).join(', ')}
-                                description={watch().description}
-                                openingHours={watch().openingHours}
-                                contact={watch().contact}
-                                pickUp={watch().pickUp}
-                                delivery={watch().delivery}
-                                dineIn={watch().dineIn}
+                            <div className=" flex gap-2 mt-7">
+                                <button className="btn w-full btn-disabled">Submit</button>
+                            </div>
+                        }
+                    </div>
+                </form >
+                {
+                    !isMobile && <div >
+                        <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+                            <input
+                                type='checkbox'
+                                name='autoSaver'
+                                className='sr-only'
+                                checked={isChecked}
+                                onChange={handleCheckboxChange}
                             />
-                        </div>
-                    )}
-                </div>
-            }
-            <Toaster />
-        </div >
+                            <span
+                                className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+                                    }`}
+                            >
+                                <span
+                                    className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
+                                        }`}
+                                ></span>
+                            </span>
+                            <span className='label flex items-center text-sm font-medium'>
+                                Show Preview
+                            </span>
+                        </label>
+                        {isChecked && (
+                            <div style={{ width: '50%' }}>
+
+                                <PreviewCard
+                                    imgUrl={previewUrl}
+                                    name={watch().name}
+                                    suburb={selectedLocation.suburb}
+                                    state={selectedLocation.state}
+                                    postcode={selectedLocation.postcode}
+                                    address={selectedLocation.address}
+                                    type={watch().type}
+                                    products={selectedTags?.map(tag => tag?.label).join(', ')}
+                                    description={watch().description}
+                                    openingHours={watch().openingHours}
+                                    contact={watch().contact}
+                                    pickUp={watch().pickUp}
+                                    delivery={watch().delivery}
+                                    dineIn={watch().dineIn}
+                                />
+                            </div>
+                        )}
+                    </div>
+                }
+                <Toaster />
+            </div >
+        </>
     )
 }

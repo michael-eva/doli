@@ -4,6 +4,7 @@ import { Card } from "../../components/Card"
 import { CardProps } from "../../Types"
 import CardSkeleton from "../../components/Loading/CardSkeleton"
 import { getData } from "./utils"
+import { Helmet } from 'react-helmet'
 
 export default function ManageListings() {
     const { posts, isLoading, getCombinedData } = getData()
@@ -43,6 +44,10 @@ export default function ManageListings() {
 
     return (
         <>
+            <Helmet>
+                <title>doli | Manage Listing</title>
+                <meta name="description" content="Manage your listing" />
+            </Helmet>
             {isLoading ?
                 <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
                     {
