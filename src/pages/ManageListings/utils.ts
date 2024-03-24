@@ -1,22 +1,12 @@
-import { useEffect, useState } from "react"
-import supabase from "../config/supabaseClient"
-import { useUser } from "@supabase/auth-helpers-react"
-import { Card } from "../components/Card"
-import { CardProps } from "../Types"
-import CardSkeleton from "../components/Loading/CardSkeleton"
+import { CardProps } from "@/Types";
+import supabase from "@/config/supabaseClient";
+import { useUser } from "@supabase/auth-helpers-react";
+import { useEffect, useState } from "react";
 
-export default function ManageListings() {
+export function getData(){
     const user = useUser()
     const [posts, setPosts] = useState<CardProps[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    useEffect(() => {
-        setIsLoading(true)
-        if (user?.id) {
-            getCombinedData()
-
-        }
-    }, [user?.id])
-
     const getCombinedData = async () => {
         try {
             setIsLoading(true);
@@ -80,54 +70,12 @@ export default function ManageListings() {
             console.error("Error fetching combined data:", error);
         }
     };
+    useEffect(() => {
+        setIsLoading(true)
+        if (user?.id) {
+            getCombinedData()
 
-    const deletePost = async (postId: string) => {
-        const { error } = await supabase
-            .from("posts")
-            .delete()
-            .eq('postId', postId)
-        if (error) {
-            console.error(error);
         }
-        // getPosts()
-        getCombinedData()
-    }
-
-    const cardsEl = () => {
-        if (posts?.length > 0) {
-
-            return (
-                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center pb-10">
-                    {posts.map((item: CardProps) => {
-                        return (
-                            <div key={item.postId} className="mt-10">
-                                <Card {...item} showStatus={true} onDelete={deletePost} />
-                            </div>
-                        );
-                    })}
-                </div>
-            )
-        }
-        else return (
-            <div className=" flex items-center text-2xl flex-col pt-10">
-                <p >No listings to display.</p>
-                <p >Post a listing to view it here.</p>
-            </div>
-        )
-    }
-
-    return (
-        <>
-            {isLoading ?
-                <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
-                    {
-                        Array.from({ length: 2 }, (_, index) => (
-                            <CardSkeleton key={index} />
-                        ))
-                    }
-                </div>
-                : cardsEl()
-            }
-        </>
-    )
+    }, [user?.id])
+    return {posts, isLoading, getCombinedData}
 }

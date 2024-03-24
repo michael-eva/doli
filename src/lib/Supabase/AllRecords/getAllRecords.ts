@@ -35,5 +35,5 @@ export function useSupabase(select: string){
         getAllMembers()
     },[])
 
-    return {allMembers, getAllPosts}
+    return {allMembers, getAllPosts, getAllMembers}
 }

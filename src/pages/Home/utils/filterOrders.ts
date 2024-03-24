@@ -11,15 +11,15 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
     const [posts, setPosts] = useState<CardProps[]>()
     const {deliveryFilter, locationFilter, decodedLocationFilter, searchFilter, decodedTypeFilter} = useFilters()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const fetchData = async () => {
+        setIsLoading(true); // Set loading state to true before fetching data
+        const mergedData = await fetchCombinedData();
+        if (mergedData) {
+            setPosts(mergedData);
+        }
+        setIsLoading(false); // Set loading state to false after fetching data
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true); // Set loading state to true before fetching data
-            const mergedData = await fetchCombinedData();
-            if (mergedData) {
-                setPosts(mergedData);
-            }
-            setIsLoading(false); // Set loading state to false after fetching data
-        };
 
         fetchData();
     }, []);
@@ -72,5 +72,5 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
         });
     }
 
-    return { filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading }
+    return { filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading, fetchData }
 };

@@ -22,7 +22,7 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 9
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const { filterPosts, paginatePageVar, isLoading } = filterOrders(isChecked, currentPage, pageSize)
+    const { filterPosts, paginatePageVar, isLoading, fetchData } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;

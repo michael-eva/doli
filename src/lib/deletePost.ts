@@ -1,4 +1,5 @@
 import supabase from "@/config/supabaseClient";
+import { fetchCombinedData } from "@/pages/Home/utils/fetchCombinedData";
 
 export async function deletePost(postId: string) {
     try {
@@ -12,6 +13,5 @@ export async function deletePost(postId: string) {
     } catch (error) {
         console.error("Error deleting post:", error);
         throw error
-        
     }
 }

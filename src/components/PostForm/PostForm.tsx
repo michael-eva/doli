@@ -18,7 +18,7 @@ import ToggleButton from "../Toggle/ToggleButton.tsx";
 import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
-import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus } from "./Functions.ts";
+import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus } from "./utils.ts";
 
 type imgPath = {
     path: string
@@ -238,8 +238,6 @@ export default function PostForm({ postData, }: CardProps) {
         setIsSubmitting(false);
         formCleanup(shouldSetVerifiedFalse)
     }
-    console.log(user?.email);
-
     const handleNewFormSubmit = async (formData: CardProps) => {
         const noErrors = handleFormErrors(formData, { selectedLocation: selectedLocation.postcode })
         if (!noErrors) {
@@ -304,7 +302,6 @@ export default function PostForm({ postData, }: CardProps) {
         }
         formCleanup(false)
     }
-
     const submitChooser = (formData: CardProps) => {
         if (postData) {
             return handleEditFormSubmit(formData)
