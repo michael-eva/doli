@@ -52,4 +52,8 @@ function countChars(name: string) {
     return inputLength
 }
 
-export { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus }
+const CDNUrl = (imgPath: {path:string}) => {
+    return `${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/cover_images/` + imgPath.path
+}
+
+export { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl }

@@ -18,11 +18,7 @@ import ToggleButton from "../Toggle/ToggleButton.tsx";
 import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
-import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus } from "./utils.ts";
-
-type imgPath = {
-    path: string
-}
+import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl } from "./utils.ts";
 
 type LocationData = {
     address: string,
@@ -89,9 +85,7 @@ export default function PostForm({ postData, }: CardProps) {
     const handleCheckboxChange = () => {
         setIsChecked(!isChecked)
     }
-    const CDNUrl = (imgPath: imgPath) => {
-        return `${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/cover_images/` + imgPath.path
-    }
+
     const formCleanup = (shouldSetVerifiedFalse: boolean) => {
         setDeliveryMethodError(false)
         setIsSubmitting(false)
@@ -152,7 +146,7 @@ export default function PostForm({ postData, }: CardProps) {
             console.error('Error updating imgUrl:', updateError);
         }
     };
-    function handleFormErrors(formData: CardProps, selectedLocation) {
+    function handleFormErrors(formData: CardProps, selectedLocation: { selectedLocation: any; }) {
         const { isDeliveryMethod, hasOpeningHours, hasSelectedLocation } = handleErrors({ delivery: watch().delivery, dineIn: watch().dineIn, pickUp: watch().pickUp }, { openingHours: formData.openingHours }, selectedLocation)
         setDeliveryMethodError(false)
         setLocationError(false)
@@ -646,7 +640,7 @@ export default function PostForm({ postData, }: CardProps) {
 
                     <div className="divider"></div>
                     <label htmlFor="">Address</label>
-                    <LocationSearch allChecked={allChecked} className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" />
+                    <LocationSearch allChecked={allChecked} className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" isRequired={true} />
                     {openingHoursError && <div className=" text-red-600 mt-5">
                         {openingHoursError}
                     </div>}
