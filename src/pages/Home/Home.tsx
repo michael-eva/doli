@@ -13,7 +13,7 @@ import { deletePost } from "@/lib/deletePost";
 import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords";
 import { isFilterApplied } from "./utils/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
-import { Helmet } from 'react-helmet'
+import SEO from "@/lib/SEO";
 
 
 export default function Home() {
@@ -71,26 +71,12 @@ export default function Home() {
 
     return (
         <>
-            <Helmet>
-                <title>doli | Home</title>
-                <meta name="description" content="::your local food and drinks directory" />
 
-
-                <meta property="og:url" content="https://doli.com.au" />
-                <meta property="og:type" content="website" />
-                <meta property="og:title" content="doli::" />
-                <meta property="og:description" content="your local food and drinks directory" />
-                <meta property="og:image" content="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/sign/website-images/doli_logo.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ3ZWJzaXRlLWltYWdlcy9kb2xpX2xvZ28uanBnIiwiaWF0IjoxNzEwMzkzNDg2LCJleHAiOjE3NDE5Mjk0ODZ9.virevU3v1QYzULFqmcMUgAlpT2Bp3E82Ro8oEYNtwvI&t=2024-03-14T05%3A18%3A06.226Z" />
-                <meta property="fb:app_id" content="785444670112157" />
-
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta property="twitter:domain" content="doli.com.au" />
-                <meta property="twitter:url" content="https://doli.com.au" />
-                <meta name="twitter:title" content="doli" />
-                <meta name="twitter:description" content="your local food and drinks directory" />
-                <meta name="twitter:image" content="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/sign/website-images/doli_logo.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ3ZWJzaXRlLWltYWdlcy9kb2xpX2xvZ28uanBnIiwiaWF0IjoxNzEwMzkzNDg2LCJleHAiOjE3NDE5Mjk0ODZ9.virevU3v1QYzULFqmcMUgAlpT2Bp3E82Ro8oEYNtwvI&t=2024-03-14T05%3A18%3A06.226Z" />
-
-            </Helmet>
+            <SEO
+                title="doli"
+                description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
+                name="doli"
+                type="website" />
             <div className=" max-w-5xl md:mx-auto pb-10 ">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">

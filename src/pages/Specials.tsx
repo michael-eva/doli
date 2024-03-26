@@ -4,10 +4,10 @@ import { Helmet } from 'react-helmet'
 export default function Specials() {
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Specials</title>
                 <meta name="description" content="doli specials" />
-            </Helmet>
+            </Helmet> */}
             <UnderConstruction />
         </>
     )

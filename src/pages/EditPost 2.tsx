@@ -62,10 +62,10 @@ export default function EditPost() {
 
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Edit Post</title>
                 <meta name="description" content="Edit your listing" />
-            </Helmet>
+            </Helmet> */}
             <PostForm postData={singlePost} />
         </>
     )

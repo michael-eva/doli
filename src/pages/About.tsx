@@ -25,10 +25,10 @@ const rating = () => {
 export default function AboutV1() {
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | About</title>
                 <meta name="description" content="About us" />
-            </Helmet>
+            </Helmet> */}
             <header></header>
             <body className="container max-w-3xl">
                 <section className="space-y-8 my-10">
