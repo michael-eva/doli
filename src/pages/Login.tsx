@@ -77,6 +77,7 @@ export default function Login({ title }: LoginProps) {
         reset()
         setLoginError("");
         setIsUser("");
+
     }
 
     return (
@@ -90,7 +91,7 @@ export default function Login({ title }: LoginProps) {
                 <meta name="og:description" content="Login to doli - OG description" />
             </Helmet> */}
             <SEO
-                title="doli"
+                title="doli | Sign In"
                 description="Sign In | doli, the home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
                 name="doli"
                 type="website" />
