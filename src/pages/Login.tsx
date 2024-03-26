@@ -82,7 +82,11 @@ export default function Login({ title }: LoginProps) {
         <>
             <Helmet>
                 <title>doli | Sign In</title>
-                <meta name="description" content="Login to doli" />
+                <meta name="description" content="Login to doli - description" />
+                <meta name="title" content="Login to doli - title" />
+
+                <meta name="og:title" content="Login to doli - OG title" />
+                <meta name="og:description" content="Login to doli - OG description" />
             </Helmet>
             <div className="shadow-2xl max-w-xl px-10 md:px-24 pb-12 pt-12 m-auto rounded-lg">
                 {location.state && (
