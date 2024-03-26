@@ -39,7 +39,9 @@ function App() {
         <NavBar />
         <Helmet>
           <title>doli</title>
-          <meta name="description" content="your local food and drinks directory" />
+          <meta name="description" content="Description" />
+          <meta name="og:title" content="your local food and drinks directory" />
+          <meta name="og:description" content="OG description" />
         </Helmet>
         <Routes>
           <Route path="/" element={<Home />} />
