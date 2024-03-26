@@ -44,10 +44,10 @@ export default function ManageListings() {
 
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Manage Listing</title>
                 <meta name="description" content="Manage your listing" />
-            </Helmet>
+            </Helmet> */}
             {isLoading ?
                 <div className="flex flex-wrap gap-4 max-w-7xl m-auto md:justify-start justify-center">
                     {

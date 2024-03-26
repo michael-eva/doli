@@ -119,10 +119,10 @@ export default function SignUp() {
 
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Sign Up</title>
                 <meta name="description" content="Sign up with doli" />
-            </Helmet>
+            </Helmet> */}
             {hasSubmitted ?
                 <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 justify-center bg-green-100">
                     <div className="flex items-center flex-col gap-5">

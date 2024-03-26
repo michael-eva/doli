@@ -10,6 +10,7 @@ import ToggleButton from "../components/Toggle/ToggleButton"
 import ToggleOn from "../components/Toggle/ToggleOn"
 import { MemberType } from "../Types"
 import { Helmet } from 'react-helmet'
+import SEO from "@/lib/SEO"
 
 
 type LoginData = {
@@ -80,14 +81,19 @@ export default function Login({ title }: LoginProps) {
 
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Sign In</title>
                 <meta name="description" content="Login to doli - description" />
                 <meta name="title" content="Login to doli - title" />
 
                 <meta name="og:title" content="Login to doli - OG title" />
                 <meta name="og:description" content="Login to doli - OG description" />
-            </Helmet>
+            </Helmet> */}
+            <SEO
+                title="doli"
+                description="Sign In | doli, the home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
+                name="doli"
+                type="website" />
             <div className="shadow-2xl max-w-xl px-10 md:px-24 pb-12 pt-12 m-auto rounded-lg">
                 {location.state && (
                     <p className=" mb-5 text-red-600 italic">*{location.state.message}</p>

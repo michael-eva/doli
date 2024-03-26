@@ -343,10 +343,10 @@ export default function PostForm({ postData, }: CardProps) {
 
     return (
         <>
-            <Helmet>
+            {/* <Helmet>
                 <title>doli | Register Business</title>
                 <meta name="description" content="Register your business" />
-            </Helmet>
+            </Helmet> */}
             <div className="flex md:justify-center">
                 <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
                     <header className=" max-w-md">
