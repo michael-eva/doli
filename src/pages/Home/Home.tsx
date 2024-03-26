@@ -73,7 +73,7 @@ export default function Home() {
         <>
 
             <SEO
-                title="doli"
+                title="doli | Home"
                 description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
                 name="doli"
                 type="website" />
