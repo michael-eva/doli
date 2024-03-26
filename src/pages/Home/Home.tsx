@@ -73,7 +73,7 @@ export default function Home() {
         <>
             <Helmet>
                 <title>doli | Home</title>
-                <meta name="description" content="doli: your local food and drinks directory" />
+                <meta name="description" content="your local food and drinks directory" />
 
 
                 <meta property="og:url" content="https://doli.com.au" />
