@@ -73,7 +73,7 @@ export default function Home() {
         <>
 
             <SEO
-                title="doli | Home"
+                title="doli | Welcome"
                 description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
                 name="doli"
                 type="website" />
@@ -81,7 +81,7 @@ export default function Home() {
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
-                            <h2 className=" text-3xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
+                            <h1 className=" text-3xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h1>
                             <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                         </div>
                         <div className="px-4">
@@ -94,7 +94,7 @@ export default function Home() {
                         <div className="flex items-center ">
                             <div className="w-1/3">
                                 <div className=" flex flex-col ">
-                                    <h2 className=" text-4xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h2>
+                                    <h1 className=" text-4xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h1>
                                     <p className=" text-2xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
                                 </div>
                             </div>
