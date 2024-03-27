@@ -20,6 +20,10 @@ import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
 import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl } from "./utils.ts";
 import { Helmet } from 'react-helmet'
+import compress from 'compressorjs';
+
+
+
 
 type LocationData = {
     address: string,
@@ -127,16 +131,60 @@ export default function PostForm({ postData, }: CardProps) {
             console.error('Error deleting current image:', deleteError);
         }
     };
-    const uploadNewImage = async () => {
+
+    const uploadNewImage = async (postId: string, selectedFile: Blob) => {
+        // Compress the selected file
+        const compressedFile: Blob | MediaSource = await new Promise((resolve, reject) => {
+            new compress(selectedFile, {
+                maxWidth: 1024,
+                maxHeight: 1024,
+                quality: 0.8,
+                success(result) {
+                    resolve(result);
+                },
+                error(error) {
+                    reject(error);
+                }
+            });
+        });
+
+        // Convert the compressed image to WebP format
+        const webpBlob: any = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.src = URL.createObjectURL(compressedFile);
+
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = image.naturalWidth;
+                canvas.height = image.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(image, 0, 0);
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/webp');
+            };
+
+            image.onerror = reject;
+        });
+
+        // Upload the webp image to Supabase
         const { data: imageData, error: imageError } = await supabase.storage
             .from('cover_images')
-            .upload(user?.id + '/' + postData?.postId, selectedFile);
+            .upload(user?.id + '/' + postId, webpBlob, {
+                contentType: 'image/webp',
+                upsert: false
+            });
+
         if (imageError) {
             console.error('Error uploading image:', imageError);
             return null;
         }
+
         return CDNUrl(imageData);
     };
+
+
+
     const updateImage = async (imageUrl: string) => {
         const { error: updateError } = await supabase
             .from('posts')
@@ -193,7 +241,7 @@ export default function PostForm({ postData, }: CardProps) {
 
             if (selectedFile) {
                 await deleteCurrentImage();
-                const imageUrl = await uploadNewImage();
+                const imageUrl = await uploadNewImage(postData?.postId, selectedFile);
                 if (imageUrl !== null) {
                     await updateImage(imageUrl);
                 }
@@ -250,47 +298,40 @@ export default function PostForm({ postData, }: CardProps) {
                 return;
             }
             if (selectedFile) {
-                const { data: imageData, error: imageError } = await supabase.storage
-                    .from('cover_images')
-                    .upload(user?.id + '/' + postId, selectedFile);
+                const imageUrl = await uploadNewImage(postId, selectedFile)
+                if (imageUrl !== null) {
 
-                if (imageError) {
-                    console.error('Error uploading image:', imageError);
-                    return;
+                    const { error: updateError } = await supabase
+                        .from('posts')
+                        .update({ imgUrl: imageUrl })
+                        .eq('id', user?.id)
+                        .eq('postId', postId);
+
+                    if (updateError) {
+                        console.error('Error updating imgUrl:', updateError);
+                        return;
+                    }
                 }
-
-                const imageUrl = CDNUrl(imageData);
-
-                const { error: updateError } = await supabase
-                    .from('posts')
-                    .update({ imgUrl: imageUrl })
-                    .eq('id', user?.id)
-                    .eq('postId', postId);
-
-                if (updateError) {
-                    console.error('Error updating imgUrl:', updateError);
-                    return;
-                }
-
-                const { error: locationError } = await supabase
-                    .from('locations')
-                    .insert({
-                        country: selectedLocation.country,
-                        state: selectedLocation.state,
-                        suburb: selectedLocation.suburb,
-                        postcode: selectedLocation.postcode,
-                        streetAddress: selectedLocation.address,
-                        formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
-                        postId: postId,
-                        coordinates: selectedLocation.coordinates
-                    })
-                if (locationError) {
-                    console.error("Error updating location table", locationError);
-                    return
-
-                }
+            }
+            const { error: locationError } = await supabase
+                .from('locations')
+                .insert({
+                    country: selectedLocation.country,
+                    state: selectedLocation.state,
+                    suburb: selectedLocation.suburb,
+                    postcode: selectedLocation.postcode,
+                    streetAddress: selectedLocation.address,
+                    formatted_address: `${selectedLocation.address}, ${selectedLocation.suburb} ${selectedLocation.state}, ${selectedLocation.country}`,
+                    postId: postId,
+                    coordinates: selectedLocation.coordinates
+                })
+            if (locationError) {
+                console.error("Error updating location table", locationError);
+                return
 
             }
+
+
 
         } catch (error) {
             console.error('Error handling submit:', error);
