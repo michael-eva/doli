@@ -11,16 +11,16 @@ module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
-    // Add PurgeCSS plugin only in production
-    ...(process.env.NODE_ENV === 'production'
-      ? {
-          '@fullhuman/postcss-purgecss': {
-            content: ['./src/**/*.html', './src/**/*.js', './src/**/*.ts', './src/**/*.tsx'],
-            defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-            whitelistPatterns: [/^daisyui-/], // Whitelist all classes starting with "daisyui-"
-          },
-        }
-      : {}),
+    // // Add PurgeCSS plugin only in production
+    // ...(process.env.NODE_ENV === 'production'
+    //   ? {
+    //       '@fullhuman/postcss-purgecss': {
+    //         content: ['./src/**/*.html', './src/**/*.js', './src/**/*.ts', './src/**/*.tsx'],
+    //         defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+    //         whitelistPatterns: [/^daisyui-/], // Whitelist all classes starting with "daisyui-"
+    //       },
+    //     }
+    //   : {}),
   },
 };
 
