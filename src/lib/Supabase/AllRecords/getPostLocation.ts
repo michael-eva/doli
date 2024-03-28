@@ -5,6 +5,7 @@ export async function getLocationData() {
         const { error, data: locationData } = await supabase
             .from("locations")
             .select("*")
+            .not("postId", "eq", "");
 
         if (error) {
             throw new Error("Error fetching verified posts: " + error.message);
