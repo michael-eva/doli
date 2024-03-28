@@ -1,10 +1,10 @@
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import LocationSearch from "../Location/LocationSearch";
 import { Input } from "../ui/input";
-import { useFilters } from "@/pages/Home/utils/filterFunctions";
+import { useFilters } from "@/pages/Home/utils/Filter/filterFunctions";
 import businessType from "../../data/businessTypes.json"
 import { useMediaQuery } from "react-responsive";
-import { isFilterApplied } from "@/pages/Home/utils/filterFunctions";
+import { isFilterApplied } from "@/pages/Home/utils/Filter/filterFunctions";
 
 export default function HomeFilters({ isChecked, handleCheckboxChange, inputClear, setInputClear, clearFilters }: FilterFieldsType) {
     const { typeFilter, searchFilter, decodedTypeFilter, deliveryFilter, decodedSearchFilter, decodedLocationFilter, locationFilter, genNewSearchParams } = useFilters()

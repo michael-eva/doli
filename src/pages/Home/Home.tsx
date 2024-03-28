@@ -8,10 +8,10 @@ import Pagination from "../../components/Pagination";
 import { CardProps } from "../../Types";
 import { RetrieveOwner } from "../../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
-import { filterOrders } from "./utils/filterOrders";
+import { filterOrders } from "./utils/Filter/filterOrders";
 import { deletePost } from "@/lib/deletePost";
 import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords";
-import { isFilterApplied } from "./utils/filterFunctions";
+import { isFilterApplied } from "./utils/Filter/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
 import SEO from "@/lib/SEO";
 
@@ -27,7 +27,7 @@ export default function Home() {
     const isFilter = isFilterApplied()
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts?.length);
+    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts);
     const { allMembers } = useSupabase("id")
 
     const isVerified = allMembers?.some(member => (member.id === user?.id && member.isVerified === true))
@@ -101,10 +101,10 @@ export default function Home() {
                             <div className="flex w-1/3 flex-col pl-24">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                    {filterPosts?.length > 0 && allMembers ? (
+                                    {filterPosts > 0 && allMembers ? (
                                         <>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                {filterPosts?.length}{" "}
+                                                {filterPosts}{" "}
                                                 <span>Businesses</span>
                                             </p>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
@@ -128,7 +128,7 @@ export default function Home() {
                 }
                 <div className="flex justify-between">
                     <p className={`${isMobile ? "py-2 px-7" : ""}`}>
-                        {startIndex} - {endIndex} of {filterPosts?.length} results
+                        {startIndex} - {endIndex} of {filterPosts} results
                     </p>
                     {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
@@ -144,7 +144,7 @@ export default function Home() {
                             }
                         </>
                         :
-                        filterPosts?.length > 0 ? (
+                        filterPosts > 0 ? (
                             paginatePageVar.map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deleteListing} />
@@ -157,7 +157,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
-                {filterPosts?.length > 2 && <Pagination totalItems={filterPosts?.length} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {filterPosts > 2 && <Pagination totalItems={filterPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );

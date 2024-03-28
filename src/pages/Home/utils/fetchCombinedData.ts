@@ -1,10 +1,13 @@
-import { getLocationData } from "@/lib/Supabase/AllRecords/getPostLocation";
-import { getVerifiedPosts } from "@/lib/Supabase/getVerifiedPosts";
+import { getLocationData } from "./Supabase/useSupabase";
+import { getVerifiedPosts } from "./Supabase/getVerifiedPost";
 
- export async function fetchCombinedData() {
+ export async function fetchCombinedData(homeScreenPosts: number) {
     try {
-        const verifiedPosts = await getVerifiedPosts();
-        const locationData = await getLocationData()
+        
+        const verifiedPosts = await getVerifiedPosts(homeScreenPosts);
+        const postIdArr = verifiedPosts.map(item => item.postId)
+        const locationData = await getLocationData(postIdArr)
+        
         const parsedPostsData = verifiedPosts.map((post) => ({
             ...post,
             selectedTags: JSON.parse(post.selectedTags).map((tag: any) => tag),
@@ -14,8 +17,10 @@ import { getVerifiedPosts } from "@/lib/Supabase/getVerifiedPosts";
             ...post,
             locationData: locationData.find((location) => location.postId === post.postId),
         }));
-        // setPosts(mergedData)
+        console.log("Merged data:", mergedData);
+        
         return mergedData
+        
 
     } catch (error) {
         console.error("Error fetching verified posts:", error);

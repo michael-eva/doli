@@ -1,9 +1,10 @@
-import { CardProps } from "../../../Types";
-import { isCoordinateWithinRadius } from "../../../components/Location/locationHelpers";
+import { CardProps } from "../../../../Types";
+import { isCoordinateWithinRadius } from "../../../../components/Location/locationHelpers";
 import { paginatePage } from "@/pages/Home/utils/pagniation";
 import { useFilters } from "./filterFunctions";
 import { useEffect, useState } from "react";
-import { fetchCombinedData } from "./fetchCombinedData";
+import { fetchCombinedData } from "../fetchCombinedData";
+import { getPostLength } from "../Supabase/useSupabase";
 const containsSearchText = (text: string, searchTerm: string) =>
     text.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -11,9 +12,14 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
     const [posts, setPosts] = useState<CardProps[]>()
     const {deliveryFilter, locationFilter, decodedLocationFilter, searchFilter, decodedTypeFilter} = useFilters()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [postslength, setPostsLength] = useState<number>()
+
     const fetchData = async () => {
         setIsLoading(true); // Set loading state to true before fetching data
-        const mergedData = await fetchCombinedData();
+        const postsArr = await getPostLength()
+        setPostsLength(postsArr)
+        const homeScreenPosts = currentPage * pageSize
+        const mergedData = await fetchCombinedData(homeScreenPosts);
         if (mergedData) {
             setPosts(mergedData);
         }
@@ -22,10 +28,9 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
     useEffect(() => {
 
         fetchData();
-    }, []);
+    }, [currentPage]);
     
     let filterPosts = [...posts|| []];
-
 
     if (decodedTypeFilter && decodedTypeFilter !== "all") {
         filterPosts = filterPosts.filter((post) => post.type === decodedTypeFilter);
@@ -72,5 +77,5 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
         });
     }
 
-    return { filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading, fetchData }
+    return { filterPosts: postslength, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading, fetchData }
 };
