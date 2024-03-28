@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm install postcss && postcss src/index.css -o dist/output.css && vite build",
+    "build": "postcss src/index.css -o dist/output.css && vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -88,7 +88,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "postcss": "^8.4.33",
+    "postcss": "^8.4.38",
     "postcss-loader": "^8.0.0",
     "tailwindcss": "^3.3.5",
     "typescript": "^3.9.10",
