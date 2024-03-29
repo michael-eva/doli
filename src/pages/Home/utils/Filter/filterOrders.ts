@@ -77,5 +77,5 @@ export function filterOrders( isChecked: boolean, currentPage: number, pageSize:
         });
     }
 
-    return { filterPosts: postslength, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading, fetchData }
+    return { numberOfPosts: postslength, filterPosts, paginatePageVar: paginatePage(currentPage, pageSize, filterPosts), isLoading, fetchData }
 };

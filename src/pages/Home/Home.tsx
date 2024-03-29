@@ -11,7 +11,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "./utils/Filter/filterOrders";
 import { deletePost } from "@/lib/deletePost";
 import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords";
-import { isFilterApplied } from "./utils/Filter/filterFunctions";
+import { isFilterApplied, useFilters } from "./utils/Filter/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
 import SEO from "@/lib/SEO";
 
@@ -23,13 +23,18 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 9
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const { filterPosts, paginatePageVar, isLoading, fetchData } = filterOrders(isChecked, currentPage, pageSize)
+    const { filterPosts, paginatePageVar, isLoading, fetchData, numberOfPosts } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
     const user = useUser();
     const startIndex = (currentPage - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts);
-    const { allMembers } = useSupabase("id")
+    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length)
+    const { deliveryFilter, locationFilter, typeFilter, searchFilter, nearbyFilter } = useFilters()
 
+    const { allMembers } = useSupabase("id")
+    console.log("is filter:", isFilter);
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [deliveryFilter, locationFilter, typeFilter, searchFilter, nearbyFilter])
     const isVerified = allMembers?.some(member => (member.id === user?.id && member.isVerified === true))
     function verifyInvitedUsers() {
         if (!isVerified) {
@@ -69,6 +74,7 @@ export default function Home() {
         setCurrentPage(1)
     }
 
+
     return (
         <>
 
@@ -101,10 +107,10 @@ export default function Home() {
                             <div className="flex w-1/3 flex-col pl-24">
                                 <div className="flex flex-col">
                                     <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                    {filterPosts > 0 && allMembers ? (
+                                    {numberOfPosts > 0 && allMembers ? (
                                         <>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                {filterPosts}{" "}
+                                                {numberOfPosts}{" "}
                                                 <span>Businesses</span>
                                             </p>
                                             <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
@@ -128,7 +134,7 @@ export default function Home() {
                 }
                 <div className="flex justify-between">
                     <p className={`${isMobile ? "py-2 px-7" : ""}`}>
-                        {startIndex} - {endIndex} of {filterPosts} results
+                        {startIndex} - {endIndex} of {!isFilter ? numberOfPosts : filterPosts.length} results
                     </p>
                     {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
@@ -144,8 +150,8 @@ export default function Home() {
                             }
                         </>
                         :
-                        filterPosts > 0 ? (
-                            paginatePageVar.map((item: CardProps) => (
+                        filterPosts.length > 0 ? (
+                            filterPosts.map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deleteListing} />
                                 </div>
@@ -157,7 +163,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
-                {filterPosts > 2 && <Pagination totalItems={filterPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterOrders.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );

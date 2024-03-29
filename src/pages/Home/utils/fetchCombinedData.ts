@@ -17,7 +17,6 @@ import { getVerifiedPosts } from "./Supabase/getVerifiedPost";
             ...post,
             locationData: locationData.find((location) => location.postId === post.postId),
         }));
-        console.log("Merged data:", mergedData);
         
         return mergedData
         
