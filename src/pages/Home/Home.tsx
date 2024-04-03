@@ -142,7 +142,7 @@ export default function Home() {
                 </div>
                 <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-center gap-4'} h-full`}>
                     {isLoading ?
-                        <div className="flex">
+                        <div className={`${!isMobile ? 'flex' : null}`}>
                             {
                                 Array.from({ length: 4 }, (_, index) => (
                                     <CardSkeleton key={index} />

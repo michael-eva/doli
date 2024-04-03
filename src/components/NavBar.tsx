@@ -52,7 +52,7 @@ export default function NavBar() {
             return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to view wholesales' } })}>Wholesale</button>;
         }
     }
-    function profileEl() {
+    function ProfileEl() {
         return (
             <div className="dropdown dropdown-end dropdown-hover ">
                 <div tabIndex={0} role="button" className="text-xl">
@@ -130,7 +130,7 @@ export default function NavBar() {
                                     </ul>
                                 </div>
                             </div>
-                            <div className="text-xl md:ml-10 md:mr-5">{profileEl()}</div>
+                            <div className="text-xl md:ml-10 md:mr-5"><ProfileEl /></div>
                         </>
                         :
                         <>
