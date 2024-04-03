@@ -8,6 +8,14 @@ import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import SearchComp from "./SearchComp";
 import { useMediaQuery } from "react-responsive"
+import { FaFacebook, FaFacebookMessenger, FaUserFriends, FaWhatsapp } from "react-icons/fa";
+import Toggle from "./Toggle/Toggle";
+import ToggleButton from "./Toggle/ToggleButton";
+import { FaSquareXTwitter } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
+import { FacebookMessengerShareButton, WhatsappShareButton, TwitterShareButton, FacebookShareButton, EmailShareButton } from "react-share";
+import CustomModal from "./Modals/CustomModal";
+import ToggleOn from "./Toggle/ToggleOn";
 
 export default function NavBar() {
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -105,6 +113,7 @@ export default function NavBar() {
                 </NavLink>
             </div>
             <div className="navbar-center hidden md:flex">
+
                 <ul className="menu menu-horizontal px-1 ">
                     <li className="text-xl"><NavLink to='/'>Home</NavLink></li>
                     {/* <li className="text-xl ">{postListingEl()}</li> */}
@@ -114,8 +123,8 @@ export default function NavBar() {
                 </ul>
             </div>
             <div className={`${isMobile ? "navbar-center" : "navbar-end"} m-auto flex items-center`}>
+                <ReferFriend isMobile={isMobile} />
                 <div className="menu menu-horizontal flex items-center md:gap-10 gap-5">
-                    {/* <SearchComp /> */}
                     {user ?
                         <>
                             <div className="md:hidden text-2xl">
@@ -155,5 +164,40 @@ export default function NavBar() {
             </div>
             <Toaster />
         </div>
+    )
+}
+function ReferFriend(isMobile) {
+    return (
+        <Toggle>
+            <ToggleButton className="px-4 py-2 border-white border-2 text-white mr-4 rounded-lg bg-[#4e9da8] flex items-center gap-2">
+                <h2>Tell a Friend</h2>
+                <FaUserFriends />
+            </ToggleButton>
+            <ToggleOn>
+                <CustomModal>
+                    <h1 className=" text-xl">Tell a friend via:</h1>
+                    <section className="mt-4 flex gap-5 justify-center">
+
+                        {!isMobile && <div className="flex text-3xl text-blue-500">
+                            <FacebookMessengerShareButton url={`https://doli.com.au/member-register`} appId={"785444670112157"}>
+                                <FaFacebookMessenger />
+                            </FacebookMessengerShareButton>
+                        </div>}
+                        {isMobile &&
+                            <div className="flex  items-center text-3xl text-blue-500">
+                                <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank">
+
+                                    <FaFacebookMessenger />
+                                </a>
+                            </div>
+                        }
+                        {/* <WhatsappShareButton > */}
+                        <WhatsappShareButton url={`https://doli.com.au/member-register`} title={"Support YOUR community, become a member!"}>
+                            <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
+                        </WhatsappShareButton>
+                    </section>
+                </CustomModal>
+            </ToggleOn>
+        </Toggle>
     )
 }
