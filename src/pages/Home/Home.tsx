@@ -21,7 +21,7 @@ export default function Home() {
     const [searchParams, setSearchParams] = useSearchParams()
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageSize = 9
+    const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
     const { filterPosts, paginatePageVar, isLoading, fetchData, numberOfPosts } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
@@ -83,7 +83,7 @@ export default function Home() {
                 description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
                 name="doli"
                 type="website" />
-            <div className=" max-w-5xl md:mx-auto pb-10 ">
+            <div className=" max-w-7xl md:mx-auto pb-10">
                 {isMobile &&
                     <div className=" flex flex-col gap-5">
                         <div className=" rounded flex flex-col items-center mt-6">
@@ -140,18 +140,18 @@ export default function Home() {
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
                     </p>}
                 </div>
-                <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-start gap-4'} h-full`}>
+                <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-center gap-4'} h-full`}>
                     {isLoading ?
-                        <>
+                        <div className="flex">
                             {
-                                Array.from({ length: 2 }, (_, index) => (
+                                Array.from({ length: 4 }, (_, index) => (
                                     <CardSkeleton key={index} />
                                 ))
                             }
-                        </>
+                        </div>
                         :
                         filterPosts.length > 0 ? (
-                            filterPosts.map((item: CardProps) => (
+                            paginatePageVar.map((item: CardProps) => (
                                 <div key={item.postId} className="mt-10">
                                     <Card {...item} onDelete={deleteListing} />
                                 </div>
