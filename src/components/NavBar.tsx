@@ -155,7 +155,7 @@ export default function NavBar() {
         </div>
     )
 }
-function ReferFriend() {
+function ReferFriend(isMobile: any) {
     return (
         <Toggle>
             <ToggleButton className="px-4 py-2 border-white border-2 text-white mr-4 rounded-lg bg-[#4e9da8] flex items-center gap-2">
@@ -166,7 +166,7 @@ function ReferFriend() {
                 <CustomModal>
                     <h1 className=" text-xl">Tell a friend via:</h1>
                     <section className="mt-4 flex gap-5 justify-center">
-                        <div className="flex text-3xl text-blue-500">
+                        {isMobile ? <div className="flex text-3xl text-blue-500">
                             <FacebookMessengerShareButton
                                 title="test tickles"
                                 url="https://doli.com.au/member-register"
@@ -175,6 +175,13 @@ function ReferFriend() {
                                 <FaFacebookMessenger />
                             </FacebookMessengerShareButton>
                         </div>
+                            :
+                            <div className="flex  items-center text-3xl text-blue-500">
+                                <a href={`fb-messenger://share?link=https://doli.com.au/member-register`} target="_blank">
+                                    <FaFacebookMessenger />
+                                </a>
+                            </div>
+                        }
                         <WhatsappShareButton url={`https://doli.com.au/member-register`} title={"Support YOUR community, become a member!"}>
                             <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
                         </WhatsappShareButton>

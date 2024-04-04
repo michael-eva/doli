@@ -162,7 +162,6 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                                     {isMobile &&
                                         <div className="flex  items-center text-3xl text-blue-500">
                                             <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank">
-
                                                 <FaFacebookMessenger />
                                             </a>
                                         </div>
