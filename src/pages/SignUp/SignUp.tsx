@@ -21,6 +21,7 @@ import { checkEmailExists } from "./utils/checkEmailExists"
 import { checkPasswordMatches } from "./utils/utils"
 import { handleNewSubmit, handleUpdateDetailsSubmit } from "./utils/formSubmitHandlers"
 import { Helmet } from 'react-helmet'
+import SEO from "@/lib/SEO"
 
 export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -119,10 +120,6 @@ export default function SignUp() {
 
     return (
         <>
-            {/* <Helmet>
-                <title>doli | Sign Up</title>
-                <meta name="description" content="Sign up with doli" />
-            </Helmet> */}
             {hasSubmitted ?
                 <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 justify-center bg-green-100">
                     <div className="flex items-center flex-col gap-5">

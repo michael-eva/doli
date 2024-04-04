@@ -16,6 +16,7 @@ export default function SEO({ title, description, type, name }: SEOProps) {
             <meta property="fb:app_id" content="785444670112157" />
             <meta property="og:url" content="https://doli.com.au" />
             <meta property="og:image" content="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/sign/website-images/doli_logo.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ3ZWJzaXRlLWltYWdlcy9kb2xpX2xvZ28uanBnIiwiaWF0IjoxNzEwMzkzNDg2LCJleHAiOjE3NDE5Mjk0ODZ9.virevU3v1QYzULFqmcMUgAlpT2Bp3E82Ro8oEYNtwvI&t=2024-03-14T05%3A18%3A06.226Z" />
+            <meta property="og:site_name" content="doli" />
             { /* End Facebook tags */}
             { /* Twitter tags */}
             <meta name="twitter:creator" content={name} />

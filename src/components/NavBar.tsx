@@ -6,14 +6,11 @@ import { IoIosLogOut } from "react-icons/io";
 import { RxAvatar } from "react-icons/rx";
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
-import SearchComp from "./SearchComp";
 import { useMediaQuery } from "react-responsive"
-import { FaFacebook, FaFacebookMessenger, FaUserFriends, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookMessenger, FaUserFriends, FaWhatsapp } from "react-icons/fa";
 import Toggle from "./Toggle/Toggle";
 import ToggleButton from "./Toggle/ToggleButton";
-import { FaSquareXTwitter } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
-import { FacebookMessengerShareButton, WhatsappShareButton, TwitterShareButton, FacebookShareButton, EmailShareButton } from "react-share";
+import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share";
 import CustomModal from "./Modals/CustomModal";
 import ToggleOn from "./Toggle/ToggleOn";
 
@@ -38,14 +35,6 @@ export default function NavBar() {
             console.error('Error:', error.message);
         }
     };
-    // function postListingEl() {
-
-    //     if (user) {
-    //         return <NavLink to='/post-listing'>Post a Listing</NavLink>;
-    //     } else {
-    //         return <button onClick={() => navigate('/login', { state: { message: 'Please login or signup to post a listing', location: "/member-register" } })}>Post a Listing</button>;
-    //     }
-    // }
     function specialsEl() {
         if (user) {
             return <NavLink to='/specials'>Specials</NavLink>;
@@ -166,7 +155,7 @@ export default function NavBar() {
         </div>
     )
 }
-function ReferFriend(isMobile) {
+function ReferFriend() {
     return (
         <Toggle>
             <ToggleButton className="px-4 py-2 border-white border-2 text-white mr-4 rounded-lg bg-[#4e9da8] flex items-center gap-2">
@@ -177,21 +166,15 @@ function ReferFriend(isMobile) {
                 <CustomModal>
                     <h1 className=" text-xl">Tell a friend via:</h1>
                     <section className="mt-4 flex gap-5 justify-center">
-
-                        {!isMobile && <div className="flex text-3xl text-blue-500">
-                            <FacebookMessengerShareButton url={`https://doli.com.au/member-register`} appId={"785444670112157"}>
+                        <div className="flex text-3xl text-blue-500">
+                            <FacebookMessengerShareButton
+                                title="test tickles"
+                                url="https://doli.com.au/member-register"
+                                appId="785444670112157"
+                            >
                                 <FaFacebookMessenger />
                             </FacebookMessengerShareButton>
-                        </div>}
-                        {isMobile &&
-                            <div className="flex  items-center text-3xl text-blue-500">
-                                <a href={`fb-messenger://share?link=https://doli.com.au`} target="_blank">
-
-                                    <FaFacebookMessenger />
-                                </a>
-                            </div>
-                        }
-                        {/* <WhatsappShareButton > */}
+                        </div>
                         <WhatsappShareButton url={`https://doli.com.au/member-register`} title={"Support YOUR community, become a member!"}>
                             <div className=" text-4xl text-green-500"><FaWhatsapp /></div>
                         </WhatsappShareButton>
