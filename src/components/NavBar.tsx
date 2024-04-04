@@ -93,6 +93,7 @@ export default function NavBar() {
         }
     }, [user?.id]);
 
+
     return (
         <div className="navbar shadow-md md:mb-10 z-[3] bg-white">
 
@@ -155,7 +156,8 @@ export default function NavBar() {
         </div>
     )
 }
-function ReferFriend(isMobile: any) {
+function ReferFriend({ isMobile }: any) {
+    console.log(isMobile);
     return (
         <Toggle>
             <ToggleButton className="px-4 py-2 border-white border-2 text-white mr-4 rounded-lg bg-[#4e9da8] flex items-center gap-2">
@@ -166,7 +168,7 @@ function ReferFriend(isMobile: any) {
                 <CustomModal>
                     <h1 className=" text-xl">Tell a friend via:</h1>
                     <section className="mt-4 flex gap-5 justify-center">
-                        {isMobile ? <div className="flex text-3xl text-blue-500">
+                        {/* {isMobile ? <div className="flex text-3xl text-blue-500">
                             <FacebookMessengerShareButton
                                 title="test tickles"
                                 url="https://doli.com.au/member-register"
@@ -176,6 +178,18 @@ function ReferFriend(isMobile: any) {
                             </FacebookMessengerShareButton>
                         </div>
                             :
+                            <div className="flex  items-center text-3xl text-blue-500">
+                                <a href={`fb-messenger://share?link=https://doli.com.au/member-register`} target="_blank">
+                                    <FaFacebookMessenger />
+                                </a>
+                            </div>
+                        } */}
+                        {!isMobile && <div className="flex text-3xl text-blue-500">
+                            <FacebookMessengerShareButton url={`https://doli.com.au/member-register`} appId="785444670112157">
+                                <FaFacebookMessenger />
+                            </FacebookMessengerShareButton>
+                        </div>}
+                        {isMobile &&
                             <div className="flex  items-center text-3xl text-blue-500">
                                 <a href={`fb-messenger://share?link=https://doli.com.au/member-register`} target="_blank">
                                     <FaFacebookMessenger />
