@@ -165,7 +165,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </div>
-                {numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterOrders.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterPosts?.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );
