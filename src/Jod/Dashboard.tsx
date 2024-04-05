@@ -4,11 +4,13 @@ import { ResponsiveBar } from "@nivo/bar"
 import { SVGProps } from "react"
 import { JSX } from "react/jsx-runtime"
 import { getDashboardData } from "./utils/getDashboardData"
+import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords"
 
 
 
 export default function Dashboard() {
     const { validationRequired, claimedPosts, posts, monthlyListings, monthlyMember, monthlyRating, unverifiedMembers } = getDashboardData()
+
     return (
         <div className="flex flex-col min-h-screen w-full">
             <main className="flex flex-1 flex-col p-4 md:p-10">
@@ -86,6 +88,7 @@ export default function Dashboard() {
                         </CardContent>
                     </Card>
                 </div>
+                {GetMembers()}
             </main>
         </div>
     )

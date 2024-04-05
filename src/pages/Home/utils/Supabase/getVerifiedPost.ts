@@ -7,7 +7,7 @@ export async function getVerifiedPosts(homeScreenPosts: number) {
             .select("*")
             .eq("isVerified", true)
             .order("updated_at", { ascending: false })
-            .range(0,homeScreenPosts-1)
+            // .range(0,homeScreenPosts-1)
 
         if (error) {
             throw new Error("Error fetching verified posts: " + error.message);
