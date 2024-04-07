@@ -88,7 +88,6 @@ export default function Dashboard() {
                         </CardContent>
                     </Card>
                 </div>
-                {GetMembers()}
             </main>
         </div>
     )
