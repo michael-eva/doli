@@ -20,12 +20,14 @@ import { years } from "./utils/utils"
 import { checkEmailExists } from "./utils/checkEmailExists"
 import { checkPasswordMatches } from "./utils/utils"
 import { handleNewSubmit, handleUpdateDetailsSubmit } from "./utils/formSubmitHandlers"
-import { Helmet } from 'react-helmet'
 import SEO from "@/lib/SEO"
+import { signUpAndInsertData } from "./utils/signUpAndInsertData"
+import { sendReauthToken } from "./utils/sendReauthToken"
 
 export default function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [hasSubmitted, setHasSubmitted] = useState<boolean>(false)
+    const [hasSentReauthToken, setHasSentReauthToken] = useState<boolean>(false)
     const { register, setValue, handleSubmit, formState: { errors }, setError, watch, clearErrors, reset } = useForm()
     const user = useUser()
     const navigate = useNavigate()
@@ -117,19 +119,39 @@ export default function SignUp() {
         }
     }, [primaryLocation.suburb, secondaryLocation.suburb]);
 
+    async function resendAuthToken() {
+        try {
+            const response = await sendReauthToken(watch('email'), setIsSubmitting);
+            if (response) {
+                setHasSentReauthToken(true)
+            }
+            else throw new Error("Unable to resend token")
+        } catch (error) {
+            throw Error("Unable to resend token")
+        }
+    }
 
     return (
         <>
+            <SEO
+                title="doli | Register"
+                description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
+                name="doli"
+                type="website" />
             {hasSubmitted ?
-                <div className="flex flex-col max-w-3xl m-auto shadow-lg px-24 pb-24 pt-10 h-96 justify-center bg-green-100">
-                    <div className="flex items-center flex-col gap-5">
+                <div className="flex flex-col max-w-3xl md:mx-auto mb-auto md:mt-10 my-auto shadow-lg md:px-24 px-5 py-16 justify-center bg-green-100">
+                    <div className="flex items-center gap-5">
                         <div style={{ fontSize: "50px" }}>
                             <IoCheckmarkCircleOutline style={{ color: 'green' }} />
                         </div>
-                        <h2 className=" text-xl font-bold">Submitted.</h2>
-                        <h2 className=" text-md">Please check your email inbox for a confirmation link.</h2>
-                        <h2 className=" text-sm italic">Email may take a few minutes to come through.</h2>
+                        <h2 className=" text-xl font-bold">Registration sent to <span className=" italic">{watch('email')}</span></h2>
                     </div>
+                    <section className=" flex flex-col md:gap-5 mt-5 gap-2">
+                        <h2 className=" text-md">Please check your email inbox for a confirmation link.</h2>
+                        <h2 className=" text-sm font-bold">Email may take a few minutes to come through. </h2>
+                        <h2 className=" text-sm font-bold">Please check your junk / spam if not receieved within 5 minutes.</h2>
+                        <h2>Didn't receive an email? {!hasSentReauthToken ? <span className=" text-blue-500 underline cursor-pointer" onClick={() => resendAuthToken()}>Click here</span> : <span className=" text-blue-500 italic">Sent</span>}</h2>
+                    </section>
                 </div >
                 :
                 <form onSubmit={handleSubmit((data) => getSubmitFunction(data as SignUpType))} className=" pb-10">

@@ -56,7 +56,7 @@ export async function handleNewSubmit(data: SignUpType, setIsSubmitting: { (valu
                         if (error) {
                             console.error(error)
                         }
-                        reset()
+                        // reset()
                     },
                 )
             insertLocationData(response, primaryLocation, secondaryLocation)
@@ -70,6 +70,7 @@ export async function handleNewSubmit(data: SignUpType, setIsSubmitting: { (valu
             }
             setHasSubmitted(true)
             console.log("sent reauth token");
+            return
         }
     } catch (error: any) {
         console.error('Error:', error.message);
