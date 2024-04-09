@@ -4,6 +4,7 @@ import { MdOutlineTableRestaurant } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import StarRatings from "react-star-ratings";
 import { Helmet } from 'react-helmet'
+import SEO from "@/lib/SEO";
 
 const rating = () => {
     return (
@@ -25,10 +26,11 @@ const rating = () => {
 export default function AboutV1() {
     return (
         <>
-            {/* <Helmet>
-                <title>doli | About</title>
-                <meta name="description" content="About us" />
-            </Helmet> */}
+            <SEO
+                title="doli | About"
+                description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
+                name="doli"
+                type="website" />
             <header></header>
             <body className="container max-w-3xl">
                 <section className="space-y-8 my-10">
