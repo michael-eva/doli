@@ -71,7 +71,7 @@ export default function NavBar() {
                 <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><NavLink to={'update-details'}>Update Details</NavLink></li>
                     <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
-                    {/* <li><NavLink to={'post-listing'}>Register Business</NavLink></li> */}
+                    {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>}
                     {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
                     <div className="divider" style={{ margin: '0' }}></div>
@@ -231,9 +231,9 @@ function ContactUsDialog() {
 
     function SendEmail() {
         console.log("message:", message);
-        sendRejection(user?.email, message)
+        // sendRejection(user?.email, message)
 
-        // sendEnquiry(user?.email, message)
+        sendEnquiry("evamichael100@gmail.com", message)
     }
 
     return (
