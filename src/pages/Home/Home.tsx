@@ -115,7 +115,7 @@ export default function Home() {
                                                     <span>Businesses</span>
                                                 </p>
                                                 <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                    {allMembers?.length} <span>Members</span>
+                                                    {allMembers?.length} <span>members</span>
                                                 </p>
                                             </>
                                         ) : (
@@ -135,11 +135,12 @@ export default function Home() {
                     }
                 </div>
                 <div className="flex justify-between">
-                    <p className={`${isMobile ? "py-2 px-7" : ""}`}>
-                        {startIndex} - {endIndex} of {!isFilter ? numberOfPosts : filterPosts.length} results
+                    <p className={`${isMobile ? "py-2 px-7" : ""} font-raleway font-bold`}>
+                        {!isFilter ? numberOfPosts : filterPosts.length} businesses
+                        {/* {startIndex} - {endIndex} of {!isFilter ? numberOfPosts : filterPosts.length} businesses */}
                     </p>
                     {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
-                        <p className=" font-bold font-raleway" >{allMembers?.length} <span>Members</span></p>
+                        <p className=" font-bold font-raleway" >{allMembers?.length} <span>members</span></p>
                     </p>}
                 </div>
                 <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-center gap-4'} h-full`}>

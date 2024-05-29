@@ -54,7 +54,7 @@ export default function HomeFilters({ isChecked, handleCheckboxChange, inputClea
                             <Select value={typeFilter ? decodedTypeFilter : ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
                                 <SelectTrigger className=" border-2 border-black h-11 w-52">
                                     <div className={`${typeFilter ? "" : "text-gray-500"}`}>
-                                        <SelectValue placeholder="Select Type of Business" />
+                                        <SelectValue placeholder="All Business Types" />
                                     </div>
                                 </SelectTrigger>
                                 <SelectContent>
@@ -137,7 +137,7 @@ export default function HomeFilters({ isChecked, handleCheckboxChange, inputClea
                                 <Select value={typeFilter ? decodedTypeFilter : ""} onValueChange={(selectedOption) => genNewSearchParams('type', selectedOption)}>
                                     <SelectTrigger className=" h-11 w-72 ">
                                         <div className={`${typeFilter ? "" : "text-gray-500"}`}>
-                                            <SelectValue placeholder="Select Type of Business" />
+                                            <SelectValue placeholder="All Business Types" />
                                         </div>
                                     </SelectTrigger>
                                     <SelectContent>

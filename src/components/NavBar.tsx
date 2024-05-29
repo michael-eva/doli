@@ -13,6 +13,16 @@ import ToggleButton from "./Toggle/ToggleButton";
 import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share";
 import CustomModal from "./Modals/CustomModal";
 import ToggleOn from "./Toggle/ToggleOn";
+import { sendEnquiry, sendRejection } from "@/Jod/utils/resend";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog"
 
 export default function NavBar() {
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -61,9 +71,11 @@ export default function NavBar() {
                 <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><NavLink to={'update-details'}>Update Details</NavLink></li>
                     <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
-                    <li><NavLink to={'post-listing'}>Register Business</NavLink></li>
+                    {/* <li><NavLink to={'post-listing'}>Register Business</NavLink></li> */}
                     {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
+                    <div className="divider" style={{ margin: '0' }}></div>
+                    <li ><ContactUsDialog /></li>
                     <div className="divider" style={{ margin: '0' }}></div>
                     <li className=" text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>
                 </ul>
@@ -113,19 +125,23 @@ export default function NavBar() {
                 </ul>
             </div>
             <div className={`${isMobile ? "navbar-center" : "navbar-end"} m-auto flex items-center`}>
-                <ReferFriend isMobile={isMobile} />
+                {!isMobile && <ReferFriend isMobile={isMobile} />}
                 <div className="menu menu-horizontal flex items-center md:gap-10 gap-5">
                     {user ?
                         <>
                             <div className="md:hidden text-2xl">
                                 <div className="dropdown dropdown-bottom dropdown-end">
                                     <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
-                                    <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                    <ul tabIndex={1} className="dropdown-content z-[2] menu shadow bg-base-100 rounded-box w-52">
                                         <li><NavLink to='/'>Home</NavLink></li>
                                         {/* <li>{postListingEl()}</li> */}
                                         <li ><NavLink to='/about'>About</NavLink></li>
-                                        <li>{specialsEl()}</li>
-                                        <li>{wholesaleEl()}</li>
+                                        <li><NavLink to={'post-listing'}>Register Business</NavLink></li>
+                                        <li><NavLink to={"https://noggins.deco-apparel.com"} target="_blank" >Merchandise</NavLink></li>
+                                        <hr className="text-gray-500" />
+                                        <li className="ml-[-5px"><ReferFriend isMobile={isMobile} /></li>
+                                        {/* <li>{specialsEl()}</li>
+                                        <li>{wholesaleEl()}</li> */}
                                     </ul>
                                 </div>
                             </div>
@@ -135,12 +151,16 @@ export default function NavBar() {
                         <>
                             <div className="dropdown dropdown-bottom dropdown-end md:hidden">
                                 <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
-                                <ul tabIndex={1} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                <ul tabIndex={1} className="dropdown-content z-[2] menu  shadow bg-base-100 rounded-box w-52">
                                     <li><NavLink to='/'>Home</NavLink></li>
                                     {/* <li>{postListingEl()}</li> */}
                                     <li ><NavLink to='/about'>About</NavLink></li>
-                                    <li>{specialsEl()}</li>
-                                    <li>{wholesaleEl()}</li>
+                                    <li><NavLink to={'post-listing'}>Register Business</NavLink></li>
+                                    <li><NavLink to={"https://noggins.deco-apparel.com"} target="_blank" >Merchandise</NavLink></li>
+                                    <hr className="text-gray-500" />
+                                    <li className="ml-[-5px]"><ReferFriend isMobile={isMobile} /></li>
+                                    {/* <li>{specialsEl()}</li>
+                                    <li>{wholesaleEl()}</li> */}
                                 </ul>
                             </div>
                             <div className=" flex items-center">
@@ -157,10 +177,9 @@ export default function NavBar() {
     )
 }
 function ReferFriend({ isMobile }: any) {
-    console.log(isMobile);
     return (
-        <Toggle>
-            <ToggleButton className="px-4 py-2 border-white border-2 text-white mr-4 rounded-lg bg-[#4e9da8] flex items-center gap-2">
+        <Toggle >
+            <ToggleButton className="px-4 py-2  border-2 border-white text-white rounded-lg bg-[#4e9da8] flex items-center gap-2">
                 <h2>Tell a Friend</h2>
                 <FaUserFriends />
             </ToggleButton>
@@ -203,5 +222,41 @@ function ReferFriend({ isMobile }: any) {
                 </CustomModal>
             </ToggleOn>
         </Toggle>
+    )
+}
+function ContactUsDialog() {
+    const [message, setMessage] = useState('');
+    const user = useUser()
+    console.log(user?.email);
+
+    function SendEmail() {
+        console.log("message:", message);
+        sendRejection(user?.email, message)
+
+        // sendEnquiry(user?.email, message)
+    }
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <button className="text-[#4f9ea8] font-bold">Contact Us</button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Message Us</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <textarea className="col-span-4 p-2 border-2 border-gray-300 rounded-md min-h-[140px]" placeholder="Message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            required={true} />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <button className="btn w-full mt-4 " style={{ backgroundColor: "#4f9ea8", color: "white" }} onClick={SendEmail} disabled={message.trim() === ""}>Send Message</button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }
