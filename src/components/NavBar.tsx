@@ -161,7 +161,7 @@ export default function NavBar() {
                                     {/* <li>{specialsEl()}</li>
                                     <li>{wholesaleEl()}</li> */}
                                 </ul>
-                            </div>x
+                            </div>
                             <div className=" flex items-center">
                                 <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Sign In</NavLink></div>
                                 {/* <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div> */}
