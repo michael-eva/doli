@@ -13,11 +13,10 @@ import ToggleButton from "./Toggle/ToggleButton";
 import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share";
 import CustomModal from "./Modals/CustomModal";
 import ToggleOn from "./Toggle/ToggleOn";
-import { sendEnquiry, sendRejection } from "@/Jod/utils/resend";
+import { sendEnquiry } from "@/Jod/utils/resend";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -68,9 +67,9 @@ export default function NavBar() {
                         <RxAvatar />
                     </div>
                 </div>
-                <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-52">
-                    <li><NavLink to={'update-details'}>Update Details</NavLink></li>
-                    <li><NavLink to={'manage-listings'}>Manage Listings</NavLink></li>
+                <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-[144px]">
+                    <li><NavLink to={'update-details'}>My Profile</NavLink></li>
+                    <li><NavLink to={'manage-listings'}>My Businesses</NavLink></li>
                     {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>}
                     {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
@@ -132,13 +131,13 @@ export default function NavBar() {
                             <div className="md:hidden text-2xl">
                                 <div className="dropdown dropdown-bottom dropdown-end">
                                     <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
-                                    <ul tabIndex={1} className="dropdown-content z-[2] menu shadow bg-base-100 rounded-box w-52">
+                                    <ul tabIndex={1} className="dropdown-content z-[2] menu shadow bg-base-100 rounded-box w-[165px]">
                                         <li><NavLink to='/'>Home</NavLink></li>
                                         {/* <li>{postListingEl()}</li> */}
                                         <li ><NavLink to='/about'>About</NavLink></li>
                                         <li><NavLink to={'post-listing'}>Register Business</NavLink></li>
                                         <li><NavLink to={"https://noggins.deco-apparel.com"} target="_blank" >Merchandise</NavLink></li>
-                                        <hr className="text-gray-500" />
+                                        <div className="divider" style={{ margin: '0' }}></div>
                                         <li className="ml-[-5px"><ReferFriend isMobile={isMobile} /></li>
                                         {/* <li>{specialsEl()}</li>
                                         <li>{wholesaleEl()}</li> */}
@@ -151,7 +150,7 @@ export default function NavBar() {
                         <>
                             <div className="dropdown dropdown-bottom dropdown-end md:hidden">
                                 <div tabIndex={1} role="button" className=" text-2xl"><CiMenuBurger /></div>
-                                <ul tabIndex={1} className="dropdown-content z-[2] menu  shadow bg-base-100 rounded-box w-52">
+                                <ul tabIndex={1} className="dropdown-content z-[2] menu  shadow bg-base-100 rounded-box w-[165px]">
                                     <li><NavLink to='/'>Home</NavLink></li>
                                     {/* <li>{postListingEl()}</li> */}
                                     <li ><NavLink to='/about'>About</NavLink></li>
@@ -162,7 +161,7 @@ export default function NavBar() {
                                     {/* <li>{specialsEl()}</li>
                                     <li>{wholesaleEl()}</li> */}
                                 </ul>
-                            </div>
+                            </div>x
                             <div className=" flex items-center">
                                 <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Sign In</NavLink></div>
                                 {/* <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div> */}
@@ -179,30 +178,14 @@ export default function NavBar() {
 function ReferFriend({ isMobile }: any) {
     return (
         <Toggle >
-            <ToggleButton className="px-4 py-2  border-2 border-white text-white rounded-lg bg-[#4e9da8] flex items-center gap-2">
+            <ToggleButton className=" text-[#4f9ea8] font-bold">
                 <h2>Tell a Friend</h2>
-                <FaUserFriends />
             </ToggleButton>
             <ToggleOn>
+                {/* @ts-ignore */}
                 <CustomModal>
                     <h1 className=" text-xl">Tell a friend via:</h1>
                     <section className="mt-4 flex gap-5 justify-center">
-                        {/* {isMobile ? <div className="flex text-3xl text-blue-500">
-                            <FacebookMessengerShareButton
-                                title="test tickles"
-                                url="https://doli.com.au/member-register"
-                                appId="785444670112157"
-                            >
-                                <FaFacebookMessenger />
-                            </FacebookMessengerShareButton>
-                        </div>
-                            :
-                            <div className="flex  items-center text-3xl text-blue-500">
-                                <a href={`fb-messenger://share?link=https://doli.com.au/member-register`} target="_blank">
-                                    <FaFacebookMessenger />
-                                </a>
-                            </div>
-                        } */}
                         {!isMobile && <div className="flex text-3xl text-blue-500">
                             <FacebookMessengerShareButton url={`https://doli.com.au/member-register`} appId="785444670112157">
                                 <FaFacebookMessenger />
@@ -227,12 +210,8 @@ function ReferFriend({ isMobile }: any) {
 function ContactUsDialog() {
     const [message, setMessage] = useState('');
     const user = useUser()
-    console.log(user?.email);
 
     function SendEmail() {
-        console.log("message:", message);
-        // sendRejection("evamichael100@gmail.com", message)
-
         sendEnquiry(user?.email, message)
     }
 

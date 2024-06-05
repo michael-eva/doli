@@ -19,7 +19,6 @@ import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
 import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl } from "./utils.ts";
-import { Helmet } from 'react-helmet'
 import compress from 'compressorjs';
 
 
@@ -439,7 +438,6 @@ export default function PostForm({ postData, }: CardProps) {
                     <div className={`${!allChecked && "text-gray-300"}`}>
                         {!allChecked ?
                             <div className="divider">
-                                <p className="text-blue-500">Please agree to the rules above to proceed</p>
                             </div>
                             :
                             <div className=" my-4">

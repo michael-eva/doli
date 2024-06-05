@@ -21,7 +21,6 @@ import { checkEmailExists } from "./utils/checkEmailExists"
 import { checkPasswordMatches } from "./utils/utils"
 import { handleNewSubmit, handleUpdateDetailsSubmit } from "./utils/formSubmitHandlers"
 import SEO from "@/lib/SEO"
-import { signUpAndInsertData } from "./utils/signUpAndInsertData"
 import { sendReauthToken } from "./utils/sendReauthToken"
 
 export default function SignUp() {
@@ -158,7 +157,7 @@ export default function SignUp() {
                     <div className="flex flex-col max-w-3xl m-auto shadow-lg px-8 md:px-24 pb-24 pt-10">
                         <div className="">
                             <h3 className=" text-xl font-semibold mb-3 text-center">
-                                {!user ? `New Member Onboarding:` : `Update user details:`}
+                                {!user ? `New Member Onboarding:` : `Member Profile:`}
                             </h3>
                         </div>
                         <div className=" flex mt-7 items-center gap-3">
@@ -213,10 +212,7 @@ export default function SignUp() {
                                 {errors.confirmPassword && <p className=" text-red-600">*{errors.confirmPassword.message?.toString()}</p>}
                             </div>
                         </div>}
-                        <div className=" mt-7">
-                            <p className=" text-center">We do need to know a little bit about you, but we won't ask for personal information we don't need... you are <span className=" font-bold">NOT</span> our product.</p>
-                        </div>
-                        <label className="mt-7">When were you born?</label>
+                        <label className="mt-7">Month & Year you were born?</label>
                         <div className="flex gap-3  w-full mb-2 items-end">
                             <div className="flex flex-col w-1/2">
                                 <Select
@@ -270,7 +266,7 @@ export default function SignUp() {
                                     options={[
                                         { value: 'Male', label: 'Male' },
                                         { value: 'Female', label: 'Female' },
-                                        { value: 'Other', label: 'Other' },
+                                        { value: 'Non-Binary', label: 'Non-Binary' },
                                     ]}
                                     placeholder="Select"
                                     onChange={(selectedOption) => setValue('gender', selectedOption?.value)}
@@ -350,7 +346,7 @@ export default function SignUp() {
                                     signUpData={secondaryLocation}
                                     suburbAndPostcode={false}
                                     allChecked={false} />
-                                <p className=" text-xs my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
+                                <p className=" text-[#0098b3] my-2">*The other community (work, holidays, childhood home) where you consider yourself a local.</p>
                             </div>
                         </div>
                         {user && <Toggle>

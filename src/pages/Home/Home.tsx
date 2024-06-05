@@ -83,10 +83,10 @@ export default function Home() {
                 description="The home-grown service that makes it easy for you to find and support the hospitality businesses that positively contribute to the fabric of your community."
                 name="doli"
                 type="website" />
-            <div className=" max-w-7xl md:mx-auto pb-10">
-                <div className="max-w-5xl md:mx-auto pb-10">
+            <div className=" max-w-7xl md:mx-auto ">
+                <div className="max-w-5xl md:mx-auto">
                     {isMobile &&
-                        <div className=" flex flex-col gap-5">
+                        <div className=" flex flex-col gap-4">
                             <div className=" rounded flex flex-col items-center mt-6">
                                 <h1 className=" text-3xl font-fira_sans" style={{ color: "#0097B2" }}>Hungry? Thirsty?</h1>
                                 <p className=" text-xl leading-10 max-w-xs mt-3">If you want to know the best places to eat and drink...  <span className=" font-bold text-2xl" style={{ color: "#CF4342" }}> ask a local!</span></p>
@@ -108,7 +108,7 @@ export default function Home() {
                                 <div className="flex w-1/3 flex-col pl-24">
                                     <div className="flex flex-col">
                                         <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                        {numberOfPosts > 0 && allMembers ? (
+                                        {numberOfPosts && numberOfPosts > 0 && allMembers ? (
                                             <>
                                                 <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
                                                     {numberOfPosts}{" "}
@@ -135,15 +135,15 @@ export default function Home() {
                     }
                 </div>
                 <div className="flex justify-between">
-                    <p className={`${isMobile ? "py-2 px-7" : ""} font-raleway font-bold`}>
+                    <p className={`${isMobile ? "px-7" : "px-5"} font-raleway font-bold py-5`}>
                         {!isFilter ? numberOfPosts : filterPosts.length} businesses
                         {/* {startIndex} - {endIndex} of {!isFilter ? numberOfPosts : filterPosts.length} businesses */}
                     </p>
-                    {isMobile && <p className={`${isMobile ? "py-2 px-7" : ""}`} >
+                    {isMobile && <p className={`${isMobile ? "py-5 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>members</span></p>
                     </p>}
                 </div>
-                <div className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-center gap-4'} h-full`}>
+                <section className={` flex ${isMobile ? 'flex-col items-center' : 'flex-wrap justify-center gap-4'} h-full`}>
                     {isLoading ?
                         <div className={`${!isMobile ? 'flex' : null}`}>
                             {
@@ -155,7 +155,7 @@ export default function Home() {
                         :
                         filterPosts.length > 0 ? (
                             paginatePageVar.map((item: CardProps) => (
-                                <div key={item.postId} className="mt-10">
+                                <div key={item.postId}>
                                     <Card {...item} onDelete={deleteListing} />
                                 </div>
                             ))
@@ -165,8 +165,8 @@ export default function Home() {
                                 <p className="text-2xl font-thin">Please try a different search criteria.</p>
                             </div>
                         ) : null}
-                </div>
-                {numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterPosts?.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                </section>
+                {numberOfPosts && numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterPosts?.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );
