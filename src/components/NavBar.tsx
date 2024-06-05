@@ -231,9 +231,9 @@ function ContactUsDialog() {
 
     function SendEmail() {
         console.log("message:", message);
-        // sendRejection(user?.email, message)
+        // sendRejection("evamichael100@gmail.com", message)
 
-        sendEnquiry("evamichael100@gmail.com", message)
+        sendEnquiry(user?.email, message)
     }
 
     return (
