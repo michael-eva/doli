@@ -18,11 +18,10 @@ import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./components/Modals/UpdateEmail"
-import { MdOutlineEmail } from "react-icons/md";
 import Footer from "./components/Footer"
 import Dashboard from "./Jod/Dashboard"
-import { Helmet } from "react-helmet"
 import { HelmetProvider } from 'react-helmet-async';
+import FirstSurvey from "./survey/firstSurvey"
 
 
 
@@ -30,14 +29,7 @@ function App() {
   return (
     <>
       <HelmetProvider>
-        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-          {/* <div className=" flex items-center justify-center md:justify-end md:pr-10 border-b gap-2 p-2">
-            <MdOutlineEmail />
-            Get in touch with us -{' '}
-            <a href="mailto:admin@doli.com.au" className="font-bold" style={{ color: "#4d9da8" }} >
-              admin@doli.com.au
-            </a>
-          </div> */}
+        <div className="flex flex-col min-h-screen">
           <NavBar />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -55,6 +47,7 @@ function App() {
               </Route>
               <Route path="seed" element={<SeedForm />} />
             </Route>
+            <Route path="survey" element={<FirstSurvey />} />
             <Route path="member-register" element={<SignUp />} />
             <Route path="login" element={<Login />} />
             <Route path="about" element={<About />} />
@@ -63,8 +56,8 @@ function App() {
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <Footer />
         </div >
+        <Footer />
       </HelmetProvider>
     </>
   )

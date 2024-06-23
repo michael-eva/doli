@@ -67,13 +67,14 @@ export default function NavBar() {
                         <RxAvatar />
                     </div>
                 </div>
-                <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-[144px]">
+                <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-[165px]">
                     <li><NavLink to={'update-details'}>My Profile</NavLink></li>
                     <li><NavLink to={'manage-listings'}>My Businesses</NavLink></li>
                     {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>}
                     {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>
                     }
                     <div className="divider" style={{ margin: '0' }}></div>
+                    {!isMobile && <li ><ReferFriend /></li>}
                     <li ><ContactUsDialog /></li>
                     <div className="divider" style={{ margin: '0' }}></div>
                     <li className=" text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>
@@ -124,7 +125,7 @@ export default function NavBar() {
                 </ul>
             </div>
             <div className={`${isMobile ? "navbar-center" : "navbar-end"} m-auto flex items-center`}>
-                {!isMobile && <ReferFriend isMobile={isMobile} />}
+                {/* {!isMobile && <ReferFriend isMobile={isMobile} />} */}
                 <div className="menu menu-horizontal flex items-center md:gap-10 gap-5">
                     {user ?
                         <>
@@ -163,7 +164,7 @@ export default function NavBar() {
                                 </ul>
                             </div>
                             <div className=" flex items-center">
-                                <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Sign In</NavLink></div>
+                                <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Sign In / Up</NavLink></div>
                                 {/* <div className="md:text-xl md:ml-10 md:mr-5"><NavLink to='/login'>Login / Signup</NavLink></div> */}
                             </div>
                         </>
