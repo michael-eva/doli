@@ -7,7 +7,7 @@ import { RxAvatar } from "react-icons/rx";
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import { useMediaQuery } from "react-responsive"
-import { FaFacebookMessenger, FaUserFriends, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa";
 import Toggle from "./Toggle/Toggle";
 import ToggleButton from "./Toggle/ToggleButton";
 import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share";
@@ -213,7 +213,7 @@ function ContactUsDialog() {
     const user = useUser()
 
     function SendEmail() {
-        sendEnquiry(user?.email, message)
+        sendEnquiry(user?.email, message, "New Enquiry")
     }
 
     return (

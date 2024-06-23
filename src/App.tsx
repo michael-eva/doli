@@ -21,9 +21,26 @@ import UpdateEmail from "./components/Modals/UpdateEmail"
 import Footer from "./components/Footer"
 import Dashboard from "./Jod/Dashboard"
 import { HelmetProvider } from 'react-helmet-async';
-import FirstSurvey from "./survey/firstSurvey"
+import Survey from "./survey/Survey"
+type Question = {
+  question: string;
+  answers: string[];
+};
+const questions: Question[] = [
+  {
+    question: "What is your favourite colour?",
+    answers: ["Red", "Blue", "Green"]
+  },
+  {
+    question: "What is your favourite animal?",
+    answers: ["Dog", "Cat", "Elephant"]
+  },
+  {
+    question: "What is your favourite food?",
+    answers: ["Pizza", "Burger", "Pasta"]
 
-
+  }
+];
 
 function App() {
   return (
@@ -47,7 +64,7 @@ function App() {
               </Route>
               <Route path="seed" element={<SeedForm />} />
             </Route>
-            <Route path="survey" element={<FirstSurvey />} />
+            <Route path="survey" element={<Survey data={questions} />} />
             <Route path="member-register" element={<SignUp />} />
             <Route path="login" element={<Login />} />
             <Route path="about" element={<About />} />

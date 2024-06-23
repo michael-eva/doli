@@ -39,14 +39,14 @@ export async function sendRejection(email: string, reason: string) {
         console.error('Error fetching data:', error);
     }
 }
-export async function sendEnquiry(email: string | undefined, message: string) {
+export async function sendEnquiry(email: string | undefined, message: string, subject: string) {
     try {
       const response = await fetch('/.netlify/functions/sendEnquiry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, message }),
+        body: JSON.stringify({ email, message, subject }),
       });
   
       if (response.ok) {
