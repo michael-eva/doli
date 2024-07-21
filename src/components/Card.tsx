@@ -71,7 +71,11 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
     return (
         <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "330px" }}>
 
-            < img src={`${props.imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" />
+            <img
+                src={`${props.imgUrl}?${new Date().getTime()}`}
+                alt="Cover Image"
+                className="w-full h-[225px] object-cover rounded-t-lg"
+            />
             <div className="card-body p-4">
 
                 {isManageListingsPage && badgePicker()}

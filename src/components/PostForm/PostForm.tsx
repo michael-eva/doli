@@ -182,8 +182,6 @@ export default function PostForm({ postData, }: CardProps) {
         return CDNUrl(imageData);
     };
 
-
-
     const updateImage = async (imageUrl: string) => {
         const { error: updateError } = await supabase
             .from('posts')
@@ -383,10 +381,6 @@ export default function PostForm({ postData, }: CardProps) {
 
     return (
         <>
-            {/* <Helmet>
-                <title>doli | Register Business</title>
-                <meta name="description" content="Register your business" />
-            </Helmet> */}
             <div className="flex md:justify-center">
                 <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
                     <header className=" max-w-md">
@@ -601,19 +595,20 @@ export default function PostForm({ postData, }: CardProps) {
                         {postData ?
                             <>
                                 <div className="flex flex-col gap-5">
-                                    {!show ? <img
-                                        src={previewUrl}
-                                        alt="Cover"
-                                        style={{ height: '225px', width: '300px' }}
-                                        className=" mt-5 rounded-lg"
-                                    />
-                                        :
-                                        <>{previewUrl && <img
+                                    {!show ?
+                                        <img
                                             src={previewUrl}
                                             alt="Cover"
-                                            style={{ height: '225px', width: '300px' }}
-                                            className=" mt-5 rounded-lg"
-                                        />}
+                                            className="h-[225px] w-[300px] object-cover mt-5 rounded-lg"
+                                        />
+                                        :
+                                        <>{previewUrl &&
+                                            <img
+                                                src={previewUrl}
+                                                alt="Cover"
+                                                className="h-[225px] w-[300px] object-cover mt-5 rounded-lg"
+                                            />
+                                        }
                                             <div className="cover-photo">
                                                 <h2 className="mt-1">Update Cover Photo</h2>
                                                 <p className="text-xs">Max image size of 300KB</p>
@@ -674,12 +669,13 @@ export default function PostForm({ postData, }: CardProps) {
                                     accept="image/*"
                                     disabled={!allChecked}
                                 />
-                                {previewUrl && <img
-                                    src={previewUrl}
-                                    alt="Cover"
-                                    style={{ height: '225px', width: '300px' }}
-                                    className=" mt-5 rounded-lg"
-                                />}
+                                {previewUrl &&
+                                    <img
+                                        src={previewUrl}
+                                        alt="Cover"
+                                        className="h-[225px] w-[300px] object-cover mt-5 rounded-lg"
+                                    />
+                                }
                             </div>
                         }
 
