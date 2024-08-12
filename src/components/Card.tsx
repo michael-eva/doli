@@ -72,11 +72,12 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
         <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "330px" }}>
 
             {/* < img src={`${props.imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" /> */}
-            <img
+            {/* <img
                 src={`${props.imgUrl}?${new Date().getTime()}`}
                 alt="Cover Image"
                 className="rounded-t-lg w-full h-[225px] object-contain"
-            />
+            /> */}
+            <ResponsiveImage src={props.imgUrl} alt="Cover Image" />
             <div className="card-body p-4">
 
                 {isManageListingsPage && badgePicker()}
@@ -220,3 +221,14 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
         </div >
     )
 }
+const ResponsiveImage = ({ src, alt }: { src: string | null | undefined, alt: string | undefined }) => {
+    return (
+        <div className="w-full h-[225px] overflow-hidden rounded-t-md">
+            <img
+                src={`${src}?${new Date().getTime()}`}
+                alt={alt}
+                className="w-full h-full object-contain"
+            />
+        </div>
+    );
+};

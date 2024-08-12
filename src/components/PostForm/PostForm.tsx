@@ -60,7 +60,7 @@ export default function PostForm({ postData, }: CardProps) {
         country: ""
     })
 
-    const MAX_FILE_SIZE_IN_BYTES = 300000;
+    const MAX_FILE_SIZE_IN_BYTES = 2097152;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -616,7 +616,7 @@ export default function PostForm({ postData, }: CardProps) {
                                         />}
                                             <div className="cover-photo">
                                                 <h2 className="mt-1">Update Cover Photo</h2>
-                                                <p className="text-xs">Max image size of 300KB</p>
+                                                <p className="text-xs">Max image size of 2MB</p>
 
                                                 {errors.imgUrl && (
                                                     <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
@@ -630,7 +630,7 @@ export default function PostForm({ postData, }: CardProps) {
                                                             maxSize: (value) =>
                                                                 !value ||
                                                                 value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                                "File size exceeds the limit of 300KB",
+                                                                "File size exceeds the limit of 2MB",
                                                         },
                                                     })}
                                                     onChange={handleFileChange}
@@ -654,7 +654,7 @@ export default function PostForm({ postData, }: CardProps) {
                             :
                             <div className="cover-photo">
                                 <h2 className="mt-7">Add Cover Photo</h2>
-                                <p className="text-xs">Max image size of 300KB</p>
+                                <p className="text-xs">Max image size of 2MB</p>
                                 {errors.imgUrl && (
                                     <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
                                 )}
