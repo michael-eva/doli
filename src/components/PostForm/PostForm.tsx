@@ -183,7 +183,6 @@ export default function PostForm({ postData, }: CardProps) {
     };
 
 
-
     const updateImage = async (imageUrl: string) => {
         const { error: updateError } = await supabase
             .from('posts')
@@ -626,12 +625,12 @@ export default function PostForm({ postData, }: CardProps) {
                                                     className="file-input file-input-bordered w-full"
                                                     {...register("imgUrl", {
                                                         required: "Cover photo is required",
-                                                        validate: {
-                                                            maxSize: (value) =>
-                                                                !value ||
-                                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                                "File size exceeds the limit of 2MB",
-                                                        },
+                                                        // validate: {
+                                                        //     maxSize: (value) =>
+                                                        //         !value ||
+                                                        //         value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                                        //         "File size exceeds the limit of 2MB",
+                                                        // },
                                                     })}
                                                     onChange={handleFileChange}
                                                     accept="image/*"
@@ -654,7 +653,7 @@ export default function PostForm({ postData, }: CardProps) {
                             :
                             <div className="cover-photo">
                                 <h2 className="mt-7">Add Cover Photo</h2>
-                                <p className="text-xs">Max image size of 2MB</p>
+                                {/* <p className="text-xs">Max image size of 2MB</p> */}
                                 {errors.imgUrl && (
                                     <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
                                 )}
@@ -663,12 +662,12 @@ export default function PostForm({ postData, }: CardProps) {
                                     className="file-input file-input-bordered w-full"
                                     {...register("imgUrl", {
                                         required: "Cover photo is required",
-                                        validate: {
-                                            maxSize: (value) =>
-                                                !value ||
-                                                value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                "File size exceeds the limit of 300KB",
-                                        },
+                                        // validate: {
+                                        //     maxSize: (value) =>
+                                        //         !value ||
+                                        //         value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
+                                        //         "File size exceeds the limit of 2MB",
+                                        // },
                                     })}
                                     onChange={handleFileChange}
                                     accept="image/*"
@@ -678,7 +677,7 @@ export default function PostForm({ postData, }: CardProps) {
                                     src={previewUrl}
                                     alt="Cover"
                                     style={{ height: '225px', width: '300px' }}
-                                    className=" mt-5 rounded-lg"
+                                    className="w-full h-full object-contain"
                                 />}
                             </div>
                         }

@@ -31,7 +31,7 @@ export function PreviewCard({ imgUrl, name, suburb, state, postcode, address, ty
     return (
 
         <div className="card card-compact w-72 bg-base-100 shadow-xl">
-            <img src={imgUrl ? imgUrl : "/images/placeholder.jpeg"} alt="Cover Image" style={{ width: '288px', height: '211.13px' }} />
+            <img src={imgUrl ? imgUrl : "/images/placeholder.jpeg"} alt="Cover Image" style={{ width: '288px', height: '211.13px' }} className="w-full h-full object-contain" />
             <div className="card-body p-4">
                 <h2 className="card-title">{name?.length > 0 ? name : 'Business Name'}</h2>
                 <h2 className=" text-blue-600">{suburb?.length > 0 ? suburb : `Suburb`}, {state?.length > 0 ? state : "State"}, {postcode?.length > 0 ? postcode : "Postcode"}</h2>

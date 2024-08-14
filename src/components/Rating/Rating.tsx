@@ -51,8 +51,8 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
         if (data) {
             setIsLocal(
                 isCoordinateWithinRadius({ latitude: data?.altCoordinates?.latitude, longitude: data?.altCoordinates?.longitude }
-                    , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 5000) || isCoordinateWithinRadius({ latitude: data?.coordinates.latitude, longitude: data?.coordinates.longitude }
-                        , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 5000)
+                    , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 10000) || isCoordinateWithinRadius({ latitude: data?.coordinates.latitude, longitude: data?.coordinates.longitude }
+                        , { latitude: coordinates?.latitude, longitude: coordinates?.longitude }, 10000)
             )
         }
     }
