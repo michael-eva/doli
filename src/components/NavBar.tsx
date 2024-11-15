@@ -48,6 +48,7 @@ export default function NavBar() {
         checkJodStatus()
     }, [user?.id])
 
+
     const handleLogout = async () => {
         try {
             const { error } = await supabase.auth.signOut()
