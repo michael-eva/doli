@@ -13,42 +13,15 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Core React chunks
-          if (
-            id.includes("node_modules/react/") ||
-            id.includes("node_modules/react-dom/")
-          ) {
-            return "react-core";
-          }
-
-          // Router related
-          if (id.includes("react-router") || id.includes("react-router-dom")) {
-            return "router";
-          }
-
-          // Supabase related
-          if (id.includes("@supabase/")) {
-            return "supabase";
-          }
-
-          // UI Components and utilities
-          if (
-            id.includes("react-icons") ||
-            id.includes("react-hot-toast") ||
-            id.includes("react-share")
-          ) {
-            return "ui-components";
-          }
-
-          // Third party utilities
-          if (id.includes("node_modules/")) {
-            return "vendor";
-          }
+        manualChunks: {
+          vendor: [
+            "react",
+            "react-dom",
+            "react-router-dom",
+            "@supabase/supabase-js",
+          ],
         },
       },
     },
-    // Increase the warning limit if needed
-    chunkSizeWarningLimit: 600,
   },
 });
