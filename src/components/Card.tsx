@@ -71,12 +71,6 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
     return (
         <div className="card card-compact bg-white shadow-xl " style={!isMobile ? { width: '300px' } : { width: "330px" }}>
 
-            {/* < img src={`${props.imgUrl}?${new Date().getTime()}`} alt="Cover Image" style={{ height: '225px' }} className=" rounded-t-lg" /> */}
-            {/* <img
-                src={`${props.imgUrl}?${new Date().getTime()}`}
-                alt="Cover Image"
-                className="rounded-t-lg w-full h-[225px] object-contain"
-            /> */}
             <ResponsiveImage src={props.imgUrl} alt="Cover Image" />
             <div className="card-body p-4">
 
@@ -129,15 +123,14 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                 </div>
 
                 <div className=" flex mt-4 gap-1 flex-col">
-                    {props.contact?.length > 0 &&
+                    {props.contact?.length && props.contact?.length > 0 &&
                         <div>
                             <span className="flex items-center gap-4">
                                 <FaPhone />
-                                {/* <label>Contact: </label> */}
                                 <p className=" text-blue-600">{props.contact}</p>
                             </span>
                         </div>}
-                    {props.website?.length > 0 && (
+                    {props.website?.length && props.website?.length > 0 && (
                         <a href={props.website!.startsWith('http') ? props.website : `http://${props.website}`} target="_blank" rel="noopener noreferrer" className=" flex items-center text-blue-600 gap-3">
                             <span className=" text-xl text-black font-extrabold">
                                 <CiLink />
