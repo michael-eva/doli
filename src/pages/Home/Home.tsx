@@ -26,8 +26,6 @@ export default function Home() {
     const { filterPosts, paginatePageVar, isLoading, fetchData, numberOfPosts } = filterOrders(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
     const user = useUser();
-    const startIndex = (currentPage - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, filterPosts.length)
     const { deliveryFilter, locationFilter, typeFilter, searchFilter, nearbyFilter } = useFilters()
 
     const { allMembers } = useSupabase("id")

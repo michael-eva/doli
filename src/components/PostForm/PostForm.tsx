@@ -18,11 +18,8 @@ import ToggleButton from "../Toggle/ToggleButton.tsx";
 import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
-import { determineVerificationStatus, handleErrors, countChars, determineRejectionStatus, CDNUrl } from "./utils.ts";
+import { determineVerificationStatus, handleErrors, countChars, CDNUrl } from "./utils.ts";
 import compress from 'compressorjs';
-
-
-
 
 type LocationData = {
     address: string,
@@ -33,6 +30,7 @@ type LocationData = {
     coordinates: any
 }
 type RuleCheckbox = {
+    [key: string]: boolean;
     checkbox1: boolean,
     checkbox2: boolean,
     checkbox3: boolean,
@@ -43,7 +41,7 @@ export default function PostForm({ postData, }: CardProps) {
     const navigate = useNavigate()
     const { register, handleSubmit, watch, formState: { errors }, setValue, reset, getValues } = useForm();
     const user = useUser();
-    const [selectedFile, setSelectedFile] = useState<string>("");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedTags, setSelectedTags] = useState<SelectedTags[]>([]);
     const [deliveryMethodError, setDeliveryMethodError] = useState<boolean>(false)
     const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -60,7 +58,6 @@ export default function PostForm({ postData, }: CardProps) {
         country: ""
     })
 
-    const MAX_FILE_SIZE_IN_BYTES = 2097152;
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [show, setShow] = useState<boolean>(false)
     const isMobile = useMediaQuery({ maxWidth: 640 });
@@ -202,11 +199,11 @@ export default function PostForm({ postData, }: CardProps) {
             setDeliveryMethodError(true)
             return false
         }
-        if (hasOpeningHours?.hasOpenDays === false) {
+        if (typeof hasOpeningHours === 'object' && hasOpeningHours?.hasOpenDays === false) {
             setOpeningHoursError("*No opening days have been selected.")
             return false
         }
-        if (hasOpeningHours?.validOpeningTimes === false) {
+        if (typeof hasOpeningHours === 'object' && hasOpeningHours?.validOpeningTimes === false) {
             setOpeningHoursError("Cannot have both opening and closing times set to '00:00.'")
             return false
         }
@@ -224,12 +221,19 @@ export default function PostForm({ postData, }: CardProps) {
         }
         setIsSubmitting(true);
         const shouldSetVerifiedFalse = determineVerificationStatus(formData, postData)
-        const shouldSetRejecFalse = determineRejectionStatus(formData, postData)
-
         try {
             const { error: insertError } = await supabase
                 .from('posts')
-                .update({ ...formData, selectedTags: selectedTags, isVerified: shouldSetVerifiedFalse, imgUrl: postData?.imgUrl, openingHours: formData.openingHours, email: user?.email, isRejected: shouldSetRejecFalse, updated_at: new Date().toISOString() })
+                .update({
+                    ...formData,
+                    selectedTags: selectedTags,
+                    isVerified: shouldSetVerifiedFalse,
+                    imgUrl: postData?.imgUrl,
+                    openingHours: formData.openingHours,
+                    email: user?.email,
+                    isRejected: false,
+                    updated_at: new Date().toISOString()
+                })
                 .match({ postId: postData?.postId });
 
             if (insertError) {
@@ -382,10 +386,6 @@ export default function PostForm({ postData, }: CardProps) {
 
     return (
         <>
-            {/* <Helmet>
-                <title>doli | Register Business</title>
-                <meta name="description" content="Register your business" />
-            </Helmet> */}
             <div className="flex md:justify-center">
                 <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
                     <header className=" max-w-md">
@@ -710,8 +710,7 @@ export default function PostForm({ postData, }: CardProps) {
                             <div className=" flex gap-2 mt-7">
                                 <button className="btn w-full btn-disabled">Submit</button>
                             </div>
-                        }
-                    </div>
+                        }                    </div>
                 </form >
                 {
                     !isMobile && <div >
