@@ -159,7 +159,6 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
             return null
         }
         return `(reviews by ${filteredRatings?.length} locals)`
-        // return `(${filteredRatings?.length} reviews)`
     }
 
     return (
@@ -175,48 +174,19 @@ export default function RatingComp({ name, postId, user, coordinates }: NameType
                 </div>
             </div>
             {name && <div>
-                <Toggle>
-                    <ToggleButton className="text-xs font-bold text-blue-600 cursor-pointer ml-7">
+                {!hasRated ? <Toggle>
+                    <ToggleButton className="text-xs font-bold text-blue-600 cursor-pointer ml-7 uppercase">
                         RATE US!
                     </ToggleButton>
-                    {/* <ToggleButton className="text-xs text-blue-600 italic cursor-pointer underline ml-7">
-                        Add a rating
-                    </ToggleButton> */}
                     <ToggleOn>
                         <CustomModal>
                             {ratingModalEl()}
                         </CustomModal>
                     </ToggleOn>
-                </Toggle>
+                </Toggle> :
+                    <div className='uppercase text-xs font-bold ml-7 text-green-500'>already rated!</div>
+                }
             </div>}
-
         </div>
-
-        // <div className="flex mt-3 items-center gap-1">
-        //     <span className=' text-lg text-yellow-500'>
-        //         <IoStar />
-        //     </span>
-
-        //     <p>{displayRating()} / 5</p>
-        //     <p className=' text-gray-500'>({filteredRatings?.length})</p>
-        // </div>
-        // <Toggle>
-        //     <ToggleButton className="text-xs text-blue-600 italic cursor-pointer">
-        //         Add a rating
-        //     </ToggleButton>
-        //     <ToggleOn>
-        //         <CustomModal>
-        //             {ratingModalEl()}
-        //         </CustomModal>
-        //     </ToggleOn>
-        // </Toggle>
-
     );
 }
-{/* <StarRatings
-                    rating={displayRating()}
-                    starRatedColor="orange"
-                    numberOfStars={5}
-                    name='rating'
-                    starDimension="30px"
-                /> */}
