@@ -4,7 +4,6 @@ import { Card } from "../../components/Card"
 import { CardProps } from "../../Types"
 import CardSkeleton from "../../components/Loading/CardSkeleton"
 import { getData } from "./utils"
-import { Helmet } from 'react-helmet'
 
 export default function ManageListings() {
     const { posts, isLoading, getCombinedData } = getData()
