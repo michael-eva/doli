@@ -24,6 +24,7 @@ import { WhatsappShareButton } from 'react-share';
 import { FacebookMessengerShareButton } from 'react-share';
 import { TwitterShareButton } from 'react-share';
 import { EmailShareButton } from 'react-share';
+import { useSuperAdmin } from "@/context/use-super-admin";
 
 
 
@@ -40,6 +41,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
     const truncatedDescription = props.description.slice(0, maxDescriptionHeight);
     const shouldShowSeeMoreButton = props.description.length > maxDescriptionHeight;
     const META_ID = "785444670112157"
+    const { isJod } = useSuperAdmin()
 
     const toggleDescription = () => {
         setShowFullDescription(!showFullDescription);
@@ -184,7 +186,7 @@ export function Card({ handleReject, handleSubmit, ...props }: CardProps) {
                 </div>
             </div >
             {
-                (user?.id === props.id || user?.email === props.adminEmail) ? <div className="flex items-center justify-around bg-gray-100">
+                (user?.id === props.id || user?.email === props.adminEmail || isJod) ? <div className="flex items-center justify-around bg-gray-100">
                     <button
                         onClick={() => handleEditSubmit(props.postId!)}
                         className="m-2 px-5 py-2 rounded-lg  bg-gray-400 text-xs hover:bg-gray-500 hover:text-white">

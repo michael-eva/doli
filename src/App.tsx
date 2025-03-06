@@ -22,6 +22,8 @@ import Footer from "./components/Footer"
 import Dashboard from "./Jod/Dashboard"
 import { HelmetProvider } from 'react-helmet-async';
 import Survey from "./survey/Survey"
+import { SuperAdminProvider } from "./context/use-super-admin"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 type Question = {
   question: string;
   answers: string[];
@@ -43,39 +45,44 @@ const questions: Question[] = [
 ];
 
 function App() {
+  const queryClient = new QueryClient();
   return (
     <>
-      <HelmetProvider>
-        <div className="flex flex-col min-h-screen">
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/update-email" element={<UpdateEmail />} />
-            <Route element={<AuthRequired />}>
-              <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
-              <Route path="manage-listings" element={<ManageListings />} />
-              <Route path="update-details" element={<SignUp />} />
-              <Route path="manage-listings" element={<ManageListings />} />
-              <Route path="edit-post/:postId" element={<EditPost />} />
-              <Route element={<JodRequired />} >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="dashboard/validate" element={<Validation />} />
-                <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
-              </Route>
-              <Route path="seed" element={<SeedForm />} />
-            </Route>
-            <Route path="survey" element={<Survey data={questions} />} />
-            <Route path="member-register" element={<SignUp />} />
-            <Route path="login" element={<Login />} />
-            <Route path="about" element={<About />} />
-            <Route path="specials" element={<Specials />} />
-            <Route path="wholesale" element={<Wholesale />} />
-            <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div >
-        <Footer />
-      </HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <SuperAdminProvider>
+            <div className="flex flex-col min-h-screen">
+              <NavBar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/update-email" element={<UpdateEmail />} />
+                <Route element={<AuthRequired />}>
+                  <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
+                  <Route path="manage-listings" element={<ManageListings />} />
+                  <Route path="update-details" element={<SignUp />} />
+                  <Route path="manage-listings" element={<ManageListings />} />
+                  <Route path="edit-post/:postId" element={<EditPost />} />
+                  <Route element={<JodRequired />} >
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="dashboard/validate" element={<Validation />} />
+                    <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
+                  </Route>
+                  <Route path="seed" element={<SeedForm />} />
+                </Route>
+                <Route path="survey" element={<Survey data={questions} />} />
+                <Route path="member-register" element={<SignUp />} />
+                <Route path="login" element={<Login />} />
+                <Route path="about" element={<About />} />
+                <Route path="specials" element={<Specials />} />
+                <Route path="wholesale" element={<Wholesale />} />
+                <Route path="reset-password" element={<ResetPassword />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div >
+            <Footer />
+          </SuperAdminProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
     </>
   )
 }

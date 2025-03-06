@@ -4,7 +4,6 @@ import { ResponsiveBar } from "@nivo/bar"
 import { SVGProps } from "react"
 import { JSX } from "react/jsx-runtime"
 import { getDashboardData } from "./utils/getDashboardData"
-import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords"
 
 
 
