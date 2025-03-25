@@ -6,13 +6,9 @@ export default function Footer() {
     return (
         <footer className=" shadow-inner" style={{ backgroundColor: "#4f9ea8" }}>
             <div className=" p-2 md:p-2 flex items-center justify-evenly">
-                <p className=" text-center hidden md:block text-white">©️ All Rights Reserved 2024</p>
+                <p className=" text-center hidden md:block text-white">©️ All Rights Reserved 2025</p>
                 <div>
                     <div className=" cursor-pointer flex gap-3 text-white">
-                        <p className="hidden md:block">|</p>
-                        <NavLink className="hidden md:block hover:text-orange-400" to={'/'}>Home</NavLink>
-                        <p className="hidden md:block">|</p>
-                        <NavLink className=" hover:text-orange-400" to={"mailto:admin@doli.com.au"}>Contact</NavLink>
                         <p className="hidden md:block">|</p>
                         <NavLink className=" hover:text-orange-400" to={"https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z"} target="_blank">Privacy Policy</NavLink>
                         <p className="hidden md:block">|</p>
@@ -30,7 +26,7 @@ export default function Footer() {
                     <SocialIcon url="https://www.instagram.com/doli.com.au/" target="_blank" style={{ width: "30px", height: "30px" }} />
                     <SocialIcon url="https://www.facebook.com/stillserving.com.au" target="_blank" style={{ width: "30px", height: "30px" }} />
                 </div>
-                <p className=" text-center md:hidden text-white">©️ All Rights Reserved 2024</p>
+                <p className=" text-center md:hidden text-white">©️ All Rights Reserved 2025</p>
             </div>
 
         </footer>

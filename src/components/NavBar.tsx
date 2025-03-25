@@ -147,32 +147,58 @@ export function ReferFriend({ isMobile }: any) {
 export function ContactUsDialog() {
     const [message, setMessage] = useState('');
     const user = useUser()
+    const navigate = useNavigate();
 
     function SendEmail() {
         sendEnquiry(user?.email, message, "New Enquiry")
     }
 
+    const handleClick = () => {
+        if (!user) {
+            navigate('/login', {
+                state: { message: "Please log in to contact us" }
+            });
+        }
+    }
+
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="text-[#4f9ea8] font-bold">Contact Us</button>
+                <button
+                    className="text-[#4f9ea8] font-bold"
+                    onClick={handleClick}
+                >
+                    Contact Us
+                </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Message Us</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <textarea className="col-span-4 p-2 border-2 border-gray-300 rounded-md min-h-[140px]" placeholder="Message"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            required={true} />
+            {user && (
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Message Us</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <textarea
+                                className="col-span-4 p-2 border-2 border-gray-300 rounded-md min-h-[140px]"
+                                placeholder="Message"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                required={true}
+                            />
+                        </div>
                     </div>
-                </div>
-                <DialogFooter>
-                    <button className="btn w-full mt-4 " style={{ backgroundColor: "#4f9ea8", color: "white" }} onClick={SendEmail} disabled={message.trim() === ""}>Send Message</button>
-                </DialogFooter>
-            </DialogContent>
+                    <DialogFooter>
+                        <button
+                            className="btn w-full mt-4"
+                            style={{ backgroundColor: "#4f9ea8", color: "white" }}
+                            onClick={SendEmail}
+                            disabled={message.trim() === ""}
+                        >
+                            Send Message
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            )}
         </Dialog>
     )
 }

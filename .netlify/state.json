@@ -11,10 +11,11 @@
 				"name": "Western Australia"
 			},
 			"timezone": "Australia/Perth",
-			"latitude": -31.9643,
-			"longitude": 115.8595
+			"latitude": -31.9028,
+			"longitude": 115.855,
+			"postalCode": "6060"
 		},
-		"timestamp": 1719134528036
+		"timestamp": 1742885084145
 	},
 	"siteId": "664d632f-8742-4a51-b7af-694c9dead199"
 }

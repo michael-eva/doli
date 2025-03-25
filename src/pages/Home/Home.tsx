@@ -1,7 +1,6 @@
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
-import { useSearchParams } from "react-router-dom";
 import CardSkeleton from "../../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import Pagination from "../../components/Pagination";
@@ -18,7 +17,6 @@ import SEO from "@/lib/SEO";
 
 export default function Home() {
     const [isChecked, setIsChecked] = useState(true)
-    const [searchParams, setSearchParams] = useSearchParams()
     const isMobile = useMediaQuery({ maxWidth: 640 });
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
@@ -67,7 +65,6 @@ export default function Home() {
         setCurrentPage(page);
     };
     const clearFilters = () => {
-        setSearchParams("")
         setInputClear(true)
         setCurrentPage(1)
     }
