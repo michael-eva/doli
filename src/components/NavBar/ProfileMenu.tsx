@@ -27,7 +27,7 @@ export default function ProfileMenu({ isJod, isMobile, handleLogout }: ProfileMe
                 {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>}
                 <div className="divider" style={{ margin: '0' }}></div>
                 {!isMobile && <li><ReferFriend /></li>}
-                <li><ContactUsDialog /></li>
+                {isMobile && <li><ContactUsDialog /></li>}
                 <div className="divider" style={{ margin: '0' }}></div>
                 <li className="text-red-600"><a onClick={handleLogout}><IoIosLogOut />Logout</a></li>
             </ul>
