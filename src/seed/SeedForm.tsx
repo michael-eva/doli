@@ -5,7 +5,6 @@ import businessType from "../data/businessTypes.json"
 import { useForm } from "react-hook-form"
 import supabase from "../config/supabaseClient.ts";
 import { PreviewCard } from "../components/PreviewCard.tsx";
-import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
 import OpeningHours from "../components/Opening-Hours/OpeningHours.tsx"
@@ -449,7 +448,6 @@ export default function SeedForm() {
                     </div>
                 )}
             </div>}
-            <Toaster />
         </div >
     )
 }

@@ -24,6 +24,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import Survey from "./survey/Survey"
 import { SuperAdminProvider } from "./context/use-super-admin"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Toaster } from "react-hot-toast"
 type Question = {
   question: string;
   answers: string[];
@@ -83,6 +84,7 @@ function App() {
           </SuperAdminProvider>
         </HelmetProvider>
       </QueryClientProvider>
+      <Toaster />
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import supabase from "../config/supabaseClient"
 import { useNavigate, useLocation } from "react-router"
-import toast, { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
 import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import ForgotPassword from "../components/ForgotPassword"
@@ -9,7 +9,6 @@ import Toggle from "../components/Toggle/Toggle"
 import ToggleButton from "../components/Toggle/ToggleButton"
 import ToggleOn from "../components/Toggle/ToggleOn"
 import { MemberType } from "../Types"
-import { Helmet } from 'react-helmet'
 import SEO from "@/lib/SEO"
 
 
@@ -140,7 +139,6 @@ export default function Login({ title }: LoginProps) {
                     <p>Not yet a member?</p>
                     <Link to="/member-register" className="btn w-48 btn-success">Sign up here</Link>
                 </div>
-                <Toaster />
             </div>
         </>
     )

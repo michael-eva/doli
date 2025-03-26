@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import months from "../../data/months"
 import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "@supabase/auth-helpers-react"
-import { Toaster } from "react-hot-toast"
 import { FaInfoCircle } from "react-icons/fa";
 import SimpleModal from "../../components/Modals/SimpleModal"
 import Toggle from "../../components/Toggle/Toggle"
@@ -377,7 +376,6 @@ export default function SignUp() {
                     </div>
                 </form>
             }
-            <Toaster />
         </>
     )
 }

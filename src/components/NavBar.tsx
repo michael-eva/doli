@@ -15,8 +15,7 @@ import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share"
 import ToggleOn from "./Toggle/ToggleOn"
 import ToggleButton from "./Toggle/ToggleButton"
 import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa"
-import { sendEnquiry } from "@/Jod/utils/resend"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+
 const CustomModal = lazy(() => import('./Modals/CustomModal'))
 
 export default function NavBar() {
@@ -142,63 +141,5 @@ export function ReferFriend({ isMobile }: any) {
                 </Suspense>
             </ToggleOn>
         </Toggle>
-    )
-}
-export function ContactUsDialog() {
-    const [message, setMessage] = useState('');
-    const user = useUser()
-    const navigate = useNavigate();
-
-    function SendEmail() {
-        sendEnquiry(user?.email, message, "New Enquiry")
-    }
-
-    const handleClick = () => {
-        if (!user) {
-            navigate('/login', {
-                state: { message: "Please log in to contact us" }
-            });
-        }
-    }
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <button
-                    className="text-[#4f9ea8] font-bold"
-                    onClick={handleClick}
-                >
-                    Contact Us
-                </button>
-            </DialogTrigger>
-            {user && (
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Message Us</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <textarea
-                                className="col-span-4 p-2 border-2 border-gray-300 rounded-md min-h-[140px]"
-                                placeholder="Message"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                required={true}
-                            />
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <button
-                            className="btn w-full mt-4"
-                            style={{ backgroundColor: "#4f9ea8", color: "white" }}
-                            onClick={SendEmail}
-                            disabled={message.trim() === ""}
-                        >
-                            Send Message
-                        </button>
-                    </DialogFooter>
-                </DialogContent>
-            )}
-        </Dialog>
     )
 }

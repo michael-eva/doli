@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
-import { ContactUsDialog, ReferFriend } from "../NavBar";
+import { ReferFriend } from "../NavBar";
+import { ContactUsDialog } from "../ContactUsDialog";
 
 
 interface ProfileMenuProps {

@@ -5,7 +5,7 @@ import businessType from "../../data/businessTypes.json"
 import { useForm } from "react-hook-form"
 import supabase from "../../config/supabaseClient.ts";
 import { PreviewCard } from "../PreviewCard.tsx";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { nanoid } from "nanoid";
 import OpeningHours from "../Opening-Hours/OpeningHours.tsx"
@@ -758,7 +758,6 @@ export default function PostForm({ postData, }: CardProps) {
                         )}
                     </div>
                 }
-                <Toaster />
             </div >
         </>
     )
