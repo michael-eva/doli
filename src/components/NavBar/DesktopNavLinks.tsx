@@ -13,7 +13,7 @@ export default function DesktopNavLinks() {
                 <li className="text-xl w-0.5 h-8 bg-gray-300"></li>
                 <li className="text-xl"><NavLink to={'post-listing'}>Register Business</NavLink></li>
                 <li className="text-xl w-0.5 h-8 bg-gray-300"></li>
-                <li className="text-xl"><NavLink to={'https://noggins.deco-apparel.com'} target="_blank">Merchandise</NavLink></li>
+                <li className="text-xl"><NavLink to={'https://noggins.deco-apparel.com'} target="_blank">Merch</NavLink></li>
                 <li className="text-xl w-0.5 h-8 bg-gray-300"></li>
                 <li className="text-xl"><ContactUsDialog /></li>
             </ul>
