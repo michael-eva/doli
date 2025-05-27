@@ -25,6 +25,7 @@ import Survey from "./survey/Survey"
 import { SuperAdminProvider } from "./context/use-super-admin"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
+import ContactUs from "./pages/ContactUs"
 type Question = {
   question: string;
   answers: string[];
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/update-email" element={<UpdateEmail />} />
                 <Route element={<AuthRequired />}>
+                  <Route path="contact-us" element={<ContactUs />} />
                   <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="update-details" element={<SignUp />} />

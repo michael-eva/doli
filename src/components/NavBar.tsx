@@ -62,7 +62,7 @@ export default function NavBar() {
     }
 
     return (
-        <div className="navbar shadow-md md:mb-10 z-[3] bg-white">
+        <div className="navbar shadow-md z-[3] bg-white">
             {/* Left section */}
             <NavLink to='/' className="flex-none">
                 <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
