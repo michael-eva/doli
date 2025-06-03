@@ -35,11 +35,8 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Have a question or feedback? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
+        <div className="text-center mb-">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Watcha got?</h1>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -68,6 +65,7 @@ export default function ContactUs() {
                 <textarea
                   id="message"
                   value={message}
+                  rows={4}
                   onChange={(e) => setMessage(e.target.value)}
                   className="textarea textarea-bordered w-full min-h-[200px] bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
                   placeholder="Tell us what's on your mind..."
@@ -97,10 +95,6 @@ export default function ContactUs() {
               </button>
             </form>
           </div>
-        </div>
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>We typically respond within 24 hours</p>
         </div>
       </div>
     </div>
