@@ -94,12 +94,9 @@ export default function Login({ title }: LoginProps) {
                         <p className=" text-lg font-semibold text-center">{`${title ? title : "Please enter your login details:"}`}</p>
                         {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
                         <div className="md:flex">
-                            <label className="label">
-                                <span className="label-text w-24">Email</span>
-                            </label>
                             <input
                                 type="email"
-                                placeholder="Type here"
+                                placeholder="Email address"
                                 className="input input-bordered w-full"
                                 style={{ backgroundColor: "white", color: "black" }}
                                 {...register('email', { required: "Please enter your email address" })}
@@ -108,24 +105,21 @@ export default function Login({ title }: LoginProps) {
                         {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
                         {isUser.length > 0 && <p className=" text-red-600 italic">Password is incorrect</p>}
                         <div className="md:flex">
-                            <label className="label">
-                                <span className="label-text w-24">Password</span>
-                            </label>
                             <input
                                 type="password"
-                                placeholder="Type here"
+                                placeholder="Password"
                                 className="input input-bordered w-full"
                                 {...register('password', { required: "Please enter your password" })}
                             />
                         </div>
                         {errors.password && <p className=" text-red-600">*{errors.password.message?.toString()}</p>}
-                        <div>
-                            {isSubmitting ? <button className="btn w-full btn-disabled mt-4">Loggin in...<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                        <div className="flex flex-col gap-3">
+                            {isSubmitting ? <button className="btn w-full btn-disabled">Signing in...<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
-                                <button className="btn btn-primary w-full mt-4">Login</button>
+                                <button className="btn !bg-[#0866ff] w-full !text-white">Sign In</button>
                             }
                             <Toggle>
-                                <ToggleButton className=" text-sm underline italic cursor-pointer">
+                                <ToggleButton className=" text-sm text-blue-500 cursor-pointer text-center">
                                     Forgot Password?
                                 </ToggleButton>
                                 <ToggleOn>
@@ -135,9 +129,13 @@ export default function Login({ title }: LoginProps) {
                         </div>
                     </div>
                 </form>
-                <div className="flex flex-col items-center gap-2 mt-4">
-                    <p>Not yet a member?</p>
-                    <Link to="/member-register" className="btn w-48 btn-success">Sign up here</Link>
+                <div className="flex flex-col items-center gap-3">
+                    <div className="flex items-center gap-3 w-full">
+                        <div className="w-1/2 h-[1px] bg-gray-300 "></div>
+                        <p className="text-gray-400">or</p>
+                        <div className="w-1/2 h-[1px] bg-gray-300 "></div>
+                    </div>
+                    <Link to="/member-register" className="btn w-48 btn-success !bg-[#42b72a] !text-white">Sign Up</Link>
                 </div>
             </div>
         </>

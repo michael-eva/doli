@@ -159,58 +159,59 @@ export default function SignUp() {
                                 {!user ? `New Member Onboarding:` : `Member Profile:`}
                             </h3>
                         </div>
-                        <div className=" flex mt-7 items-center gap-3">
-                            {user ? <div className="flex flex-col w-full">
-                                <label>Email Address</label>
-
-                                <input
-                                    type="text"
-                                    className="input input-bordered "
-                                    {...register('email')}
-                                />
-                            </div>
-                                :
-                                <div className="flex flex-col w-full">
-                                    <label>Email Address</label>
-                                    {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
+                        <div className="flex flex-col gap-3">
+                            <div className=" flex mt-7 items-center gap-3">
+                                {user ? <div className="flex flex-col w-full">
                                     <input
                                         type="text"
                                         className="input input-bordered "
-                                        {...register('email', {
-                                            required: 'Email address is required',
-                                            onChange: (e) => checkEmailExists(e.target.value, setError, clearErrors)
-
-                                        })}
-                                        onBlur={() => {
-                                            if (existingEmail)
-                                                setValue('email', '')
-                                        }}
+                                        placeholder="Email address"
+                                        {...register('email')}
                                     />
-                                </div>}
+                                </div>
+                                    :
+                                    <div className="flex flex-col w-full">
+                                        {errors.email && <p className=" text-red-600">*{errors.email.message?.toString()}</p>}
+                                        <input
+                                            type="text"
+                                            placeholder="Email address"
+                                            className="input input-bordered "
+                                            {...register('email', {
+                                                required: 'Email address is required',
+                                                onChange: (e) => checkEmailExists(e.target.value, setError, clearErrors)
+
+                                            })}
+                                            onBlur={() => {
+                                                if (existingEmail)
+                                                    setValue('email', '')
+                                            }}
+                                        />
+                                    </div>}
+                            </div>
+                            {!user && <div className="flex flex-col md:flex-row gap-3  md:mt-7 w-full mb-2">
+                                <div className="flex flex-col md:w-1/2">
+                                    <input
+                                        type="password"
+                                        className="input input-bordered "
+                                        placeholder="Password"
+                                        {...register('password', { required: "Password is required." })}
+                                    />
+                                    {errors.password && <p className=" text-red-600">*{errors.password.message?.toString()}</p>}
+                                </div>
+                                <div className="flex flex-col md:w-1/2">
+                                    <input
+                                        type="password"
+                                        className="input input-bordered "
+                                        placeholder="Confirm password"
+                                        {...register('confirmPassword', {
+                                            required: "Confirm password is required.",
+                                        })}
+                                        onChange={(e) => checkPasswordMatches(e.target.value, watch, clearErrors, setError)}
+                                    />
+                                    {errors.confirmPassword && <p className=" text-red-600">*{errors.confirmPassword.message?.toString()}</p>}
+                                </div>
+                            </div>}
                         </div>
-                        {!user && <div className="md:flex gap-3 md:mt-7 w-full mb-2">
-                            <div className="flex flex-col md:w-1/2">
-                                <label>Password</label>
-                                <input
-                                    type="password"
-                                    className="input input-bordered "
-                                    {...register('password', { required: "Password is required." })}
-                                />
-                                {errors.password && <p className=" text-red-600">*{errors.password.message?.toString()}</p>}
-                            </div>
-                            <div className="flex flex-col md:w-1/2">
-                                <label>Confirm Password</label>
-                                <input
-                                    type="password"
-                                    className="input input-bordered "
-                                    {...register('confirmPassword', {
-                                        required: "Confirm password is required.",
-                                    })}
-                                    onChange={(e) => checkPasswordMatches(e.target.value, watch, clearErrors, setError)}
-                                />
-                                {errors.confirmPassword && <p className=" text-red-600">*{errors.confirmPassword.message?.toString()}</p>}
-                            </div>
-                        </div>}
                         <label className="mt-7">Month & Year you were born?</label>
                         <div className="flex gap-3  w-full mb-2 items-end">
                             <div className="flex flex-col w-1/2">
@@ -364,11 +365,11 @@ export default function SignUp() {
                                 <a className=" text-bold underline cursor-pointer" href={`${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf`} target="_blank">Terms of Service.</a>
                             </span>
                         </div>
-                        {isSubmitting ? <button className="btn w-full btn-disabled mt-3">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
+                        {isSubmitting ? <button className="btn w-full btn-disabled mt-3">Submitting<span className=" ml-4 loading loading-spinner !text-white"></span></button>
                             :
-                            isAgree ? <button className="btn btn-primary mt-3 w-full">Submit</button>
+                            isAgree ? <button className="btn !bg-[#0866ff] mt-3 w-full !text-white">Submit</button>
                                 :
-                                <button className="btn btn-primary mt-3 w-full" disabled>Submit</button>
+                                <button className="btn !bg-[#0866ff] mt-3 w-full !text-white" disabled>Submit</button>
 
                         }
 
