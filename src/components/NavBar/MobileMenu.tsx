@@ -13,7 +13,7 @@ export default function MobileMenu({ isMobile }: MobileMenuProps) {
             <ul tabIndex={1} className="dropdown-content z-[2] menu shadow bg-base-100 rounded-box w-[165px]">
                 <li><NavLink to='/'>Home</NavLink></li>
                 <li><NavLink to='/about'>About</NavLink></li>
-                <li><NavLink to={'post-listing'}>BizRego</NavLink></li>
+                <li><NavLink to={'post-listing'}>Business</NavLink></li>
                 <li><NavLink to={"https://noggins.deco-apparel.com"} target="_blank">Merch</NavLink></li>
                 <li><NavLink to={'contact-us'}>Contact Us</NavLink></li>
                 <div className="divider" style={{ margin: '0' }}></div>

@@ -28,6 +28,7 @@ export default function Login({ title }: LoginProps) {
     const [members, setMembers] = useState<MemberType[]>([])
     const [loginError, setLoginError] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [isAgree, setIsAgree] = useState<boolean>(false)
     const { register, formState: { errors }, handleSubmit, reset } = useForm()
 
     useEffect(() => {
@@ -89,9 +90,13 @@ export default function Login({ title }: LoginProps) {
                 {location.state && (
                     <p className=" mb-5 text-red-600 italic">*{location.state.message}</p>
                 )}
+                <div className="flex flex-col items-center mb-6">
+                    <img src="/images/noggins_logo.png" alt="doli" className="w-24 h-24 mb-5" />
+                    <p className="text-lg font-semibold text-center">Powered by noggins.co</p>
+                </div>
                 <form onSubmit={handleSubmit((data) => handleFormSubmit(data as LoginData))}>
                     <div className="  gap-2 md:gap-5 flex flex-col ">
-                        <p className=" text-lg font-semibold text-center">{`${title ? title : "Please enter your login details:"}`}</p>
+                        {/* <p className=" text-lg font-semibold text-center">{`${title ? title : "Please enter your login details:"}`}</p> */}
                         {loginError && (<p className=" text-red-600 italic">*An account with that email address doesn't exist</p>)}
                         <div className="md:flex">
                             <input
@@ -116,7 +121,7 @@ export default function Login({ title }: LoginProps) {
                         <div className="flex flex-col gap-3">
                             {isSubmitting ? <button className="btn w-full btn-disabled">Signing in...<span className=" ml-4 loading loading-spinner text-primary"></span></button>
                                 :
-                                <button className="btn !bg-[#0866ff] w-full !text-white">Sign In</button>
+                                <button className={`btn !bg-[#0866ff] w-full !text-white ${!isAgree ? "!bg-blue-300" : ""}`} disabled={!isAgree}>Sign In</button>
                             }
                             <Toggle>
                                 <ToggleButton className=" text-sm text-blue-500 cursor-pointer text-center">
@@ -136,6 +141,16 @@ export default function Login({ title }: LoginProps) {
                         <div className="w-1/2 h-[1px] bg-gray-300 "></div>
                     </div>
                     <Link to="/member-register" className="btn w-48 btn-success !bg-[#42b72a] !text-white">Sign Up</Link>
+                </div>
+                <div className=" flex items-center gap-3 mt-5">
+                    <label className="cursor-pointer label ">
+                        <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
+                    </label>
+                    <span className="label-text">I agree to the <span></span>
+                        <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
+                        <span></span> and <span></span>
+                        <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
+                    </span>
                 </div>
             </div>
         </>
