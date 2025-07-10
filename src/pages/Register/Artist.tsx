@@ -124,6 +124,82 @@ export default function RegisterArtist() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8 sm:p-10">
             <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+              {/* Image Upload */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  Artist Image
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Upload Artist Image *
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="w-full file-input file-input-bordered"
+                      />
+                    </div>
+                  </div>
+
+                  {selectedFile && !croppedImage && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium text-gray-900">Crop Your Image</h3>
+                      <ImageUpload
+                        file={selectedFile}
+                        setCroppedImage={setCroppedImage}
+                        circular={true}
+                      />
+                    </div>
+                  )}
+
+                  {/* Artist Post Preview (always visible) */}
+                  <div className="flex pt-8">
+                    <div className="w-80 bg-white rounded-2xl shadow-md p-6 flex flex-col items-center">
+                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 mb-4">
+                        <img
+                          src={croppedImage || '/images/placeholder.jpeg'}
+                          alt="Artist Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-gray-900 mb-1">
+                          {watch("name") || "Artist Name"}
+                        </div>
+                        <div className="text-sm text-blue-600 mb-2 cursor-pointer underline">
+                          {selectedType === "music"
+                            ? (watch("genre") && watch("music_type")
+                              ? `${watch("genre")!.charAt(0).toUpperCase() + watch("genre")!.slice(1)} ${watch("music_type") === "cover" ? "Covers" : "Originals"}`
+                              : "Alt / Indie Originals")
+                            : selectedType === "comedy"
+                              ? "Comedy"
+                              : selectedType === "other"
+                                ? "Other"
+                                : "Alt / Indie Originals"}
+                        </div>
+                        <div className="text-gray-700 text-sm mb-4 min-h-[48px]">
+                          {watch("about") || "Artist description goes here. Tell us about your artist/band, your style, experience, and what makes you unique..."}
+                        </div>
+                        {/* <button
+                          type="button"
+                          className="bg-[#4e9da8] hover:bg-[#3d8a94] text-white px-6 py-2 rounded-full font-medium text-sm shadow transition-all duration-200"
+                          disabled
+                        >
+                          Follow
+                        </button> */}
+                      </div>
+                    </div>
+                  </div>
+
+                  {errors.image_url && (
+                    <p className="text-red-600 text-sm">{errors.image_url.message}</p>
+                  )}
+                </div>
+              </div>
               {/* Basic Information */}
               <div className="space-y-6">
                 <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
@@ -272,56 +348,7 @@ export default function RegisterArtist() {
                 </div>
               </div>
 
-              {/* Image Upload */}
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  Artist Image
-                </h2>
 
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Upload Artist Image *
-                    </label>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="w-full file-input file-input-bordered"
-                      />
-                    </div>
-                  </div>
-
-                  {selectedFile && !croppedImage && (
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium text-gray-900">Crop Your Image</h3>
-                      <ImageUpload
-                        file={selectedFile}
-                        croppedImage={croppedImage}
-                        setCroppedImage={setCroppedImage}
-                      />
-                    </div>
-                  )}
-
-                  {croppedImage && (
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium text-gray-900">Final Image</h3>
-                      <div className="border rounded-lg overflow-hidden max-w-md">
-                        <img
-                          src={croppedImage}
-                          alt="Cropped Artist Image"
-                          className="w-full h-auto object-contain"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {errors.image_url && (
-                    <p className="text-red-600 text-sm">{errors.image_url.message}</p>
-                  )}
-                </div>
-              </div>
 
               {/* About Section */}
               <div className="space-y-6">

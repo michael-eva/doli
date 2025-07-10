@@ -655,7 +655,7 @@ export default function RegisterBusiness({ postData, }: CardProps) {
                     </>
                   ) : (
                     <>
-                      {!croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} croppedImage={croppedImage} setCroppedImage={setCroppedImage} /></div>}
+                      {!croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} setCroppedImage={setCroppedImage} /></div>}
                       {croppedImage && (
                         <div className="mt-6">
                           <div className="border rounded-lg overflow-hidden">
@@ -700,7 +700,7 @@ export default function RegisterBusiness({ postData, }: CardProps) {
                   accept="image/*"
                   disabled={!allChecked}
                 />
-                {previewUrl && !croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} croppedImage={croppedImage} setCroppedImage={setCroppedImage} /></div>}
+                {previewUrl && !croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} setCroppedImage={setCroppedImage} /></div>}
                 {croppedImage && (
                   <div className="mt-6">
                     <div className="border rounded-lg overflow-hidden">
