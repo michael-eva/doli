@@ -9,11 +9,11 @@ export default function Footer() {
                 <p className=" text-center hidden md:block text-white">©️ All Rights Reserved 2025</p>
                 <div>
                     <div className=" cursor-pointer flex gap-3 text-white">
-                        <p className="hidden md:block">|</p>
+                        {/* <p className="hidden md:block">|</p> */}
                         <NavLink className=" hover:text-orange-400" to={"https://www.noggins.co/_files/ugd/15a67b_d209eac9e13549748f1108d909bcf2f9.pdf"} target="_blank">Policies, Terms & Conditions</NavLink>
                         {/* <p className="hidden md:block">|</p> */}
                         {/* <NavLink className=" hover:text-orange-400" to={"https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z"} target="_blank">Terms of Service</NavLink> */}
-                        <p className="hidden md:block">|</p>
+                        {/* <p className="hidden md:block">|</p> */}
                     </div>
                 </div>
                 <div className=" gap-2 pl-2 rounded-xl hidden md:flex">
