@@ -20,6 +20,7 @@ import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
 import { determineVerificationStatus, handleErrors, countChars, CDNUrl } from "./utils.ts";
 import compress from 'compressorjs';
+import ImageUpload from "../ImageUpload.tsx";
 
 type LocationData = {
     address: string,
@@ -49,6 +50,7 @@ export default function PostForm({ postData, }: CardProps) {
     const [openingHoursError, setOpeningHoursError] = useState<string>("")
     const [locationError, setLocationError] = useState<boolean>(false)
     const [isAgree, setIsAgree] = useState<boolean>(true)
+    const [croppedImage, setCroppedImage] = useState<string | null>(null)
     const [selectedLocation, setSelectedLocation] = useState<LocationData>({
         coordinates: "",
         address: "",
@@ -108,6 +110,7 @@ export default function PostForm({ postData, }: CardProps) {
         }
     };
     const handleFileChange = (e: any) => {
+        setCroppedImage(null)
         const file = e.target.files[0];
         setSelectedFile(file);
         if (file) {
@@ -190,6 +193,7 @@ export default function PostForm({ postData, }: CardProps) {
             console.error('Error updating imgUrl:', updateError);
         }
     };
+
     function handleFormErrors(formData: CardProps, selectedLocation: { selectedLocation: any; }) {
         const { isDeliveryMethod, hasOpeningHours, hasSelectedLocation } = handleErrors({ delivery: watch().delivery, dineIn: watch().dineIn, pickUp: watch().pickUp }, { openingHours: formData.openingHours }, selectedLocation)
         setDeliveryMethodError(false)
@@ -243,7 +247,19 @@ export default function PostForm({ postData, }: CardProps) {
 
             if (selectedFile) {
                 await deleteCurrentImage();
-                const imageUrl = await uploadNewImage(postData?.postId, selectedFile);
+
+                // Use cropped image if available, otherwise use original file
+                let fileToUpload: Blob;
+
+                if (croppedImage) {
+                    // Convert blob URL to Blob
+                    const response = await fetch(croppedImage);
+                    fileToUpload = await response.blob();
+                } else {
+                    fileToUpload = selectedFile;
+                }
+
+                const imageUrl = await uploadNewImage(postData?.postId, fileToUpload);
                 if (imageUrl !== null) {
                     await updateImage(imageUrl);
                 }
@@ -299,8 +315,20 @@ export default function PostForm({ postData, }: CardProps) {
                 console.error('Error inserting post:', insertError);
                 return;
             }
-            if (selectedFile) {
-                const imageUrl = await uploadNewImage(postId, selectedFile)
+
+            // Use cropped image if available, otherwise use original file
+            if (croppedImage || selectedFile) {
+                let fileToUpload: Blob;
+
+                if (croppedImage) {
+                    // Convert blob URL to Blob
+                    const response = await fetch(croppedImage);
+                    fileToUpload = await response.blob();
+                } else {
+                    fileToUpload = selectedFile!;
+                }
+
+                const imageUrl = await uploadNewImage(postId, fileToUpload)
                 if (imageUrl !== null) {
 
                     const { error: updateError } = await supabase
@@ -600,23 +628,17 @@ export default function PostForm({ postData, }: CardProps) {
                         {postData ?
                             <>
                                 <div className="flex flex-col gap-5">
-                                    {!show ? <img
-                                        src={previewUrl}
-                                        alt="Cover"
-                                        style={{ height: '225px', width: '300px' }}
-                                        className=" mt-5 rounded-lg"
-                                    />
-                                        :
-                                        <>{previewUrl && <img
-                                            src={previewUrl}
-                                            alt="Cover"
-                                            style={{ height: '225px', width: '300px' }}
-                                            className=" mt-5 rounded-lg"
-                                        />}
+                                    {!selectedFile ? (
+                                        <>
+                                            <img
+                                                src={postData.imgUrl}
+                                                alt="Cover"
+                                                style={{ height: '225px', width: '300px' }}
+                                                className="mt-5 rounded-lg"
+                                            />
                                             <div className="cover-photo">
                                                 <h2 className="mt-1">Update Cover Photo</h2>
                                                 <p className="text-xs">Max image size of 2MB</p>
-
                                                 {errors.imgUrl && (
                                                     <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
                                                 )}
@@ -625,28 +647,39 @@ export default function PostForm({ postData, }: CardProps) {
                                                     className="file-input file-input-bordered w-full"
                                                     {...register("imgUrl", {
                                                         required: "Cover photo is required",
-                                                        // validate: {
-                                                        //     maxSize: (value) =>
-                                                        //         !value ||
-                                                        //         value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                                        //         "File size exceeds the limit of 2MB",
-                                                        // },
                                                     })}
                                                     onChange={handleFileChange}
                                                     accept="image/*"
                                                 />
-
                                             </div>
                                         </>
-                                    }
-                                    {!show ? <p onClick={() => setShow(!show)}
-                                        className="btn btn-primary w-"
-                                    >Update Cover Photo</p>
-                                        :
-                                        <p onClick={() => { setPreviewUrl(postData.imgUrl); setShow(!show) }}
-                                            className="btn btn-primary w-"
-                                        >Cancel</p>
-                                    }
+                                    ) : (
+                                        <>
+                                            {!croppedImage && <ImageUpload file={previewUrl} croppedImage={croppedImage} setCroppedImage={setCroppedImage} />}
+                                            {croppedImage && (
+                                                <div className="mt-6">
+                                                    <div className="border rounded-lg overflow-hidden">
+                                                        <img
+                                                            src={croppedImage}
+                                                            alt="Cropped"
+                                                            className="w-full h-auto max-h-64 object-contain"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setPreviewUrl(postData.imgUrl);
+                                                    setCroppedImage(null);
+                                                    setSelectedFile(null);
+                                                }}
+                                                className="btn btn-gray w-full"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </>
 
@@ -662,23 +695,23 @@ export default function PostForm({ postData, }: CardProps) {
                                     className="file-input file-input-bordered w-full"
                                     {...register("imgUrl", {
                                         required: "Cover photo is required",
-                                        // validate: {
-                                        //     maxSize: (value) =>
-                                        //         !value ||
-                                        //         value[0].size <= MAX_FILE_SIZE_IN_BYTES ||
-                                        //         "File size exceeds the limit of 2MB",
-                                        // },
                                     })}
                                     onChange={handleFileChange}
                                     accept="image/*"
                                     disabled={!allChecked}
                                 />
-                                {previewUrl && <img
-                                    src={previewUrl}
-                                    alt="Cover"
-                                    style={{ height: '225px', width: '300px' }}
-                                    className="w-full h-full object-contain"
-                                />}
+                                {previewUrl && !croppedImage && <ImageUpload file={previewUrl} croppedImage={croppedImage} setCroppedImage={setCroppedImage} />}
+                                {croppedImage && (
+                                    <div className="mt-6">
+                                        <div className="border rounded-lg overflow-hidden">
+                                            <img
+                                                src={croppedImage}
+                                                alt="Cropped"
+                                                className="w-full h-auto max-h-64 object-contain"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         }
 
@@ -739,7 +772,7 @@ export default function PostForm({ postData, }: CardProps) {
                             <div style={{ width: '50%' }}>
 
                                 <PreviewCard
-                                    imgUrl={previewUrl}
+                                    imgUrl={croppedImage}
                                     name={watch().name}
                                     suburb={selectedLocation.suburb}
                                     state={selectedLocation.state}

@@ -26,6 +26,7 @@ import { SuperAdminProvider } from "./context/use-super-admin"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
 import ContactUs from "./pages/ContactUs"
+import ImageUpload from "./components/ImageUpload"
 type Question = {
   question: string;
   answers: string[];
@@ -65,6 +66,7 @@ function App() {
                   <Route path="update-details" element={<SignUp />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="edit-post/:postId" element={<EditPost />} />
+                  {/* <Route path="image-upload" element={<ImageUpload />} /> */}
                   <Route element={<JodRequired />} >
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/validate" element={<Validation />} />
