@@ -28,7 +28,7 @@ export default function Login({ title }: LoginProps) {
     const [members, setMembers] = useState<MemberType[]>([])
     const [loginError, setLoginError] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-    const [isAgree, setIsAgree] = useState<boolean>(false)
+    const [isAgree, setIsAgree] = useState<boolean>(true)
     const { register, formState: { errors }, handleSubmit, reset } = useForm()
 
     useEffect(() => {
@@ -143,13 +143,38 @@ export default function Login({ title }: LoginProps) {
                     <Link to="/member-register" className="btn w-48 btn-success !bg-[#42b72a] !text-white">Sign Up</Link>
                 </div>
                 <div className=" flex items-center gap-3 mt-5">
-                    <label className="cursor-pointer label ">
-                        <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
+                    <label className="cursor-pointer label">
+                        <div className="relative">
+                            <input
+                                type="checkbox"
+                                checked={isAgree}
+                                onChange={() => setIsAgree(!isAgree)}
+                                className="sr-only"
+                            />
+                            <div className={`w-5 h-5 border-2 rounded transition-colors duration-200 ${isAgree
+                                ? 'bg-white border-gray-500'
+                                : 'bg-white border-gray-300'
+                                }`}>
+                                {isAgree && (
+                                    <svg
+                                        className="absolute inset-0 w-5 h-5 text-black pointer-events-none"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={3}
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
                     </label>
                     <span className="label-text">I agree to the <span></span>
-                        <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
-                        <span></span> and <span></span>
-                        <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
+                        <a className=" text-bold underline cursor-pointer" href="https://www.noggins.co/_files/ugd/15a67b_d209eac9e13549748f1108d909bcf2f9.pdf" target="_blank">Policies, Terms & Conditions</a>
                     </span>
                 </div>
             </div>

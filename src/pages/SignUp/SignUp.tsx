@@ -358,11 +358,38 @@ export default function SignUp() {
                             </ToggleOn>
                         </Toggle>}
                         <div className=" flex items-center gap-3">
-                            <label className="cursor-pointer label ">
-                                <input type="checkbox" checked={isAgree} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
+                            <label className="cursor-pointer label">
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        checked={isAgree}
+                                        onChange={() => setIsAgree(!isAgree)}
+                                        className="sr-only"
+                                    />
+                                    <div className={`w-5 h-5 border-2 rounded transition-colors duration-200 ${isAgree
+                                        ? 'bg-white border-gray-500'
+                                        : 'bg-white border-gray-300'
+                                        }`}>
+                                        {isAgree && (
+                                            <svg
+                                                className="absolute inset-0 w-5 h-5 text-black pointer-events-none"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={3}
+                                                    d="M5 13l4 4L19 7"
+                                                />
+                                            </svg>
+                                        )}
+                                    </div>
+                                </div>
                             </label>
                             <span className="label-text">I agree to the <span></span>
-                                <a className=" text-bold underline cursor-pointer" href={`${import.meta.env.VITE_REACT_APP_SUPABASE_URL}/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf`} target="_blank">Terms of Service.</a>
+                                <a className=" text-bold underline cursor-pointer" href="https://www.noggins.co/_files/ugd/15a67b_d209eac9e13549748f1108d909bcf2f9.pdf" target="_blank">Policies, Terms & Conditions</a>
                             </span>
                         </div>
                         {isSubmitting ? <button className="btn w-full btn-disabled mt-3">Submitting<span className=" ml-4 loading loading-spinner !text-white"></span></button>
