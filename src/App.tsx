@@ -26,7 +26,8 @@ import { SuperAdminProvider } from "./context/use-super-admin"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
 import ContactUs from "./pages/ContactUs"
-import ImageUpload from "./components/ImageUpload"
+import RegisterBusiness from "./pages/Register/Business"
+import RegisterArtist from "./pages/Register/Artist"
 type Question = {
   question: string;
   answers: string[];
@@ -61,7 +62,8 @@ function App() {
                 <Route path="/update-email" element={<UpdateEmail />} />
                 <Route element={<AuthRequired />}>
                   <Route path="contact-us" element={<ContactUs />} />
-                  <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
+                  <Route path="register/business" element={<RegisterBusiness postData={undefined} name={""} description={""} />} />
+                  <Route path="register/artist" element={<RegisterArtist />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="update-details" element={<SignUp />} />
                   <Route path="manage-listings" element={<ManageListings />} />
