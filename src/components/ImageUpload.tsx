@@ -3,9 +3,16 @@ import Cropper from 'react-easy-crop'
 import { Slider } from "./ui/slider"
 import { Area } from "react-easy-crop";
 import { Button } from "./ui/button";
-import { FaCrop } from "react-icons/fa";
 
-export default function ImageUpload({ file, croppedImage, setCroppedImage }: { file: string, croppedImage: string | null, setCroppedImage: (croppedImage: string) => void }) {
+export default function ImageUpload({
+  file,
+  setCroppedImage,
+  circular = false
+}: {
+  file: string,
+  setCroppedImage: (croppedImage: string) => void,
+  circular?: boolean
+}) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -31,6 +38,19 @@ export default function ImageUpload({ file, croppedImage, setCroppedImage }: { f
         // Set canvas size to the cropped size
         canvas.width = pixelCrop.width
         canvas.height = pixelCrop.height
+
+        if (circular) {
+          // Create circular crop
+          ctx.beginPath()
+          ctx.arc(
+            pixelCrop.width / 2,
+            pixelCrop.height / 2,
+            Math.min(pixelCrop.width, pixelCrop.height) / 2,
+            0,
+            2 * Math.PI
+          )
+          ctx.clip()
+        }
 
         // Draw the cropped image
         ctx.drawImage(
@@ -87,7 +107,7 @@ export default function ImageUpload({ file, croppedImage, setCroppedImage }: { f
           image={file}
           crop={crop}
           zoom={zoom}
-          aspect={4 / 3}
+          aspect={circular ? 1 : 4 / 3}
           onCropChange={setCrop}
           onCropComplete={onCropComplete}
           onZoomChange={setZoom}
@@ -96,7 +116,11 @@ export default function ImageUpload({ file, croppedImage, setCroppedImage }: { f
               width: '100%',
               height: '100%',
               backgroundColor: '#f3f4f6'
-            }
+            },
+            cropAreaStyle: circular ? {
+              border: '2px solid #4e9da8',
+              borderRadius: '50%'
+            } : undefined
           }}
         />
       </div>
