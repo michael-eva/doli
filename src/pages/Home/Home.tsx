@@ -5,7 +5,7 @@ import CardSkeleton from "../../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import Pagination from "../../components/Pagination";
 import { CardProps } from "../../Types";
-import { RetrieveOwner } from "../../seed/RetrieveOwner";
+// import { RetrieveOwner } from "../../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
 import { filterOrders } from "./utils/Filter/filterOrders";
 import { deletePost } from "@/lib/deletePost";
@@ -49,7 +49,7 @@ export default function Home() {
     }
     useEffect(() => {
         if (user) {
-            RetrieveOwner(user.email, user);
+            // RetrieveOwner(user.email, user);
             verifyInvitedUsers()
         }
     }, [user?.email]);

@@ -1,10 +1,11 @@
 import { z } from "zod"
 import { useUser } from "@supabase/auth-helpers-react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { Music, Mic, Palette, Upload, Send } from "lucide-react";
+import { Music, Mic, Palette, Send } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
@@ -15,42 +16,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { useMutation } from "@tanstack/react-query";
+import { createArtist } from "@/db/mutations";
+import { uploadArtistImage } from "@/utils/imageUpload";
 
+export const RegisterArtistSchema = z.discriminatedUnion("type", [
+  z.object({
+    name: z.string().min(1),
+    admin_one_email: z.email(),
+    admin_two_email: z.email().or(z.literal("")).optional(),
+    image_url: z.string().min(1, "Image is required"),
+    type: z.literal("music"),
+    music_type: z.enum(["cover", "original"]),
+    genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]),
+    about: z.string().min(1),
+  }),
+  z.object({
+    name: z.string().min(1),
+    admin_one_email: z.email(),
+    admin_two_email: z.email().or(z.literal("")).optional(),
+    image_url: z.string().min(1, "Image is required"),
+    type: z.enum(["comedy", "other"]),
+    music_type: z.enum(["cover", "original"]).optional(),
+    genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]).optional(),
+    about: z.string().min(1),
+  })
+]);
 export default function RegisterArtist() {
   const user = useUser();
+  if (!user) {
+    return <div>Loading...</div>;
+  }
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [selectedFile, setSelectedFile] = useState<string>("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [imageForCropping, setImageForCropping] = useState<string>("");
+  const [selectedFileBlob, setSelectedFileBlob] = useState<Blob | null>(null);
 
-  const RegisterArtistSchema = z.discriminatedUnion("type", [
-    z.object({
-      name: z.string().min(1),
-      admin_one_email: z.string().email(),
-      admin_two_email: z.string().email(),
-      image_url: z.string().url(),
-      type: z.literal("music"),
-      music_type: z.enum(["cover", "original"]),
-      genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]),
-      about: z.string().min(1),
-    }),
-    z.object({
-      name: z.string().min(1),
-      admin_one_email: z.string().email(),
-      admin_two_email: z.string().email(),
-      image_url: z.string().url(),
-      type: z.enum(["comedy", "other"]),
-      music_type: z.enum(["cover", "original"]).optional(),
-      genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]).optional(),
-      about: z.string().min(1),
-    })
-  ]);
+  const { mutate: createArtistMutation, isPending: isCreatingArtist } = useMutation({
+    mutationFn: createArtist,
+  });
 
+  const handleImageUpload = async (selectedFile: Blob) => {
+    const result = await uploadArtistImage(selectedFile, user.id);
+
+    if (!result.success) {
+      console.error('Error uploading image:', result.error);
+      throw new Error(result.error || 'Failed to upload image');
+    }
+
+    return result.url!;
+  };
   const getDefaultValues = () => {
     return {
       name: "",
       admin_one_email: user?.email,
-      admin_two_email: "",
+      admin_two_email: undefined,
       image_url: "",
       type: undefined,
       music_type: undefined,
@@ -58,9 +80,10 @@ export default function RegisterArtist() {
       about: ""
     }
   }
-
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<z.infer<typeof RegisterArtistSchema>>({
-    defaultValues: getDefaultValues()
+  const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm<z.infer<typeof RegisterArtistSchema>>({
+    resolver: zodResolver(RegisterArtistSchema),
+    defaultValues: getDefaultValues(),
+    mode: "onChange"
   });
 
   // Set the user email once it's available
@@ -72,46 +95,88 @@ export default function RegisterArtist() {
 
   const selectedType = watch("type");
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setSelectedFile(result);
-        setValue("image_url", result);
-        // Reset cropped image when new file is selected
+      try {
+
+        // Store the file blob
+        setSelectedFileBlob(file);
+
+        // Convert the file to a data URL for cropping
+        const dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+
+        // Set the image URL in the form
+        setSelectedFile(dataUrl);
+        setValue("image_url", dataUrl);
+        setImageForCropping(dataUrl); // Store data URL for cropping
         setCroppedImage(null);
-      };
-      reader.readAsDataURL(file);
+
+      } catch (error) {
+        console.error("Error uploading image:", error);
+
+        // Reset on error
+        setSelectedFile("");
+        setCroppedImage(null);
+        setImageForCropping("");
+        setSelectedFileBlob(null);
+        setValue("image_url", "");
+      }
     } else {
       // If no file selected, reset everything
       setSelectedFile("");
       setCroppedImage(null);
+      setImageForCropping("");
+      setSelectedFileBlob(null);
       setValue("image_url", "");
     }
   };
 
   const handleFormSubmit = async (data: z.infer<typeof RegisterArtistSchema>) => {
-    setIsSubmitting(true);
     try {
-      // Use cropped image if available, otherwise use the original
-      const finalImageUrl = croppedImage || data.image_url;
+      let finalImageUrl = data.image_url;
 
-      // Here you would typically send the data to your backend
-      console.log("Form data:", { ...data, image_url: finalImageUrl });
+      // If we have a selected file blob, upload it to Supabase
+      if (selectedFileBlob) {
 
-      toast.success("Artist registration submitted successfully!");
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+        // Upload the image to Supabase
+        finalImageUrl = await handleImageUpload(selectedFileBlob);
+      }
+
+      // Convert undefined to null for the database
+      const submissionData = {
+        ...data,
+        image_url: finalImageUrl,
+        admin_two_email: data.admin_two_email || null
+      };
+
+      createArtistMutation(
+        submissionData,
+        {
+          onSuccess: () => {
+            toast.success("Artist registration submitted successfully!");
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+          },
+          onError: (error) => {
+            console.error("Error submitting form:", error);
+            toast.error("Failed to submit registration. Please try again.");
+          }
+        }
+      );
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to submit registration. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      console.error("Error uploading image:", error);
+      toast.dismiss();
+      toast.error("Failed to upload image. Please try again.");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -145,11 +210,11 @@ export default function RegisterArtist() {
                     </div>
                   </div>
 
-                  {selectedFile && !croppedImage && (
+                  {imageForCropping && !croppedImage && (
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-gray-900">Crop Your Image</h3>
                       <ImageUpload
-                        file={selectedFile}
+                        file={imageForCropping} // Pass the data URL for cropping
                         setCroppedImage={setCroppedImage}
                         circular={true}
                       />
@@ -333,7 +398,7 @@ export default function RegisterArtist() {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Secondary Admin Email *
+                      Secondary Admin Email (Optional)
                     </label>
                     <Input
                       {...register("admin_two_email")}
@@ -376,10 +441,10 @@ export default function RegisterArtist() {
               <div className="pt-6">
                 <Button
                   type="submit"
-                  className="w-full bg-[#4e9da8] hover:bg-[#3d8a94] text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group"
-                  disabled={isSubmitting}
+                  className="w-full !bg-[#4e9da8] !hover:bg-[#3d8a94] text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isCreatingArtist || !isValid}
                 >
-                  {isSubmitting ? (
+                  {isCreatingArtist ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
                       Submitting...

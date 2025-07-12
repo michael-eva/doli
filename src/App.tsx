@@ -7,13 +7,13 @@ import Login from "./pages/Login"
 import ManageListings from "./pages/ManageListings/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
-import PostForm from "./components/PostForm/PostForm"
+// import PostForm from "./components/PostForm/PostForm"
 import AuthRequired from "./Auth/AuthRequired"
 import JodRequired from "./Jod/JodRequired"
 import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost/EditPost"
 import Wholesale from "./pages/Wholesale"
-import SeedForm from "./seed/SeedForm"
+// import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
@@ -74,7 +74,7 @@ function App() {
                     <Route path="dashboard/validate" element={<Validation />} />
                     <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
                   </Route>
-                  <Route path="seed" element={<SeedForm />} />
+                  {/* <Route path="seed" element={<SeedForm />} /> */}
                 </Route>
                 <Route path="survey" element={<Survey data={questions} />} />
                 <Route path="member-register" element={<SignUp />} />

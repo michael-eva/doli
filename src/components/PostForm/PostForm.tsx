@@ -18,8 +18,8 @@ import ToggleButton from "../Toggle/ToggleButton.tsx";
 import ToggleOn from "../Toggle/ToggleOn.tsx";
 import SimpleModal from "../Modals/SimpleModal.tsx";
 import { FaInfoCircle } from "react-icons/fa";
-import { determineVerificationStatus, handleErrors, countChars, CDNUrl } from "./utils.ts";
-import compress from 'compressorjs';
+import { determineVerificationStatus, handleErrors, countChars } from "./utils.ts";
+import { uploadCoverImage, deleteImage } from "@/utils/imageUpload";
 import ImageUpload from "../ImageUpload.tsx";
 
 type LocationData = {
@@ -122,64 +122,22 @@ export default function PostForm({ postData, }: CardProps) {
         }
     }
     const deleteCurrentImage = async () => {
-        const currentImageName = user?.id + '/' + postData?.postId;
-        const { error: deleteError } = await supabase.storage
-            .from('cover_images')
-            .remove([currentImageName]);
-        if (deleteError) {
-            console.error('Error deleting current image:', deleteError);
+        const currentImagePath = `${user?.id}/${postData?.postId}`;
+        const result = await deleteImage('cover_images', currentImagePath);
+        if (!result.success) {
+            console.error('Error deleting current image:', result.error);
         }
     };
 
     const uploadNewImage = async (postId: string, selectedFile: Blob) => {
-        // Compress the selected file
-        const compressedFile: Blob | MediaSource = await new Promise((resolve, reject) => {
-            new compress(selectedFile, {
-                maxWidth: 1024,
-                maxHeight: 1024,
-                quality: 0.8,
-                success(result) {
-                    resolve(result);
-                },
-                error(error) {
-                    reject(error);
-                }
-            });
-        });
+        const result = await uploadCoverImage(selectedFile, user?.id!, postId);
 
-        // Convert the compressed image to WebP format
-        const webpBlob: any = await new Promise((resolve, reject) => {
-            const image = new Image();
-            image.src = URL.createObjectURL(compressedFile);
-
-            image.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = image.naturalWidth;
-                canvas.height = image.naturalHeight;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(image, 0, 0);
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, 'image/webp');
-            };
-
-            image.onerror = reject;
-        });
-
-        // Upload the webp image to Supabase
-        const { data: imageData, error: imageError } = await supabase.storage
-            .from('cover_images')
-            .upload(user?.id + '/' + postId, webpBlob, {
-                contentType: 'image/webp',
-                upsert: false
-            });
-
-        if (imageError) {
-            console.error('Error uploading image:', imageError);
+        if (!result.success) {
+            console.error('Error uploading image:', result.error);
             return null;
         }
 
-        return CDNUrl(imageData);
+        return result.url!;
     };
 
 
