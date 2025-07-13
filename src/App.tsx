@@ -30,6 +30,7 @@ import RegisterBusiness from "./pages/Register/Business"
 import RegisterArtist from "./pages/Register/Artist"
 import AddGigs from "./pages/AddGigs"
 import Artists from "./pages/GigGuide/Artists"
+import Gigs from "./pages/GigGuide/Gigs"
 type Question = {
   question: string;
   answers: string[];
@@ -79,6 +80,7 @@ function App() {
                   {/* <Route path="seed" element={<SeedForm />} /> */}
                 </Route>
                 <Route path="gig-guide/artists" element={<Artists />} />
+                <Route path="gig-guide/gigs" element={<Gigs />} />
                 <Route path="survey" element={<Survey data={questions} />} />
                 <Route path="member-register" element={<SignUp />} />
                 <Route path="login" element={<Login />} />

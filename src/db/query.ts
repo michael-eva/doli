@@ -64,3 +64,31 @@ export async function GetUserBusiness(userId: string) {
 
   return data;
 }
+
+export async function GetGigs() {
+  const { data, error } = await supabase.from("gigs").select(`
+            *,
+      artists (
+        name,
+        music_type,
+        genre,
+        type,
+        image_url
+      ),
+      posts (
+        name,
+        locations (
+          suburb,
+          state,
+          postcode
+        )
+      )
+    `);
+
+  if (error) {
+    console.error("Error:", error);
+    return [];
+  }
+
+  return data;
+}
