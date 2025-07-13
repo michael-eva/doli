@@ -289,7 +289,7 @@ export default function AddGigs() {
                 <div className="pt-6">
                   <Button
                     type="submit"
-                    className="btn btn-primary w-full group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+                    className="btn !bg-[#4e9da8] !text-white w-full group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
                     disabled={!isValid}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
