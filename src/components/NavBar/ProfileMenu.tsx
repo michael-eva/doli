@@ -26,7 +26,7 @@ export default function ProfileMenu({ isJod, isMobile, handleLogout, userHasBusi
                 <li><NavLink to={'manage-listings'}>My Businesses</NavLink></li>
                 {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>}
                 {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>}
-                {!userHasBusiness && <li><NavLink to={'add-gigs'}>Add Gigs</NavLink></li>}
+                {userHasBusiness && <li><NavLink to={'add-gigs'}>Add Gigs</NavLink></li>}
                 <div className="divider" style={{ margin: '0' }}></div>
                 {!isMobile && <li><ReferFriend /></li>}
                 {isMobile && <li><ContactUsDialog /></li>}
