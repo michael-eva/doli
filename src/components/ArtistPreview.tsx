@@ -1,3 +1,5 @@
+import { Button } from "./ui/button"
+
 interface ArtistPreviewProps {
   artistName: string
   artistImage: string
@@ -5,6 +7,7 @@ interface ArtistPreviewProps {
   musicType: string
   genre: string
   about: string
+  showFollowButton?: boolean
 }
 
 export default function ArtistPreview({
@@ -13,7 +16,8 @@ export default function ArtistPreview({
   artistType,
   musicType,
   genre,
-  about
+  about,
+  showFollowButton = false
 }: ArtistPreviewProps) {
   const getArtistSubtitle = () => {
     if (genre && musicType) {
@@ -24,6 +28,10 @@ export default function ArtistPreview({
       return artistType
     }
     return "Live Music"
+  }
+
+  const handleFollow = () => {
+    alert("Following artist")
   }
 
   return (
@@ -50,6 +58,11 @@ export default function ArtistPreview({
           <div className="text-gray-700 text-sm">
             {about}
           </div>
+          {showFollowButton && (
+            <Button onClick={handleFollow} className="rounded-full !bg-[#4e9da8] !text-white hover:bg-[#4e9da8]/80">
+              Follow
+            </Button>
+          )}
         </div>
       </div>
     </div>
