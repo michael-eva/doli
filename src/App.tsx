@@ -28,6 +28,7 @@ import { Toaster } from "react-hot-toast"
 import ContactUs from "./pages/ContactUs"
 import RegisterBusiness from "./pages/Register/Business"
 import RegisterArtist from "./pages/Register/Artist"
+import AddGigs from "./pages/AddGigs"
 type Question = {
   question: string;
   answers: string[];
@@ -68,7 +69,7 @@ function App() {
                   <Route path="update-details" element={<SignUp />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="edit-post/:postId" element={<EditPost />} />
-                  {/* <Route path="image-upload" element={<ImageUpload />} /> */}
+                  <Route path="add-gigs" element={<AddGigs />} />
                   <Route element={<JodRequired />} >
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/validate" element={<Validation />} />

@@ -9,9 +9,10 @@ interface ProfileMenuProps {
     isJod: boolean;
     isMobile: boolean;
     handleLogout: () => void;
+    userHasBusiness: boolean;
 }
 
-export default function ProfileMenu({ isJod, isMobile, handleLogout }: ProfileMenuProps) {
+export default function ProfileMenu({ isJod, isMobile, handleLogout, userHasBusiness }: ProfileMenuProps) {
     return (
         <div className="dropdown dropdown-end dropdown-hover">
             <div tabIndex={0} role="button" className="text-xl">
@@ -25,6 +26,7 @@ export default function ProfileMenu({ isJod, isMobile, handleLogout }: ProfileMe
                 <li><NavLink to={'manage-listings'}>My Businesses</NavLink></li>
                 {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>}
                 {isJod && <li><NavLink to={'dashboard'}>Dashboard</NavLink></li>}
+                {!userHasBusiness && <li><NavLink to={'add-gigs'}>Add Gigs</NavLink></li>}
                 <div className="divider" style={{ margin: '0' }}></div>
                 {!isMobile && <li><ReferFriend /></li>}
                 {isMobile && <li><ContactUsDialog /></li>}
