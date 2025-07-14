@@ -1,4 +1,5 @@
-import { GetGigs } from "@/db/query"
+import { CheckBusinessStatus, GetGigs } from "@/db/query"
+import { useUser } from "@supabase/auth-helpers-react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
@@ -85,9 +86,16 @@ function GigCard({ gig }: { gig: Gig }) {
 }
 
 export default function Gigs() {
+  const navigate = useNavigate()
   const { data: gigs } = useQuery({
     queryKey: ["gigs"],
     queryFn: GetGigs,
+  })
+  const user = useUser()
+  const { data: userHasBusiness, isLoading: isBusinessLoading } = useQuery({
+    queryKey: ["isBusiness"],
+    queryFn: () => CheckBusinessStatus(user?.id!),
+    enabled: !!user?.id
   })
   if (!gigs) {
     // Skeleton loading state
@@ -145,7 +153,17 @@ export default function Gigs() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Gigs</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Upcoming Gigs</h1>
+        {userHasBusiness && (
+          <button
+            onClick={() => navigate('/add-gigs')}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            Create Gig
+          </button>
+        )}
+      </div>
       <div className="space-y-6">
         {sortedDates.map(date => (
           <div key={date}>

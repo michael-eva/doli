@@ -132,3 +132,49 @@ export async function GetGigs() {
 
   return data;
 }
+
+// Get artists that a user follows
+export async function GetFollowedArtists(userId: string, name?: string) {
+  let query = supabase
+    .from("artist_follows")
+    .select(
+      `
+      artist_id,
+      artists (
+        id,
+        name,
+        admin_one_email,
+        admin_two_email,
+        image_url,
+        type,
+        music_type,
+        genre,
+        about,
+        is_verified,
+        is_rejected,
+        created_at,
+        updated_at
+      )
+    `
+    )
+    .eq("user_id", userId);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error getting followed artists:", error);
+    return [];
+  }
+
+  // Extract the artists from the joined data
+  const artists = data?.map((follow) => follow.artists).filter(Boolean) || [];
+
+  // Apply name filter if provided
+  if (name && name.trim() !== "") {
+    return artists.filter((artist: any) =>
+      artist.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  return artists;
+}

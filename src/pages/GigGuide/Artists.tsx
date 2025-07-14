@@ -1,29 +1,69 @@
 import { useQuery } from "@tanstack/react-query"
-import { useSearchParams } from "react-router-dom"
-import { GetArtists } from "@/db/query"
+import { useSearchParams, useNavigate } from "react-router-dom"
+import { GetArtists, GetFollowedArtists } from "@/db/query"
 import ArtistPreview from "@/components/ArtistPreview"
+import { useUser } from "@supabase/auth-helpers-react"
+import { Button } from "@/components/ui/button"
 
 export default function Artists() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const nameFilter = searchParams.get("name") || ""
+  const showFollows = searchParams.get("showFollows") === "true"
+  const user = useUser()
 
   const { data: artists } = useQuery({
-    queryKey: ["artists", nameFilter],
-    queryFn: () => GetArtists(nameFilter),
+    queryKey: ["artists", nameFilter, showFollows, user?.id],
+    queryFn: () => {
+      if (showFollows && user?.id) {
+        return GetFollowedArtists(user.id, nameFilter)
+      }
+      return GetArtists(nameFilter)
+    },
+    enabled: !showFollows || !!user?.id
   })
+
+  const handleToggleFollows = () => {
+    const newSearchParams = new URLSearchParams(searchParams)
+    if (showFollows) {
+      newSearchParams.delete("showFollows")
+    } else {
+      newSearchParams.set("showFollows", "true")
+    }
+    setSearchParams(newSearchParams)
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Artists
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          {showFollows ? "Followed Artists" : "Artists"}
+        </h1>
+        {user && (
+          <Button
+            onClick={handleToggleFollows}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            {showFollows ? "Show All Artists" : "Show Followed Artists"}
+          </Button>
+        )}
+      </div>
       {artists && artists.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-500 text-lg mb-2">
-            {nameFilter ? `No artists found matching "${nameFilter}"` : "No artists found"}
+            {showFollows
+              ? (nameFilter ? `No followed artists found matching "${nameFilter}"` : "You haven't followed any artists yet")
+              : (nameFilter ? `No artists found matching "${nameFilter}"` : "No artists found")
+            }
           </div>
           {nameFilter && (
             <div className="text-gray-400">
               Try adjusting your search or <a href="/gig-guide/artists" className="text-blue-500 underline hover:text-blue-700 transition-colors">view all artists</a>
+            </div>
+          )}
+          {showFollows && !nameFilter && (
+            <div className="text-gray-400">
+              <a href="/gig-guide/artists" className="text-blue-500 underline hover:text-blue-700 transition-colors">Discover artists to follow</a>
             </div>
           )}
         </div>
