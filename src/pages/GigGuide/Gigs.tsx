@@ -69,7 +69,9 @@ function GigCard({ gig }: { gig: Gig }) {
           }} className="underline font-bold cursor-pointer">{gig.artists.name}</span> - {gig.artists.type === "music" ? gig.artists.genre.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " " + gig.artists.music_type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") : gig.artists.type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
         </div>
         <div className="text-gray-700 mb-1">
-          {formattedTime} @ {gig.posts.name}
+          {formattedTime} @ <span className="underline font-bold cursor-pointer" onClick={() => {
+            navigate(`/?search=${gig.posts.name}`)
+          }}>{gig.posts.name}</span>
         </div>
         <div className="text-gray-600 mb-2">
           {locationString}
