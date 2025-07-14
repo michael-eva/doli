@@ -28,6 +28,40 @@ export async function CheckBusinessStatus(userId: string) {
 
   return data && data.length > 0;
 }
+
+// Check if a user is following an artist
+export async function isFollowingArtist(userId: string, artistId: string) {
+  const { data, error } = await supabase
+    .from("artist_follows")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("artist_id", artistId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    // PGRST116 is "not found" error
+    console.error("Error checking follow status:", error);
+    return false;
+  }
+
+  return !!data;
+}
+
+// Get follow count for an artist
+export async function getArtistFollowCount(artistId: string) {
+  const { count, error } = await supabase
+    .from("artist_follows")
+    .select("*", { count: "exact", head: true })
+    .eq("artist_id", artistId);
+
+  if (error) {
+    console.error("Error getting follow count:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
 export async function GetArtists(name?: string) {
   let query = supabase.from("artists").select("*");
 

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import businessType from "@/data/businessTypes.json"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { CreateGig } from "@/db/mutations"
 import ArtistPreview from "@/components/ArtistPreview"
 import { toast } from "react-hot-toast"
@@ -77,9 +77,12 @@ export default function AddGigs() {
   }, [userBusiness, setValue])
 
   // Handle artist selection and prefill artist data
+  const [selectedArtistId, setSelectedArtistId] = useState<string>("")
+
   const handleArtistSelection = (artistName: string) => {
     const selectedArtist = artists?.find(artist => artist.name === artistName)
     if (selectedArtist) {
+      setSelectedArtistId(selectedArtist.id!)
       setValue("artist.name", selectedArtist.name)
       setValue("artist.image_url", selectedArtist.image_url)
       setValue("artist.type", selectedArtist.type)
@@ -207,12 +210,14 @@ export default function AddGigs() {
                 {/* Artist Preview */}
                 {selectedArtistName && (
                   <ArtistPreview
+                    artistId={selectedArtistId}
                     artistName={selectedArtistName || "Artist Name"}
                     artistImage={artistImage || '/images/placeholder.jpeg'}
                     artistType={artistType || ""}
                     musicType={musicType || ""}
                     genre={genre || ""}
                     about={about || "Artist description goes here. Tell us about your artist/band, your style, experience, and what makes you unique..."}
+                    showFollowButton={false}
                   />
                 )}
               </div>

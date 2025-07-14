@@ -32,6 +32,7 @@ export default function Artists() {
           {artists?.sort((a, b) => a.name.localeCompare(b.name)).map((artist) => (
             <ArtistPreview
               key={artist.id}
+              artistId={artist.id!}
               artistName={artist.name}
               artistImage={artist.image_url}
               artistType={artist.type}

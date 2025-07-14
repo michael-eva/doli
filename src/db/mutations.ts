@@ -10,6 +10,30 @@ export const createArtist = async (artist: Artist) => {
   return { data, error };
 };
 
+// Follow an artist
+export const followArtist = async (userId: string, artistId: string) => {
+  const { data, error } = await supabase
+    .from("artist_follows")
+    .insert({
+      user_id: userId,
+      artist_id: artistId,
+      created_at: new Date().toISOString(),
+    })
+    .select();
+  return { data, error };
+};
+
+// Unfollow an artist
+export const unfollowArtist = async (userId: string, artistId: string) => {
+  const { data, error } = await supabase
+    .from("artist_follows")
+    .delete()
+    .eq("user_id", userId)
+    .eq("artist_id", artistId)
+    .select();
+  return { data, error };
+};
+
 export const uploadImage = async (
   userId: string,
   filename: string,

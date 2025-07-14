@@ -1,6 +1,14 @@
 import { Button } from "./ui/button"
+import { useUser } from "@supabase/auth-helpers-react"
+import { useNavigate } from "react-router-dom"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { followArtist, unfollowArtist } from "@/db/mutations"
+import { isFollowingArtist } from "@/db/query"
+import { useState, useEffect } from "react"
+import toast from "react-hot-toast"
 
 interface ArtistPreviewProps {
+  artistId: string
   artistName: string
   artistImage: string
   artistType: string
@@ -11,6 +19,7 @@ interface ArtistPreviewProps {
 }
 
 export default function ArtistPreview({
+  artistId,
   artistName,
   artistImage,
   artistType,
@@ -19,6 +28,53 @@ export default function ArtistPreview({
   about,
   showFollowButton = false
 }: ArtistPreviewProps) {
+  const user = useUser()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [isFollowing, setIsFollowing] = useState(false)
+
+  // Check if user is following this artist
+  const { data: followingStatus } = useQuery({
+    queryKey: ["followingStatus", user?.id, artistId],
+    queryFn: () => isFollowingArtist(user?.id!, artistId),
+    enabled: !!user?.id && !!artistId,
+  })
+
+  // Follow mutation
+  const followMutation = useMutation({
+    mutationFn: () => followArtist(user?.id!, artistId),
+    onSuccess: () => {
+      setIsFollowing(true)
+      queryClient.invalidateQueries({ queryKey: ["followingStatus", user?.id, artistId] })
+      toast.success(`Following ${artistName}`)
+    },
+    onError: (error) => {
+      console.error("Error following artist:", error)
+      toast.error("Failed to follow artist. Please try again.")
+    }
+  })
+
+  // Unfollow mutation
+  const unfollowMutation = useMutation({
+    mutationFn: () => unfollowArtist(user?.id!, artistId),
+    onSuccess: () => {
+      setIsFollowing(false)
+      queryClient.invalidateQueries({ queryKey: ["followingStatus", user?.id, artistId] })
+      toast.success(`Unfollowed ${artistName}`)
+    },
+    onError: (error) => {
+      console.error("Error unfollowing artist:", error)
+      toast.error("Failed to unfollow artist. Please try again.")
+    }
+  })
+
+  // Update local state when query data changes
+  useEffect(() => {
+    if (followingStatus !== undefined) {
+      setIsFollowing(followingStatus)
+    }
+  }, [followingStatus])
+
   const getArtistSubtitle = () => {
     if (genre && musicType) {
       return `${genre.charAt(0).toUpperCase() + genre.slice(1)} ${musicType === "cover" ? "Covers" : "Originals"}`
@@ -30,9 +86,22 @@ export default function ArtistPreview({
     return "Live Music"
   }
 
-  const handleFollow = () => {
-    alert("Following artist")
+  const handleFollowClick = () => {
+    if (!user) {
+      navigate('/login', {
+        state: { message: "Please sign in to follow artists" }
+      })
+      return
+    }
+
+    if (isFollowing) {
+      unfollowMutation.mutate()
+    } else {
+      followMutation.mutate()
+    }
   }
+
+  const isLoading = followMutation.isPending || unfollowMutation.isPending
 
   return (
     <div className="flex pt-8">
@@ -59,8 +128,22 @@ export default function ArtistPreview({
             {about}
           </div>
           {showFollowButton && (
-            <Button onClick={handleFollow} className="rounded-full !bg-[#4e9da8] !text-white hover:bg-[#4e9da8]/80">
-              Follow
+            <Button
+              onClick={handleFollowClick}
+              disabled={isLoading}
+              className={`rounded-full !text-white hover:opacity-80 transition-all ${isFollowing
+                ? "!bg-[#ce3f42] hover:!bg-[#ce3f42]/80"
+                : "!bg-[#4e9da8] hover:!bg-[#4e9da8]/80"
+                }`}
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {isFollowing ? "Unfollowing..." : "Following..."}
+                </span>
+              ) : (
+                isFollowing ? "Unfollow" : "Follow"
+              )}
             </Button>
           )}
         </div>
