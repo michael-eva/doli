@@ -28,5 +28,6 @@ If you are developing a production application, we recommend updating the config
 
 Next:
 
-- get and display artists in dropdown
-- get form fields up and running
+- Follow / unfollow functionality for artists
+- Link artist in gig guide/gigs to artist
+- Link business in gig guide/gigs to business

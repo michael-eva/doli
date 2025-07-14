@@ -36,7 +36,7 @@ export default function AddGigs() {
   })
   const { data: artists } = useQuery({
     queryKey: ["artists"],
-    queryFn: GetArtists,
+    queryFn: () => GetArtists(),
     enabled: !!user?.id
   })
   const { data: userBusiness } = useQuery({

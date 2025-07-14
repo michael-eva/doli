@@ -28,8 +28,14 @@ export async function CheckBusinessStatus(userId: string) {
 
   return data && data.length > 0;
 }
-export async function GetArtists() {
-  const { data, error } = await supabase.from("artists").select("*");
+export async function GetArtists(name?: string) {
+  let query = supabase.from("artists").select("*");
+
+  if (name && name.trim() !== "") {
+    query = query.ilike("name", `%${name}%`);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error:", error);

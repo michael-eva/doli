@@ -1,5 +1,6 @@
 import { GetGigs } from "@/db/query"
 import { useQuery } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom"
 
 interface Gig {
   id: string
@@ -38,6 +39,7 @@ function formatTime(timeString: string): string {
 }
 
 function GigCard({ gig }: { gig: Gig }) {
+  const navigate = useNavigate()
   const formattedTime = formatTime(gig.event_time)
   const location = gig.posts.locations[0]
   const locationString = `${location.suburb}, ${location.state} ${location.postcode}`
@@ -61,8 +63,10 @@ function GigCard({ gig }: { gig: Gig }) {
         )}
       </div>
       <div className="flex-1">
-        <div className="text-lg font-semibold text-gray-900 mb-1">
-          {gig.artists.name} - {gig.artists.type === "music" ? gig.artists.genre.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " " + gig.artists.music_type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") : gig.artists.type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+        <div className="text-lg  text-gray-900 mb-1 ">
+          <span onClick={() => {
+            navigate(`/gig-guide/artists?name=${gig.artists.name}`)
+          }} className="underline font-bold cursor-pointer">{gig.artists.name}</span> - {gig.artists.type === "music" ? gig.artists.genre.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " " + gig.artists.music_type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") : gig.artists.type.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
         </div>
         <div className="text-gray-700 mb-1">
           {formattedTime} @ {gig.posts.name}
