@@ -152,7 +152,8 @@ export default function RegisterArtist() {
       const submissionData = {
         ...data,
         image_url: finalImageUrl,
-        admin_two_email: data.admin_two_email || null
+        admin_two_email: data.admin_two_email || null,
+        user_id: user.id
       };
 
       createArtistMutation(

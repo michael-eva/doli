@@ -21,6 +21,7 @@ interface Gig {
       postcode: string
     }>
   }
+  created_by: string
 }
 
 function formatDate(dateString: string): string {
@@ -42,6 +43,7 @@ function formatTime(timeString: string): string {
 }
 
 function GigCard({ gig }: { gig: Gig }) {
+  const user = useUser()
   const navigate = useNavigate()
   const { isJod } = useSuperAdmin()
   const formattedTime = formatTime(gig.event_time)
@@ -50,9 +52,8 @@ function GigCard({ gig }: { gig: Gig }) {
   const ticketInfo = gig.ticket_type === 'free' ? 'Free Entry' : 'Ticketed Event'
   const artistImage = gig.artists.image_url
   const artistInitial = gig.artists.name.charAt(0).toUpperCase()
-  console.log(gig)
-  // Check if user can edit gigs (admin or isJob user)
-  const canEditGigs = isJod
+
+  const canEditGigs = isJod || user?.id === gig.created_by
 
   const handleEditGig = () => {
     // Navigate to add-gigs page with gig ID for editing

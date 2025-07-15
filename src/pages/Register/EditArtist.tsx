@@ -19,7 +19,6 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateArtist } from "@/db/mutations";
 import { uploadArtistImage } from "@/utils/imageUpload";
-import { useSuperAdmin } from "@/context/use-super-admin";
 
 export const EditArtistSchema = z.discriminatedUnion("type", [
   z.object({
@@ -51,32 +50,15 @@ export default function EditArtist() {
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isJod } = useSuperAdmin();
 
   // Get artist data from navigation state
   const artistData = location.state?.artistData;
   const isEditing = location.state?.isEditing;
 
-  // Check if user has permission to edit
-  const canEdit = isJod || user?.email === "admin@doli.com"; // Add your admin email check here
-
   if (!user) {
     return <div>Loading...</div>;
   }
 
-  if (!canEdit) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-lg text-gray-600 mb-8">You don't have permission to edit artists.</p>
-          <Button onClick={() => navigate('/gig-guide/artists')} className="bg-blue-600 hover:bg-blue-700">
-            Back to Artists
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   if (!artistData || !isEditing) {
     return (

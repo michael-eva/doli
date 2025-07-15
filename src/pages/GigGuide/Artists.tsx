@@ -46,7 +46,7 @@ export default function Artists() {
   }
 
   // Check if user can edit artists (admin or isJob user)
-  const canEditArtists = isJod || user?.email === "admin@doli.com" // Add your admin email check here
+  const canEditArtists = isJod || artists?.find(artist => artist.user_id === user?.id)
 
   return (
     <div className="container mx-auto px-4 py-8">
