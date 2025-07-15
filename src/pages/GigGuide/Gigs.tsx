@@ -2,6 +2,8 @@ import { CheckBusinessStatus, GetGigs } from "@/db/query"
 import { useUser } from "@supabase/auth-helpers-react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
+import { useSuperAdmin } from "@/context/use-super-admin"
+import { Button } from "@/components/ui/button"
 
 interface Gig {
   id: string
@@ -41,15 +43,43 @@ function formatTime(timeString: string): string {
 
 function GigCard({ gig }: { gig: Gig }) {
   const navigate = useNavigate()
+  const { isJod } = useSuperAdmin()
   const formattedTime = formatTime(gig.event_time)
   const location = gig.posts.locations[0]
   const locationString = `${location.suburb}, ${location.state} ${location.postcode}`
   const ticketInfo = gig.ticket_type === 'free' ? 'Free Entry' : 'Ticketed Event'
   const artistImage = gig.artists.image_url
   const artistInitial = gig.artists.name.charAt(0).toUpperCase()
+  console.log(gig)
+  // Check if user can edit gigs (admin or isJob user)
+  const canEditGigs = isJod
+
+  const handleEditGig = () => {
+    // Navigate to add-gigs page with gig ID for editing
+    navigate(`/add-gigs?edit=${gig.id}`, {
+      state: {
+        gigData: gig,
+        isEditing: true
+      }
+    })
+  }
 
   return (
-    <div className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 hover:shadow-lg transition-shadow">
+    <div className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 hover:shadow-lg transition-shadow relative">
+      {/* Edit button for authorized users */}
+      {canEditGigs && (
+        <div className="absolute top-2 right-2">
+          <Button
+            onClick={handleEditGig}
+            size="sm"
+            variant="outline"
+            className="bg-white/90 hover:bg-white text-gray-700 border-gray-300 hover:border-gray-400"
+          >
+            Edit
+          </Button>
+        </div>
+      )}
+
       <div className="flex-shrink-0 mr-4">
         {artistImage ? (
           <img

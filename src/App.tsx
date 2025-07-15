@@ -28,6 +28,7 @@ import { Toaster } from "react-hot-toast"
 import ContactUs from "./pages/ContactUs"
 import RegisterBusiness from "./pages/Register/Business"
 import RegisterArtist from "./pages/Register/Artist"
+import EditArtist from "./pages/Register/EditArtist"
 import AddGigs from "./pages/AddGigs"
 import Artists from "./pages/GigGuide/Artists"
 import Gigs from "./pages/GigGuide/Gigs"
@@ -67,6 +68,7 @@ function App() {
                   <Route path="contact-us" element={<ContactUs />} />
                   <Route path="register/business" element={<RegisterBusiness postData={undefined} name={""} description={""} />} />
                   <Route path="register/artist" element={<RegisterArtist />} />
+                  <Route path="edit-artist" element={<EditArtist />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="update-details" element={<SignUp />} />
                   <Route path="manage-listings" element={<ManageListings />} />

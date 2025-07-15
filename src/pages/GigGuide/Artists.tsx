@@ -4,6 +4,7 @@ import { GetArtists, GetFollowedArtists } from "@/db/query"
 import ArtistPreview from "@/components/ArtistPreview"
 import { useUser } from "@supabase/auth-helpers-react"
 import { Button } from "@/components/ui/button"
+import { useSuperAdmin } from "@/context/use-super-admin"
 
 export default function Artists() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -11,6 +12,7 @@ export default function Artists() {
   const nameFilter = searchParams.get("name") || ""
   const showFollows = searchParams.get("showFollows") === "true"
   const user = useUser()
+  const { isJod } = useSuperAdmin()
 
   const { data: artists } = useQuery({
     queryKey: ["artists", nameFilter, showFollows, user?.id],
@@ -32,6 +34,19 @@ export default function Artists() {
     }
     setSearchParams(newSearchParams)
   }
+
+  const handleEditArtist = (artist: any) => {
+    // Navigate to edit artist page with artist data
+    navigate('/edit-artist', {
+      state: {
+        artistData: artist,
+        isEditing: true
+      }
+    })
+  }
+
+  // Check if user can edit artists (admin or isJob user)
+  const canEditArtists = isJod || user?.email === "admin@doli.com" // Add your admin email check here
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,17 +85,31 @@ export default function Artists() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {artists?.sort((a, b) => a.name.localeCompare(b.name)).map((artist) => (
-            <ArtistPreview
-              key={artist.id}
-              artistId={artist.id!}
-              artistName={artist.name}
-              artistImage={artist.image_url}
-              artistType={artist.type}
-              musicType={artist.music_type || ""}
-              genre={artist.genre || ""}
-              about={artist.about}
-              showFollowButton={true}
-            />
+            <div key={artist.id} className="relative">
+              <ArtistPreview
+                artistId={artist.id!}
+                artistName={artist.name}
+                artistImage={artist.image_url}
+                artistType={artist.type}
+                musicType={artist.music_type || ""}
+                genre={artist.genre || ""}
+                about={artist.about}
+                showFollowButton={true}
+              />
+              {/* Edit button for authorized users */}
+              {canEditArtists && (
+                <div className="absolute top-2 right-2">
+                  <Button
+                    onClick={() => handleEditArtist(artist)}
+                    size="sm"
+                    variant="outline"
+                    className="bg-white/90 hover:bg-white text-gray-700 border-gray-300 hover:border-gray-400"
+                  >
+                    Edit
+                  </Button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

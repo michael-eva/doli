@@ -1,17 +1,19 @@
-import { GetArtists, GetUserBusiness } from "@/db/query"
+import { GetArtists, GetGigs } from "@/db/query"
 import { useUser } from "@supabase/auth-helpers-react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import businessType from "@/data/businessTypes.json"
 import { useEffect, useState } from "react"
-import { CreateGig } from "@/db/mutations"
+import { CreateGig, updateGig } from "@/db/mutations"
 import ArtistPreview from "@/components/ArtistPreview"
 import { toast } from "react-hot-toast"
 import { Button } from "@/components/ui/button"
+import { useNavigate, useLocation } from "react-router-dom"
 
 export const GigSchema = z.object({
+  id: z.string().optional(), // Optional for create mode, required for edit mode
   businessName: z.string().min(1),
   suburb: z.string().min(1),
   type: z.number(),
@@ -23,7 +25,7 @@ export const GigSchema = z.object({
     genre: z.string(),
     about: z.string().min(1),
   }),
-  date: z.date(),
+  date: z.string().min(1),
   time: z.string().min(1),
   ticketType: z.enum(["free", "paid"]),
   description: z.string().min(1),
@@ -31,27 +33,116 @@ export const GigSchema = z.object({
 
 export default function AddGigs() {
   const user = useUser()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const queryClient = useQueryClient()
+
+  // Get gig data from navigation state or URL parameters for edit mode
+  const searchParams = new URLSearchParams(location.search)
+  const editGigId = searchParams.get('edit')
+  const gigDataFromState = location.state?.gigData
+  const isEditingFromState = location.state?.isEditing
+
+  // Determine if we're editing and get gig data
+  const isEditing = isEditingFromState || !!editGigId
+
+
+  // All hooks must be called before any conditional returns
   const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm<z.infer<typeof GigSchema>>({
     resolver: zodResolver(GigSchema),
   })
+
   const { data: artists } = useQuery({
     queryKey: ["artists"],
     queryFn: () => GetArtists(),
     enabled: !!user?.id
   })
-  const { data: userBusiness } = useQuery({
-    queryKey: ["userBusiness"],
-    queryFn: () => GetUserBusiness(user?.id!),
-    enabled: !!user?.id
-  })
-  const { mutate: createGig } = useMutation({
-    mutationFn: (data: z.infer<typeof GigSchema>) => CreateGig(data, user!),
+
+  // Fetch gig data if editing via URL parameter
+  const { data: allGigs } = useQuery({
+    queryKey: ["gigs"],
+    queryFn: GetGigs,
+    enabled: !!editGigId
   })
 
-  // Prefill business information when userBusiness data is loaded
+  // Get gig data from state or fetched data
+  const gigData = gigDataFromState || (editGigId && allGigs ? allGigs.find(gig => gig.id === editGigId) : null)
+
+  const post = gigData?.posts
+
+  const { mutate: createGig } = useMutation({
+    mutationFn: (data: z.infer<typeof GigSchema>) => CreateGig({ ...data, date: new Date(data.date) }, user!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gigs"] });
+      toast.success("Gig created successfully");
+      navigate('/gig-guide/gigs');
+    },
+    onError: () => {
+      toast.error("Failed to create gig");
+    }
+  })
+
+  const { mutate: updateGigMutation, isPending: isUpdatingGig } = useMutation({
+    mutationFn: updateGig,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gigs"] });
+      toast.success("Gig updated successfully!");
+      navigate('/gig-guide/gigs');
+    },
+    onError: (error) => {
+      console.error("Error updating gig:", error);
+      toast.error("Failed to update gig. Please try again.");
+    }
+  });
+
+  // Handle artist selection and prefill artist data
+  const [selectedArtistId, setSelectedArtistId] = useState<string>("")
+
+  // Prefill form data for edit mode
   useEffect(() => {
-    if (userBusiness && userBusiness.length > 0) {
-      const business = userBusiness[0] // Get the first business record
+    if (isEditing && gigData) {
+
+      // Set gig ID for edit mode
+      setValue("id", gigData.id);
+
+      // Set business information from posts
+      setValue("businessName", gigData.posts.name);
+      if (gigData.posts.locations && gigData.posts.locations.length > 0) {
+        setValue("suburb", gigData.posts.locations[0].suburb);
+      }
+
+      // Set artist information from artists
+      setValue("artist.name", gigData.artists.name);
+      setValue("artist.image_url", gigData.artists.image_url || '');
+      setValue("artist.type", gigData.artists.type);
+      setValue("artist.music_type", gigData.artists.music_type || '');
+      setValue("artist.genre", gigData.artists.genre || '');
+      setValue("artist.about", gigData.artists.about || '');
+
+      // Set the selected artist ID for the dropdown
+      setSelectedArtistId(gigData.artist_id || '');
+
+      // Set event details from gig
+      setValue("date", gigData.event_date);
+      setValue("time", gigData.event_time);
+      setValue("ticketType", gigData.ticket_type);
+      setValue("description", gigData.description || '');
+
+      // Set business type from posts data
+      if (gigData.posts.type !== undefined) {
+        const typeIndex = businessType.findIndex(type => type === gigData.posts.type);
+        setValue("type", typeIndex !== -1 ? typeIndex : 0);
+      } else {
+        setValue("type", 0);
+      }
+    }
+  }, [isEditing, gigData, setValue]);
+
+
+  // Prefill business information when userBusiness data is loaded (only for create mode)
+  useEffect(() => {
+    if (!isEditing && post && post.length > 0) {
+      const business = post[0] // Get the first business record
 
       // Set business name
       if (business.name) {
@@ -74,10 +165,30 @@ export default function AddGigs() {
         }
       }
     }
-  }, [userBusiness, setValue])
+  }, [post, setValue, isEditing])
 
-  // Handle artist selection and prefill artist data
-  const [selectedArtistId, setSelectedArtistId] = useState<string>("")
+
+
+
+  // Now we can have conditional returns
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+
+  if (isEditing && !gigData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">No Gig Data</h1>
+          <p className="text-lg text-gray-600 mb-8">No gig data provided for editing.</p>
+          <Button onClick={() => navigate('/gig-guide/gigs')} className="bg-blue-600 hover:bg-blue-700">
+            Back to Gigs
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleArtistSelection = (artistName: string) => {
     const selectedArtist = artists?.find(artist => artist.name === artistName)
@@ -100,22 +211,26 @@ export default function AddGigs() {
   const about = watch("artist.about")
 
   const onSubmit = (data: z.infer<typeof GigSchema>) => {
-    createGig(data, {
-      onSuccess: () => {
-        toast.success("Gig created successfully")
-      },
-      onError: () => {
-        toast.error("Failed to create gig")
+    if (isEditing) {
+      // Update existing gig
+      if (data.id) {
+        updateGigMutation({ ...data, date: new Date(data.date) } as z.infer<typeof GigSchema> & { id: string; date: Date });
       }
-    })
+    } else {
+      createGig(data);
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Add a New Gig</h1>
-          <p className="text-lg text-gray-600">Share your upcoming event with the community</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {isEditing ? "Edit Gig" : "Add a New Gig"}
+          </h1>
+          <p className="text-lg text-gray-600">
+            {isEditing ? "Update your event details" : "Share your upcoming event with the community"}
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -235,7 +350,7 @@ export default function AddGigs() {
                     </label>
                     <input
                       type="date"
-                      {...register("date", { valueAsDate: true })}
+                      {...register("date")}
                       className="input input-bordered w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
                     />
                     {errors.date && (
@@ -291,14 +406,29 @@ export default function AddGigs() {
                 </div>
 
                 {/* Submit Button */}
-                <div className="pt-6">
+                <div className="pt-6 flex gap-4">
+                  <Button
+                    type="button"
+                    onClick={() => navigate('/gig-guide/gigs')}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     type="submit"
-                    className="btn !bg-[#4e9da8] !text-white w-full group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
-                    disabled={!isValid}
+                    className="btn !bg-[#4e9da8] !text-white flex-1 group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+                    disabled={!isValid || isUpdatingGig}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      Add Gig
+                      {isUpdatingGig ? (
+                        <>
+                          <span className="loading loading-spinner loading-sm"></span>
+                          Updating...
+                        </>
+                      ) : (
+                        isEditing ? "Update Gig" : "Add Gig"
+                      )}
                     </span>
                   </Button>
                 </div>

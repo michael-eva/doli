@@ -113,10 +113,12 @@ export async function GetGigs() {
         music_type,
         genre,
         type,
-        image_url
+        image_url,
+        about
       ),
       posts (
         name,
+        type,
         locations (
           suburb,
           state,
