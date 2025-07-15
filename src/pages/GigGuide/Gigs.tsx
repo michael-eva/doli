@@ -296,12 +296,17 @@ export default function Gigs() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Upcoming Gigs</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Upcoming Gigs</h1>
+          <p className="text-gray-600">
+            Discover live performances and upcoming events
+          </p>
+        </div>
         {userHasBusiness && (
           <button
             onClick={() => navigate('/add-gigs')}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors w-full sm:w-auto"
           >
             Create Gig
           </button>
