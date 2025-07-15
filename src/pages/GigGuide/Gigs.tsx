@@ -132,21 +132,86 @@ export default function Gigs() {
     // Skeleton loading state
     return (
       <div className="max-w-2xl mx-auto p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Gigs</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Upcoming Gigs</h1>
+          {/* <div className="w-24 h-10 bg-gray-200 rounded-lg animate-pulse" /> */}
+        </div>
         <div className="space-y-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 animate-pulse">
-              <div className="flex-shrink-0 mr-4">
-                <div className="w-32 h-32 rounded-full bg-gray-200" />
-              </div>
-              <div className="flex-1 space-y-3">
-                <div className="h-6 bg-gray-200 rounded w-2/3" />
-                <div className="h-5 bg-gray-200 rounded w-1/2" />
-                <div className="h-4 bg-gray-200 rounded w-1/3" />
-                <div className="h-4 bg-blue-100 rounded w-1/4" />
-              </div>
+          {/* Date group skeleton */}
+          <div>
+            {/* <div className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-200">
+              <div className="w-48 h-6 bg-gray-200 rounded animate-pulse" />
+            </div> */}
+            <div className="space-y-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 animate-pulse relative">
+                  {/* Edit button skeleton */}
+                  <div className="absolute top-2 right-2 w-12 h-7 bg-gray-200 rounded animate-pulse" />
+
+                  {/* Artist image skeleton */}
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="w-32 h-32 rounded-full bg-gray-200 animate-pulse" />
+                  </div>
+
+                  {/* Content skeleton */}
+                  <div className="flex-1 space-y-2">
+                    {/* Artist name and type */}
+                    <div className="space-y-1">
+                      <div className="h-5 bg-gray-200 rounded w-3/4 animate-pulse" />
+                      <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+                    </div>
+
+                    {/* Time and venue */}
+                    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+
+                    {/* Location */}
+                    <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+
+                    {/* Ticket info */}
+                    <div className="h-4 bg-blue-100 rounded w-1/4 animate-pulse" />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Second date group skeleton */}
+          <div>
+            <div className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-200">
+              <div className="w-40 h-6 bg-gray-200 rounded animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              {[1].map((i) => (
+                <div key={i} className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 animate-pulse relative">
+                  {/* Edit button skeleton */}
+                  <div className="absolute top-2 right-2 w-12 h-7 bg-gray-200 rounded animate-pulse" />
+
+                  {/* Artist image skeleton */}
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="w-32 h-32 rounded-full bg-gray-200 animate-pulse" />
+                  </div>
+
+                  {/* Content skeleton */}
+                  <div className="flex-1 space-y-2">
+                    {/* Artist name and type */}
+                    <div className="space-y-1">
+                      <div className="h-5 bg-gray-200 rounded w-3/4 animate-pulse" />
+                      <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+                    </div>
+
+                    {/* Time and venue */}
+                    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+
+                    {/* Location */}
+                    <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+
+                    {/* Ticket info */}
+                    <div className="h-4 bg-blue-100 rounded w-1/4 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -157,10 +222,57 @@ export default function Gigs() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Gigs</h1>
-        <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-2">No gigs on the calendar right now!</div>
-          <div className="text-gray-400 mb-2">Why not <a href="/gig-guide/artists" className="text-blue-500 underline hover:text-blue-700 transition-colors">explore our artists</a> and discover your next favourite act?</div>
-          <div className="text-gray-400">Check back soon for new events!</div>
+        <div className="text-center py-16 px-8">
+          {/* Icon */}
+          <div className="mb-6">
+            <div className="w-20 h-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Main message */}
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">
+            No gigs on the calendar right now!
+          </h3>
+
+          {/* Subtitle */}
+          <p className="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
+            Why not <a
+              href="/gig-guide/artists"
+              className="text-blue-600 font-medium hover:text-blue-700 transition-colors underline decoration-blue-300 hover:decoration-blue-500"
+            >
+              explore our artists
+            </a> and discover your next favourite act?
+          </p>
+
+          {/* Call to action */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate('/gig-guide/artists')}
+              className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Browse Artists
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
+            </button>
+          </div>
+
+          {/* Bottom message */}
+          <p className="text-gray-500 text-sm mt-6">
+            Check back soon for new events!
+          </p>
         </div>
       </div>
     )
