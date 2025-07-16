@@ -28,6 +28,4 @@ If you are developing a production application, we recommend updating the config
 
 Next:
 
-- Follow and Artists are both selected in the gig-guide/artists
 - Mobile optimise the menues
-- update register business UI
