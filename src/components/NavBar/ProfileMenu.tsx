@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
 import { ReferFriend } from "../NavBar";
@@ -13,6 +13,21 @@ interface ProfileMenuProps {
 }
 
 export default function ProfileMenu({ isJod, isMobile, handleLogout, userHasBusiness }: ProfileMenuProps) {
+    const location = useLocation();
+
+    // Custom isActive functions to check query parameters
+    const isFollowsActive = (isActive: boolean) => {
+        if (!isActive) return false;
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get('showFollows') === 'true';
+    };
+
+    const isArtistsActive = (isActive: boolean) => {
+        if (!isActive) return false;
+        const searchParams = new URLSearchParams(location.search);
+        return !searchParams.get('showFollows') || searchParams.get('showFollows') !== 'true';
+    };
+
     return (
         <div className="dropdown dropdown-end dropdown-hover">
             <div tabIndex={0} role="button" className="text-xl">
@@ -23,8 +38,8 @@ export default function ProfileMenu({ isJod, isMobile, handleLogout, userHasBusi
             </div>
             <ul tabIndex={0} className="dropdown-content z-[2] menu p-2 shadow bg-base-100 rounded-box w-[165px]">
                 <li><NavLink to={'update-details'}>Profile</NavLink></li>
-                <li><NavLink to={'gig-guide/artists?showFollows=true'}>Follows</NavLink></li>
-                <li><NavLink to={'gig-guide/artists'}>Artists</NavLink></li>
+                <li><NavLink to={'gig-guide/artists?showFollows=true'} className={({ isActive }) => isFollowsActive(isActive) ? 'active' : ''}>Follows</NavLink></li>
+                <li><NavLink to={'gig-guide/artists'} className={({ isActive }) => isArtistsActive(isActive) ? 'active' : ''}>Artists</NavLink></li>
                 <li><NavLink to={'manage-listings'}>Businesses</NavLink></li>
                 {/* {!isMobile && <li><NavLink to={'post-listing'}>Register Business</NavLink></li>} */}
                 {userHasBusiness && <li><NavLink to={'add-gigs'}>Gigs</NavLink></li>}
