@@ -53,7 +53,7 @@ export default function NavBar() {
         <div className="navbar shadow-md z-[3] bg-white">
             {/* Left section */}
             <NavLink to='/' className="flex-none">
-                <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
+                <img src="/images/IMG_20231227_130328.jpg" alt="" width={80} />
             </NavLink>
 
             {/* Center section - Desktop Nav Links */}
