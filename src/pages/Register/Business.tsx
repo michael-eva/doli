@@ -21,6 +21,9 @@ import { determineVerificationStatus, handleErrors, countChars } from "@/compone
 import { uploadCoverImage, deleteImage } from "@/utils/imageUpload";
 import ImageUpload from "@/components/ImageUpload.tsx";
 import { PreviewCard } from "@/components/PreviewCard.tsx";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Send } from "lucide-react";
 
 
 type LocationData = {
@@ -371,385 +374,477 @@ export default function RegisterBusiness({ postData, }: CardProps) {
   };
 
   return (
-    <>
-      <div className="flex md:justify-center">
-        <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="max-w-full md:mr-10 shadow-lg md:px-10 pb-24 pt-10 p-4">
-          <header className=" max-w-md">
-            {!postData ?
-              <div className=" py-4 flex flex-col">
-                <p className=" mb-4 text-center"><span className=" font-bold">Awesome!</span> We’re super excited you decided to register. Before we get going, please confirm the following about your business.</p>
-                <div className="text-xs leading-6 list-inside flex flex-col gap-2">
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-accent checkbox-sm"
-                      checked={checkboxes.checkbox1}
-                      onChange={() => handleRuleCheckboxChange('checkbox1')}
-                    />
-                    <span>Food and / or drinks are your <span className=" underline">primary</span> product offering.</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-accent checkbox-sm"
-                      checked={checkboxes.checkbox2}
-                      onChange={() => handleRuleCheckboxChange('checkbox2')}
-                    />
-                    <span>You have a <span className=" underline">genuine and permanent</span> physical retail location. </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-accent checkbox-sm"
-                      checked={checkboxes.checkbox3}
-                      onChange={() => handleRuleCheckboxChange('checkbox3')}
-                    />
-                    <span>You do <span className=" underline">NOT</span> operate or derive financial benefit from electronic gaming machines.</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-accent checkbox-sm"
-                      checked={checkboxes.checkbox4}
-                      onChange={() => handleRuleCheckboxChange('checkbox4')}
-                    />
-                    <span>You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
-                  </div>
-                </div>
-              </div> :
-              <p className=" mb-4 font-bold text-2xl">Edit Post:</p>
-            }
-          </header>
-          <div className={`${!allChecked && "text-gray-300"}`}>
-            {!allChecked ?
-              <div className="divider">
-              </div>
-              :
-              <div className=" my-4">
-                <p className="text-blue-500">Ok... let’s go! Make sure you complete all mandatory fields below.</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {postData ? "Edit Business Listing" : "Register Your Business"}
+          </h1>
+          <p className="text-lg text-gray-600">
+            {postData ? "Update your business information" : "Share your business with the community"}
+          </p>
+        </div>
 
-            }
-            <div className="flex flex-col mb-5 mt-7">
-              <label htmlFor="">Business Name</label>
-              {errors.name && <p className=" text-red-600">*{errors.name.message?.toString()}</p>}
-              <input
-                type="text"
-                className="input input-bordered w-full max-w-xs"
-                {...register("name", { required: "Business name is required" })}
-                disabled={!allChecked}
-              />
-            </div>
+        <div className="flex gap-8">
+          {/* Main Form */}
+          <div className="flex-1 bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="p-8 sm:p-10">
+              <form onSubmit={handleSubmit((data) => submitChooser(data as CardProps))} className="space-y-8">
 
-            <div className="flex flex-col mb-5">
-              <label htmlFor="">Author Email</label>
-              <input
-                type="text"
-                value={user?.email}
-                className="input input-bordered w-full max-w-xs"
-                disabled
-              />
-            </div>
-            <div className="flex flex-col mb-5">
-              <div className="flex items-center gap-5">
-                <label htmlFor="">Admin Email (optional)</label>
-                <Toggle>
-                  <ToggleButton className=" cursor-pointer"> <FaInfoCircle /></ToggleButton>
-                  <ToggleOn>
-                    <SimpleModal title="doli" >Add an admin who can edit the post on the authors behalf.</SimpleModal>
-                  </ToggleOn>
-                </Toggle>
-              </div>
-              {errors.adminEmail && <p className=" text-red-600">*{errors.adminEmail.message?.toString()}</p>}
-              <input
-                type="text"
-                className="input input-bordered w-full max-w-xs"
-                {...register("adminEmail")}
-                disabled={!allChecked}
-              />
-              <div>
-                {watch('adminEmail') && <button
-                  className=" btn btn-error btn-xs" onClick={() => setValue("adminEmail", null)}
-                >Remove admin</button>}
-              </div>
-            </div>
-
-            <div className="divider "></div>
-
-            <div className="flex flex-col mb-5">
-              <label> Select Type:</label>
-              {errors.type && <p className=" text-red-600">*{errors.type.message?.toString()}</p>}
-              <select
-                className="select select-bordered w-full max-w-xs"
-                {...register("type", { required: "Type of business is required" })}
-                defaultValue="Select Type"
-                disabled={!allChecked}
-              >
-                <option disabled>Select Type</option>
-                {businessType.map(item => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col mb-5">
-              <h2>About</h2>
-              {errors.description && <p className=" text-red-600">*{errors.description.message?.toString()}</p>}
-              <textarea
-                className="textarea textarea-bordered w-full h-48"
-                placeholder="Tell us about your business. What makes it unique, special, or just plain awesome at what you do. Maybe you have a signature dish or award-winning tipple… maybe there’s a brilliant back story or maybe it’s home to a cast of lovable, colourful characters. Remember we’re all about community so it's ok to be friendly and its ok to be personal."
-                {...register("description", {
-                  required: "A description is required",
-                })}
-                disabled={!allChecked}
-                maxLength={500}
-                style={{ whiteSpace: 'pre-wrap' }}
-              >
-              </textarea>
-              <div className="label">
-                <span className="label-text-alt"></span>
-                <span className={countChars(getValues("description")) >= 500 ? "text-red-500 text-xs" : "label-text-alt"}>
-                  {countChars(getValues("description")) || 0}/500
-                </span>
-
-              </div>
-            </div>
-            <div className="flex flex-col mb-5 ">
-              <p >Delivery Method</p>
-              {deliveryMethodError && <p className="text-red-600">*Please select at least one option.</p>}
-              <div className="flex gap-3">
-                <div className="flex">
-                  <input
-                    {...register("pickUp")}
-                    type="checkbox"
-                    className="checkbox checkbox-xs mr-2 mt-1"
-                    disabled={!allChecked}
-                  />
-                  <label>Pick-Up</label>
-                </div>
-                <div className="flex">
-                  <input
-                    {...register("delivery")}
-                    type="checkbox"
-                    className="checkbox checkbox-xs mr-2 mt-1"
-                    disabled={!allChecked}
-                  />
-                  <label>Delivery</label>
-                </div>
-                <div className="flex">
-                  <input
-                    {...register("dineIn")}
-                    type="checkbox"
-                    className="checkbox checkbox-xs mr-2 mt-1"
-                    disabled={!allChecked}
-                  />
-                  <label>Dine-In</label>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col mb-5">
-              <label >Opening Hours:</label>
-              {openingHoursError && <div className=" text-red-600 mt-5">
-                {openingHoursError}
-              </div>}
-              <OpeningHours register={register} watch={watch} errors={errors} allChecked={allChecked} />
-            </div>
-            <div className="flex mb-2">
-              <label >Choose up to 5 options that best describe your business:</label>
-            </div>
-            <Select
-              value={selectedTags}
-              onChange={handleTagChange}
-              options={transformedTags}
-              isMulti={true}
-              isDisabled={!allChecked}
-            />
-            <div className="flex flex-col md:flex-row mt-7 gap-4">
-              <div className="flex flex-col md:w-1/2">
-                <label>Website <small>(Optional)</small></label>
-                <input
-                  type="website"
-                  className="input input-bordered "
-                  {...register("website")}
-                  disabled={!allChecked}
-                />
-              </div>
-              <div className="flex flex-col md:w-1/2">
-                <label>Contact Number <small>(Optional)</small></label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  {...register("contact")}
-                  disabled={!allChecked}
-                />
-              </div>
-            </div>
-            {postData ?
-              <>
-                <div className="flex flex-col gap-5">
-                  {!selectedFile ? (
-                    <>
-                      <img
-                        src={postData.imgUrl}
-                        alt="Cover"
-                        style={{ height: '225px', width: '300px' }}
-                        className="mt-5 rounded-lg"
-                      />
-                      <div className="cover-photo">
-                        <h2 className="mt-1">Update Cover Photo</h2>
-                        <p className="text-xs">Max image size of 2MB</p>
-                        {errors.imgUrl && (
-                          <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                        )}
-                        <input
-                          type="file"
-                          className="file-input file-input-bordered w-full"
-                          {...register("imgUrl", {
-                            required: "Cover photo is required",
-                          })}
-                          onChange={handleFileChange}
-                          accept="image/*"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {!croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} setCroppedImage={setCroppedImage} /></div>}
-                      {croppedImage && (
-                        <div className="mt-6">
-                          <div className="border rounded-lg overflow-hidden">
-                            <img
-                              src={croppedImage}
-                              alt="Cropped"
-                              className="w-full h-auto max-h-64 object-contain"
-                            />
-                          </div>
+                {/* Business Rules Checkboxes - Only show for new registrations */}
+                {!postData && (
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                      Business Requirements
+                    </h2>
+                    <div className="space-y-4">
+                      <p className="text-gray-700">Before we get started, please confirm the following about your business:</p>
+                      <div className="space-y-3">
+                        <div className="flex gap-3 items-start">
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-accent checkbox-sm mt-1"
+                            checked={checkboxes.checkbox1}
+                            onChange={() => handleRuleCheckboxChange('checkbox1')}
+                          />
+                          <span className="text-sm text-gray-700">Food and/or drinks are your <span className="font-semibold underline">primary</span> product offering.</span>
                         </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreviewUrl(postData.imgUrl);
-                          setCroppedImage(null);
-                          setSelectedFile(null);
-                        }}
-                        className="btn btn-gray w-full"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
-                </div>
-              </>
-
-              :
-              <div className="cover-photo">
-                <h2 className="mt-7">Add Cover Photo</h2>
-                {/* <p className="text-xs">Max image size of 2MB</p> */}
-                {errors.imgUrl && (
-                  <p className="text-red-600">*{errors.imgUrl.message?.toString()}</p>
-                )}
-                <input
-                  type="file"
-                  className="file-input file-input-bordered w-full"
-                  {...register("imgUrl", {
-                    required: "Cover photo is required",
-                  })}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  disabled={!allChecked}
-                />
-                {previewUrl && !croppedImage && <div className="mt-4"><ImageUpload file={previewUrl} setCroppedImage={setCroppedImage} /></div>}
-                {croppedImage && (
-                  <div className="mt-6">
-                    <div className="border rounded-lg overflow-hidden">
-                      <img
-                        src={croppedImage}
-                        alt="Cropped"
-                        className="w-full h-auto max-h-64 object-contain"
-                      />
+                        <div className="flex gap-3 items-start">
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-accent checkbox-sm mt-1"
+                            checked={checkboxes.checkbox2}
+                            onChange={() => handleRuleCheckboxChange('checkbox2')}
+                          />
+                          <span className="text-sm text-gray-700">You have a <span className="font-semibold underline">genuine and permanent</span> physical retail location.</span>
+                        </div>
+                        <div className="flex gap-3 items-start">
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-accent checkbox-sm mt-1"
+                            checked={checkboxes.checkbox3}
+                            onChange={() => handleRuleCheckboxChange('checkbox3')}
+                          />
+                          <span className="text-sm text-gray-700">You do <span className="font-semibold underline">NOT</span> operate or derive financial benefit from electronic gaming machines.</span>
+                        </div>
+                        <div className="flex gap-3 items-start">
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-accent checkbox-sm mt-1"
+                            checked={checkboxes.checkbox4}
+                            onChange={() => handleRuleCheckboxChange('checkbox4')}
+                          />
+                          <span className="text-sm text-gray-700">You are not part of a franchise organisation, owned by a publicly listed entity, wholly or majority owned by non-Australian interests.</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
-              </div>
-            }
 
-            <div className="divider"></div>
-            <label htmlFor="">Address</label>
-            <LocationSearch allChecked={allChecked} className="input input-bordered" onSelect={handleLocationSelect} postData={postData} suburbAndPostcode={true} types={['address']} placeholder="Start typing in an address" isRequired={true} />
-            {openingHoursError && <div className=" text-red-600 mt-5">
-              {openingHoursError}
-            </div>}
-            {deliveryMethodError && <p className="text-red-600 mt-5">*Please select at least one delivery method option.</p>}
-            {locationError && <p className="text-red-600 mt-5">*Please select a business location.</p>}
-            {!postData && <div className=" flex items-center gap-3 mt-5">
-              <label className="cursor-pointer label ">
-                <input type="checkbox" checked={isAgree} disabled={!allChecked} onChange={() => setIsAgree(!isAgree)} className="checkbox checkbox-info" />
-              </label>
-              <span className="label-text">I agree to the <span></span>
-                <a className=" text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z" target="_blank">Terms of Service</a>
-                <span></span> and <span></span>
-                <a className="text-bold underline cursor-pointer" href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z" target="_blank">Privacy Policy.</a >
-              </span>
-            </div>}
-            {isAgree && allChecked ? <div className=" flex gap-2 mt-7">
-              {isSubmitting ? <button className="btn w-full btn-disabled">Submitting<span className=" ml-4 loading loading-spinner text-primary"></span></button>
-                :
-                <button className="btn btn-primary w-full">Submit</button>
-              }
-            </div> :
+                {/* Cover Photo Section */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Cover Photo
+                  </h2>
 
-              <div className=" flex gap-2 mt-7">
-                <button className="btn w-full btn-disabled">Submit</button>
-              </div>
-            }                    </div>
-        </form >
-        {
-          !isMobile && <div >
-            <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
-              <input
-                type='checkbox'
-                name='autoSaver'
-                className='sr-only'
-                checked={isChecked}
-                onChange={handleCheckboxChange}
-              />
-              <span
-                className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
-                  }`}
-              >
-                <span
-                  className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''
-                    }`}
-                ></span>
-              </span>
-              <span className='label flex items-center text-sm font-medium'>
-                Show Preview
-              </span>
-            </label>
-            {isChecked && (
-              <div style={{ width: '50%' }}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Upload Cover Photo *
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="w-full file-input file-input-bordered"
+                          disabled={!allChecked}
+                        />
+                      </div>
+                    </div>
 
-                <PreviewCard
-                  imgUrl={croppedImage}
-                  name={watch().name}
-                  suburb={selectedLocation.suburb}
-                  state={selectedLocation.state}
-                  postcode={selectedLocation.postcode}
-                  address={selectedLocation.address}
-                  type={watch().type}
-                  products={selectedTags?.map(tag => tag?.label).join(', ')}
-                  description={watch().description}
-                  openingHours={watch().openingHours}
-                  contact={watch().contact}
-                  pickUp={watch().pickUp}
-                  delivery={watch().delivery}
-                  dineIn={watch().dineIn}
-                />
-              </div>
-            )}
+                    {previewUrl && !croppedImage && (
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-medium text-gray-900">Crop Your Image</h3>
+                        <ImageUpload file={previewUrl} setCroppedImage={setCroppedImage} />
+                      </div>
+                    )}
+
+
+
+                    {errors.imgUrl && (
+                      <p className="text-red-600 text-sm">{errors.imgUrl.message?.toString()}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Basic Information */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Basic Information
+                  </h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Business Name *
+                      </label>
+                      <Input
+                        {...register("name", { required: "Business name is required" })}
+                        placeholder="Enter business name"
+                        className="w-full"
+                        disabled={!allChecked}
+                      />
+                      {errors.name && (
+                        <p className="text-red-600 text-sm">{errors.name.message?.toString()}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Business Type *
+                      </label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4e9da8] focus:border-transparent"
+                        {...register("type", { required: "Type of business is required" })}
+                        disabled={!allChecked}
+                      >
+                        <option value="">Select Type</option>
+                        {businessType.map(item => (
+                          <option key={item} value={item}>{item}</option>
+                        ))}
+                      </select>
+                      {errors.type && (
+                        <p className="text-red-600 text-sm">{errors.type.message?.toString()}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Contact Information
+                  </h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Author Email
+                      </label>
+                      <Input
+                        type="email"
+                        value={user?.email}
+                        className="w-full"
+                        disabled
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          Admin Email (Optional)
+                        </label>
+                        <Toggle>
+                          <ToggleButton className="cursor-pointer">
+                            <FaInfoCircle className="w-4 h-4" />
+                          </ToggleButton>
+                          <ToggleOn>
+                            <SimpleModal title="Admin Email">Add an admin who can edit the post on the author's behalf.</SimpleModal>
+                          </ToggleOn>
+                        </Toggle>
+                      </div>
+                      <Input
+                        {...register("adminEmail")}
+                        type="email"
+                        placeholder="admin@example.com"
+                        className="w-full"
+                        disabled={!allChecked}
+                      />
+                      {watch('adminEmail') && (
+                        <button
+                          type="button"
+                          className="btn btn-error btn-xs"
+                          onClick={() => setValue("adminEmail", null)}
+                        >
+                          Remove admin
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Website (Optional)
+                      </label>
+                      <Input
+                        {...register("website")}
+                        type="url"
+                        placeholder="https://example.com"
+                        className="w-full"
+                        disabled={!allChecked}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Contact Number (Optional)
+                      </label>
+                      <Input
+                        {...register("contact")}
+                        type="tel"
+                        placeholder="Phone number"
+                        className="w-full"
+                        disabled={!allChecked}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Section */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    About Your Business
+                  </h2>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Business Description *
+                    </label>
+                    <textarea
+                      {...register("description", {
+                        required: "A description is required",
+                      })}
+                      rows={4}
+                      placeholder="Tell us about your business. What makes it unique, special, or just plain awesome at what you do. Maybe you have a signature dish or award-winning tipple… maybe there's a brilliant back story or maybe it's home to a cast of lovable, colourful characters. Remember we're all about community so it's ok to be friendly and its ok to be personal."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4e9da8] focus:border-transparent resize-none"
+                      disabled={!allChecked}
+                      maxLength={500}
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    />
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-500">
+                        {countChars(getValues("description")) || 0}/500 characters
+                      </span>
+                    </div>
+                    {errors.description && (
+                      <p className="text-red-600 text-sm">{errors.description.message?.toString()}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Services & Hours */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Services & Hours
+                  </h2>
+
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <label className="text-sm font-medium text-gray-700">
+                        Delivery Methods *
+                      </label>
+                      {deliveryMethodError && <p className="text-red-600 text-sm">Please select at least one option.</p>}
+                      <div className="flex gap-6">
+                        <div className="flex items-center gap-2">
+                          <input
+                            {...register("pickUp")}
+                            type="checkbox"
+                            className="checkbox checkbox-accent"
+                            disabled={!allChecked}
+                          />
+                          <label className="text-sm text-gray-700">Pick-Up</label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            {...register("delivery")}
+                            type="checkbox"
+                            className="checkbox checkbox-accent"
+                            disabled={!allChecked}
+                          />
+                          <label className="text-sm text-gray-700">Delivery</label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            {...register("dineIn")}
+                            type="checkbox"
+                            className="checkbox checkbox-accent"
+                            disabled={!allChecked}
+                          />
+                          <label className="text-sm text-gray-700">Dine-In</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="text-sm font-medium text-gray-700">
+                        Opening Hours *
+                      </label>
+                      {openingHoursError && (
+                        <p className="text-red-600 text-sm">{openingHoursError}</p>
+                      )}
+                      <OpeningHours register={register} watch={watch} errors={errors} allChecked={allChecked} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Business Tags */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Business Categories
+                  </h2>
+
+                  <div className="space-y-4">
+                    <label className="text-sm font-medium text-gray-700">
+                      Choose up to 5 options that best describe your business:
+                    </label>
+                    <Select
+                      value={selectedTags}
+                      onChange={handleTagChange}
+                      options={transformedTags}
+                      isMulti={true}
+                      isDisabled={!allChecked}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Business Location
+                  </h2>
+
+                  <div className="space-y-4">
+                    <label className="text-sm font-medium text-gray-700">
+                      Business Address *
+                    </label>
+                    <LocationSearch
+                      allChecked={allChecked}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4e9da8] focus:border-transparent"
+                      onSelect={handleLocationSelect}
+                      postData={postData}
+                      suburbAndPostcode={true}
+                      types={['address']}
+                      placeholder="Start typing in an address"
+                      isRequired={true}
+                    />
+                    {locationError && (
+                      <p className="text-red-600 text-sm">Please select a business location.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Terms Agreement - Only for new registrations */}
+                {!postData && (
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isAgree}
+                        disabled={!allChecked}
+                        onChange={() => setIsAgree(!isAgree)}
+                        className="checkbox checkbox-accent mt-1"
+                      />
+                      <span className="text-sm text-gray-700">
+                        I agree to the{" "}
+                        <a
+                          className="font-semibold underline cursor-pointer text-[#4e9da8]"
+                          href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Terms%20of%20Service.pdf?t=2024-03-02T06%3A44%3A23.692Z"
+                          target="_blank"
+                        >
+                          Terms of Service
+                        </a>{" "}
+                        and{" "}
+                        <a
+                          className="font-semibold underline cursor-pointer text-[#4e9da8]"
+                          href="https://yagpsuctumdlmcazzeuv.supabase.co/storage/v1/object/public/website_documents/Privacy%20Policy.pdf?t=2024-03-02T06%3A43%3A32.620Z"
+                          target="_blank"
+                        >
+                          Privacy Policy
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <div className="pt-6">
+                  <Button
+                    type="submit"
+                    className="w-full !bg-[#4e9da8] !hover:bg-[#3d8a94] text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isSubmitting || !allChecked || (!postData && !isAgree)}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <span className="loading loading-spinner loading-sm"></span>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        {postData ? "Update Business Listing" : "Submit Business Registration"}
+                        <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
-        }
-      </div >
-    </>
+
+          {/* Preview Section - Only show on desktop */}
+          {!isMobile && (
+            <div className="w-96">
+              <div className="sticky top-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+                    <input
+                      type='checkbox'
+                      name='autoSaver'
+                      className='sr-only'
+                      checked={isChecked}
+                      onChange={handleCheckboxChange}
+                    />
+                    <span
+                      className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'}`}
+                    >
+                      <span
+                        className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${isChecked ? 'translate-x-6' : ''}`}
+                      ></span>
+                    </span>
+                    <span className='label flex items-center text-sm font-medium'>
+                      Show Preview
+                    </span>
+                  </label>
+                </div>
+
+                {isChecked && (
+                  <div className="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
+                    <PreviewCard
+                      imgUrl={croppedImage || previewUrl}
+                      name={watch().name}
+                      suburb={selectedLocation.suburb}
+                      state={selectedLocation.state}
+                      postcode={selectedLocation.postcode}
+                      address={selectedLocation.address}
+                      type={watch().type}
+                      products={selectedTags?.map(tag => tag?.label).join(', ')}
+                      description={watch().description}
+                      openingHours={watch().openingHours}
+                      contact={watch().contact}
+                      pickUp={watch().pickUp}
+                      delivery={watch().delivery}
+                      dineIn={watch().dineIn}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
