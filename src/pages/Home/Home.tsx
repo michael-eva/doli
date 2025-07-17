@@ -5,14 +5,14 @@ import CardSkeleton from "../../components/Loading/CardSkeleton";
 import { useMediaQuery } from "react-responsive"
 import Pagination from "../../components/Pagination";
 import { CardProps } from "../../Types";
-import { RetrieveOwner } from "../../seed/RetrieveOwner";
+// import { RetrieveOwner } from "../../seed/RetrieveOwner";
 import { useUser } from "@supabase/auth-helpers-react";
-import { filterOrders } from "./utils/Filter/filterOrders";
 import { deletePost } from "@/lib/deletePost";
 import { useSupabase } from "@/lib/Supabase/AllRecords/getAllRecords";
 import { isFilterApplied, useFilters } from "./utils/Filter/filterFunctions";
 import HomeFilters from "@/components/Filters/HomeFilters";
 import SEO from "@/lib/SEO";
+import { useServerSideFiltering } from "./utils/Filter/useServerSideFiltering";
 
 
 export default function Home() {
@@ -21,10 +21,10 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageSize = 8
     const [inputClear, setInputClear] = useState<boolean>(false)
-    const { filterPosts, paginatePageVar, isLoading, fetchData, numberOfPosts } = filterOrders(isChecked, currentPage, pageSize)
+    const { posts, totalCount, isLoading, fetchData, error, isSearchDebounced } = useServerSideFiltering(isChecked, currentPage, pageSize)
     const isFilter = isFilterApplied()
     const user = useUser();
-    const { deliveryFilter, locationFilter, typeFilter, searchFilter, nearbyFilter } = useFilters()
+    const { deliveryFilter, locationFilter, typeFilter, searchFilter, nearbyFilter, clearAllFilters } = useFilters()
 
     const { allMembers } = useSupabase("id")
     console.log("is filter:", isFilter);
@@ -49,7 +49,7 @@ export default function Home() {
     }
     useEffect(() => {
         if (user) {
-            RetrieveOwner(user.email, user);
+            // RetrieveOwner(user.email, user);
             verifyInvitedUsers()
         }
     }, [user?.email]);
@@ -67,7 +67,13 @@ export default function Home() {
     const clearFilters = () => {
         setInputClear(true)
         setCurrentPage(1)
+
+        // Clear all URL parameters
+        clearAllFilters()
     }
+
+    // Debug pagination
+    console.log("Pagination debug:", { totalCount, pageSize, shouldShow: totalCount > pageSize });
 
 
     return (
@@ -103,10 +109,10 @@ export default function Home() {
                                 <div className="flex w-1/3 flex-col pl-24">
                                     <div className="flex flex-col">
                                         <p className="text-xl font-bold font-raleway" >Search Results:</p>
-                                        {numberOfPosts && numberOfPosts > 0 && allMembers ? (
+                                        {totalCount > 0 && allMembers ? (
                                             <>
                                                 <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
-                                                    {numberOfPosts}{" "}
+                                                    {totalCount}{" "}
                                                     <span>Businesses</span>
                                                 </p>
                                                 <p className="text-xl py-2 font-bold font-raleway" style={{ color: "#4e9da8" }}>
@@ -130,10 +136,14 @@ export default function Home() {
                     }
                 </div>
                 <div className="flex justify-between">
-                    <p className={`${isMobile ? "px-7" : "px-5"} font-raleway font-bold py-5`}>
-                        {!isFilter ? numberOfPosts : filterPosts.length} businesses
-                        {/* {startIndex} - {endIndex} of {!isFilter ? numberOfPosts : filterPosts.length} businesses */}
-                    </p>
+                    <div className={`${isMobile ? "px-7" : "px-5"} font-raleway font-bold py-5`}>
+                        <p>{totalCount} businesses</p>
+                        {isSearchDebounced && searchFilter && (
+                            <p className="text-sm text-gray-500 mt-1">
+                                ⏳ Searching for "{searchFilter}"...
+                            </p>
+                        )}
+                    </div>
                     {isMobile && <p className={`${isMobile ? "py-5 px-7" : ""}`} >
                         <p className=" font-bold font-raleway" >{allMembers?.length} <span>members</span></p>
                     </p>}
@@ -148,8 +158,8 @@ export default function Home() {
                             }
                         </div>
                         :
-                        filterPosts.length > 0 ? (
-                            paginatePageVar.map((item: CardProps) => (
+                        posts.length > 0 ? (
+                            posts.map((item: CardProps) => (
                                 <div key={item.postId}>
                                     <Card {...item} onDelete={deleteListing} />
                                 </div>
@@ -161,7 +171,7 @@ export default function Home() {
                             </div>
                         ) : null}
                 </section>
-                {numberOfPosts && numberOfPosts > 2 && <Pagination totalItems={isFilter ? filterPosts?.length : numberOfPosts} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
+                {true && <Pagination totalItems={totalCount} pageSize={pageSize} currentPage={currentPage} onPageChange={handlePageChange} />}
             </div >
         </>
     );

@@ -2,11 +2,9 @@ import { NavLink, useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { useUser } from "@supabase/auth-helpers-react"
 import { useMediaQuery } from "react-responsive"
-import { useEffect, useState, Suspense, lazy } from "react"
+import { Suspense, lazy } from "react"
 import supabase from "@/config/supabaseClient"
 
-// Import new components
-// import Logo from "./Logo" // You'll need to create this simple component
 import DesktopNavLinks from "./NavBar/DesktopNavLinks"
 import MobileMenu from "./NavBar/MobileMenu"
 const ProfileMenu = lazy(() => import('./NavBar/ProfileMenu'))
@@ -15,6 +13,8 @@ import { FacebookMessengerShareButton, WhatsappShareButton } from "react-share"
 import ToggleOn from "./Toggle/ToggleOn"
 import ToggleButton from "./Toggle/ToggleButton"
 import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa"
+import { CheckBusinessStatus, CheckJodStatus } from "@/db/query"
+import { useQuery } from "@tanstack/react-query"
 
 const CustomModal = lazy(() => import('./Modals/CustomModal'))
 
@@ -22,32 +22,20 @@ export default function NavBar() {
     const isMobile = useMediaQuery({ maxWidth: 640 })
     const navigate = useNavigate()
     const user = useUser()
-    const [isJod, setIsJod] = useState<boolean | null>(null)
+    const { data: isJod, isLoading: isJodLoading } = useQuery({
+        queryKey: ["isJod"],
+        queryFn: () => CheckJodStatus(user?.id!),
+        enabled: !!user?.id
+    })
+    const { data: userHasBusiness, isLoading: isBusinessLoading } = useQuery({
+        queryKey: ["isBusiness"],
+        queryFn: () => CheckBusinessStatus(user?.id!),
+        enabled: !!user?.id
+    })
 
-    useEffect(() => {
-        const checkJodStatus = async () => {
-            if (!user?.id) {
-                setIsJod(false)
-                return
-            }
-
-            const { data, error } = await supabase
-                .from("members")
-                .select("*")
-                .eq('id', user.id)
-                .eq('isJod', true)
-
-            if (error) {
-                console.error("Error:", error)
-                return
-            }
-            setIsJod(data && data.length > 0)
-        }
-
-        checkJodStatus()
-    }, [user?.id])
-
-
+    if (isJodLoading || isBusinessLoading) {
+        return <div>Loading...</div>
+    }
     const handleLogout = async () => {
         try {
             const { error } = await supabase.auth.signOut()
@@ -65,7 +53,7 @@ export default function NavBar() {
         <div className="navbar shadow-md z-[3] bg-white">
             {/* Left section */}
             <NavLink to='/' className="flex-none">
-                <img src="images/IMG_20231227_130328.jpg" alt="" width={80} />
+                <img src="/images/IMG_20231227_130328.jpg" alt="" width={80} />
             </NavLink>
 
             {/* Center section - Desktop Nav Links */}
@@ -89,6 +77,7 @@ export default function NavBar() {
                                         isJod={isJod || false}
                                         isMobile={isMobile}
                                         handleLogout={handleLogout}
+                                        userHasBusiness={userHasBusiness || false}
                                     />
                                 </Suspense>
                             </div>
