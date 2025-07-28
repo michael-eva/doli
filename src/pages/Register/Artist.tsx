@@ -143,9 +143,19 @@ export default function RegisterArtist() {
 
       // If we have a selected file blob, upload it to Supabase
       if (selectedFileBlob) {
+        // Use cropped image if available, otherwise use original file
+        let fileToUpload: Blob;
+
+        if (croppedImage) {
+          // Convert blob URL to Blob
+          const response = await fetch(croppedImage);
+          fileToUpload = await response.blob();
+        } else {
+          fileToUpload = selectedFileBlob;
+        }
 
         // Upload the image to Supabase
-        finalImageUrl = await handleImageUpload(selectedFileBlob);
+        finalImageUrl = await handleImageUpload(fileToUpload);
       }
 
       // Convert undefined to null for the database
