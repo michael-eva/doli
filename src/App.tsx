@@ -16,6 +16,8 @@ import Wholesale from "./pages/Wholesale"
 // import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
+import ValidateBusinesses from "./Jod/ValidateBusinesses"
+import ValidateArtists from "./Jod/ValidateArtists"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./components/Modals/UpdateEmail"
 import Footer from "./components/Footer"
@@ -77,6 +79,8 @@ function App() {
                   <Route element={<JodRequired />} >
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/validate" element={<Validation />} />
+                    <Route path="dashboard/validate-businesses" element={<ValidateBusinesses />} />
+                    <Route path="dashboard/validate-artists" element={<ValidateArtists />} />
                     <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
                   </Route>
                   {/* <Route path="seed" element={<SeedForm />} /> */}

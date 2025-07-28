@@ -160,7 +160,7 @@ export default function RegisterArtist() {
         submissionData,
         {
           onSuccess: () => {
-            toast.success("Artist registration submitted successfully!");
+            toast.success("Artist registration submitted for approval!");
             setTimeout(() => {
               navigate("/");
             }, 1500);

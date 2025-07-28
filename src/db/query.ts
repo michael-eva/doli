@@ -63,7 +63,7 @@ export async function getArtistFollowCount(artistId: string) {
 }
 
 export async function GetArtists(name?: string) {
-  let query = supabase.from("artists").select("*");
+  let query = supabase.from("artists").select("*").eq("is_verified", true).eq("is_rejected", false);
 
   if (name && name.trim() !== "") {
     query = query.ilike("name", `%${name}%`);
@@ -168,8 +168,10 @@ export async function GetFollowedArtists(userId: string, name?: string) {
     return [];
   }
 
-  // Extract the artists from the joined data
-  const artists = data?.map((follow) => follow.artists).filter(Boolean) || [];
+  // Extract the artists from the joined data and filter only verified artists
+  const artists = data?.map((follow) => follow.artists).filter((artist: any) => 
+    artist && artist.is_verified === true && artist.is_rejected === false
+  ) || [];
 
   // Apply name filter if provided
   if (name && name.trim() !== "") {

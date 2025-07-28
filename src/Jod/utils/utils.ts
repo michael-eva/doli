@@ -45,4 +45,38 @@ export async function validatePost(postId: string){
     }
 }
 
+export async function rejectArtist(artistId: string){
+    try {
+        const { error } = await supabase
+            .from("artists")
+            .update({ is_verified: false, is_rejected: true })
+            .eq("id", artistId);
+        if (error) {
+            console.error("Error updating artist:", error);
+            return false
+        } else {
+            return true
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+export async function validateArtist(artistId: string){
+    try {
+        const { error } = await supabase
+            .from("artists")
+            .update({ is_verified: true, is_rejected: false })
+            .eq("id", artistId);
+        if (error) {
+            console.error("Error updating artist:", error);
+            return false
+        } else {
+            return true
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 

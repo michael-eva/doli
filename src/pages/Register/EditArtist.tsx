@@ -81,10 +81,16 @@ export default function EditArtist() {
   const [imageChanged, setImageChanged] = useState(false);
 
   const { mutate: updateArtistMutation, isPending: isUpdatingArtist } = useMutation({
-    mutationFn: updateArtist,
-    onSuccess: () => {
+    mutationFn: ({ updatedArtist, currentArtist }: { updatedArtist: Artist & { id: string }, currentArtist: Artist }) => 
+      updateArtist(updatedArtist, currentArtist),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["artists"] });
-      toast.success("Artist updated successfully!");
+      const wasResubmittedForApproval = data?.data?.[0]?.is_verified === false;
+      if (wasResubmittedForApproval) {
+        toast.success("Artist updated and resubmitted for approval!");
+      } else {
+        toast.success("Artist updated successfully!");
+      }
       setTimeout(() => {
         navigate("/gig-guide/artists");
       }, 1500);
@@ -195,7 +201,10 @@ export default function EditArtist() {
         admin_two_email: data.admin_two_email || null
       };
 
-      updateArtistMutation(submissionData);
+      updateArtistMutation({ 
+        updatedArtist: submissionData, 
+        currentArtist: artistData 
+      });
     } catch (error) {
       console.error("Error uploading image:", error);
       toast.dismiss();

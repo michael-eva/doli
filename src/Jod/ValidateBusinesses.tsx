@@ -4,8 +4,8 @@ import CustomModal from "../components/Modals/CustomModal"
 import { useForm } from "react-hook-form"
 import { getCombinedData } from "./utils/getCombinedData"
 import { sendVerification, sendRejection } from "./utils/resend"
-import { rejectPost, validatePost, rejectArtist, validateArtist } from "./utils/utils"
-import ArtistValidationCard from "../components/ArtistValidationCard"
+import { rejectPost, validatePost } from "./utils/utils"
+
 type CardProps = {
     locationData: {
         altCountry: string,
@@ -53,54 +53,48 @@ type CardProps = {
     itemType?: 'business' | 'artist',
     [key: string]: any;
 }
-export default function Validation() {
+
+export default function ValidateBusinesses() {
     const [posts, setPosts] = useState<CardProps[]>([])
     const [showModal, setShowModal] = useState<boolean>(false)
     const [postId, setPostId] = useState<string>("")
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     async function getData() {
-        const posts: any = await getCombinedData()
+        const posts: any = await getCombinedData('business')
         setPosts(posts)
     }
+    
     useEffect(() => {
         getData()
     }, [])
+    
     async function handleAcceptSubmit(postId: string) {
         const post = posts.find(post => post.postId === postId)
         const userEmail = post?.email
         
-        let isSent;
-        if (post?.itemType === 'artist') {
-            isSent = await validateArtist(postId)
-        } else {
-            isSent = await validatePost(postId)
-        }
-        
+        const isSent = await validatePost(postId)
         if (!isSent) return
         sendVerification(userEmail)
         getData()
     }
+    
     async function handleReject(postId: string) {
         setShowModal(true)
         setPostId(postId)
     }
+    
     async function onRejectSubmit(data: any) {
         const post = posts.find(post => post.postId === postId)
         const userEmail = post?.email
         
-        let isSent;
-        if (post?.itemType === 'artist') {
-            isSent = await rejectArtist(postId)
-        } else {
-            isSent = await rejectPost(postId)
-        }
-        
+        const isSent = await rejectPost(postId)
         if (!isSent) return
         getData()
         sendRejection(userEmail, data.reason)
         setShowModal(false)
     };
+    
     function modalEl() {
         return (
             <CustomModal setShowModal={setShowModal}>
@@ -117,7 +111,6 @@ export default function Validation() {
                         {...register("reason", { required: "Please enter a reason why it's being rejected." })}
                     ></textarea>
                     <button className="btn btn-success" >Submit</button>
-                    {/* <button className="btn btn-success" onSubmit={() => sendRejection("evamichael100@gmail.com", `${reason}`)}>Submit</button> */}
                 </form>
             </CustomModal>
         )
@@ -125,23 +118,18 @@ export default function Validation() {
 
     return (
         <>
-            <div className=" flex justify-center gap-10">
-                {posts.length > 0 ? posts.length : <h1 className=" text-xl italic">No posts to be validated</h1>}
+            <div className="flex justify-center gap-10 mb-6">
+                <h1 className="text-3xl font-bold">Business Listing Validations</h1>
             </div>
-            <div className=" max-w-7xl m-auto">
+            <div className="flex justify-center gap-10">
+                {posts.length > 0 ? `${posts.length} business listings to validate` : <h1 className="text-xl italic">No business listings to be validated</h1>}
+            </div>
+            <div className="max-w-7xl m-auto">
                 <div className="flex flex-wrap justify-evenly h-full">
                     {posts.map((item: CardProps) => {
                         return (
                             <div key={item.postId} className="mt-10">
-                                {item.itemType === 'artist' ? (
-                                    <ArtistValidationCard 
-                                        {...item}
-                                        handleSubmit={handleAcceptSubmit} 
-                                        handleReject={handleReject} 
-                                    />
-                                ) : (
-                                    <Card {...item} isJod={true} handleSubmit={handleAcceptSubmit} handleReject={handleReject} />
-                                )}
+                                <Card {...item} isJod={true} handleSubmit={handleAcceptSubmit} handleReject={handleReject} />
                             </div>
                         );
                     })}
@@ -150,5 +138,4 @@ export default function Validation() {
             {showModal && modalEl()}
         </>
     )
-
 }

@@ -5,12 +5,32 @@ import { User } from "@supabase/supabase-js";
 export const createArtist = async (artist: Artist) => {
   const { data, error } = await supabase
     .from("artists")
-    .insert(artist)
+    .insert({
+      ...artist,
+      is_verified: false,
+      is_rejected: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
     .select();
   return { data, error };
 };
 
-export const updateArtist = async (artist: Artist & { id: string }) => {
+const determineArtistVerificationStatus = (updatedArtist: Artist & { id: string }, currentArtist?: Artist) => {
+  if (!currentArtist || currentArtist.is_verified === false) {
+    return false;
+  }
+  
+  const isNameChanged = updatedArtist.name !== currentArtist.name;
+  const isAboutChanged = updatedArtist.about !== currentArtist.about;
+  const isImageChanged = updatedArtist.image_url !== currentArtist.image_url;
+  
+  return isNameChanged || isAboutChanged || isImageChanged ? false : true;
+};
+
+export const updateArtist = async (artist: Artist & { id: string }, currentArtist?: Artist) => {
+  const shouldSetVerifiedTrue = determineArtistVerificationStatus(artist, currentArtist);
+  
   const { data, error } = await supabase
     .from("artists")
     .update({
@@ -22,6 +42,8 @@ export const updateArtist = async (artist: Artist & { id: string }) => {
       music_type: artist.music_type,
       genre: artist.genre,
       about: artist.about,
+      is_verified: shouldSetVerifiedTrue,
+      is_rejected: false,
       updated_at: new Date().toISOString(),
     })
     .eq("id", artist.id)
