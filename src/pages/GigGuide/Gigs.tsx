@@ -1,9 +1,15 @@
-import { CheckBusinessStatus, GetGigs } from "@/db/query"
+import { CheckBusinessStatus, GetGigs, GetAllGigs } from "@/db/query"
 import { useUser } from "@supabase/auth-helpers-react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { useSuperAdmin } from "@/context/use-super-admin"
 import { Button } from "@/components/ui/button"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
+import { Settings, Edit3 } from "lucide-react"
+import { cancelGig, reinstateGig } from "@/db/mutations"
+import { toast } from "react-hot-toast"
+import { useState } from "react"
 
 interface Gig {
   id: string
@@ -12,6 +18,7 @@ interface Gig {
   event_time: string
   ticket_type: string
   ticket_price: number | null
+  status?: string
   artists: { name: string, type: string, genre: string, music_type: string, image_url?: string }
   posts: {
     name: string
@@ -46,17 +53,22 @@ function GigCard({ gig }: { gig: Gig }) {
   const user = useUser()
   const navigate = useNavigate()
   const { isJod } = useSuperAdmin()
+  const queryClient = useQueryClient()
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
+
   const formattedTime = formatTime(gig.event_time)
   const location = gig.posts.locations[0]
   const locationString = `${location.suburb}, ${location.state} ${location.postcode}`
   const ticketInfo = gig.ticket_type === 'free' ? 'Free Entry' : 'Ticketed Event'
   const artistImage = gig.artists.image_url
   const artistInitial = gig.artists.name.charAt(0).toUpperCase()
+  const isCancelled = gig.status === 'cancelled'
 
   const canEditGigs = isJod || user?.id === gig.created_by
 
   const handleEditGig = () => {
-    // Navigate to add-gigs page with gig ID for editing
+    setIsPopoverOpen(false)
     navigate(`/add-gigs?edit=${gig.id}`, {
       state: {
         gigData: gig,
@@ -65,23 +77,136 @@ function GigCard({ gig }: { gig: Gig }) {
     })
   }
 
+  const cancelGigMutation = useMutation({
+    mutationFn: () => cancelGig(gig.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gigs"] })
+      toast.success("Gig cancelled successfully")
+      setIsCancelDialogOpen(false)
+      setIsPopoverOpen(false)
+    },
+    onError: () => {
+      toast.error("Failed to cancel gig")
+    }
+  })
+
+  const reinstateGigMutation = useMutation({
+    mutationFn: () => reinstateGig(gig.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gigs"] })
+      toast.success("Gig reinstated successfully")
+      setIsPopoverOpen(false)
+    },
+    onError: () => {
+      toast.error("Failed to reinstate gig")
+    }
+  })
+
+  const handleCancelGig = () => {
+    cancelGigMutation.mutate()
+  }
+
+  const handleReinstateGig = () => {
+    reinstateGigMutation.mutate()
+  }
+
   return (
-    <div className="flex items-center bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 hover:shadow-lg transition-shadow relative">
-      {/* Edit button for authorized users */}
+    <div className={`flex flex-col md:flex-row items-center md:items-start bg-white rounded-lg shadow-md p-4 mb-3 border border-gray-200 hover:shadow-lg transition-shadow relative overflow-hidden ${isCancelled ? 'opacity-75' : ''}`}>
+      {/* Settings menu for authorized users */}
       {canEditGigs && (
-        <div className="absolute top-2 right-2">
-          <Button
-            onClick={handleEditGig}
-            size="sm"
-            variant="outline"
-            className="bg-white/90 hover:bg-white text-gray-700 border-gray-300 hover:border-gray-400"
-          >
-            Edit
-          </Button>
+        <div className="absolute top-2 right-2 z-10">
+          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white/90 hover:bg-white text-gray-700 border-gray-300 hover:border-gray-400 p-2"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 p-2" align="end">
+              <div className="space-y-1">
+                <Button
+                  onClick={handleEditGig}
+                  variant="ghost"
+                  className="w-full justify-start text-left"
+                  size="sm"
+                >
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                {!isCancelled ? (
+                  <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left text-red-600 hover:text-red-700 hover:bg-red-50"
+                        size="sm"
+                      >
+                        Cancel Event
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Cancel Event</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to cancel this event? This action will hide the event from the public gig guide.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsCancelDialogOpen(false)}
+                        >
+                          Keep Event
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleCancelGig}
+                          disabled={cancelGigMutation.isPending}
+                        >
+                          {cancelGigMutation.isPending ? "Cancelling..." : "Cancel Event"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                ) : (
+                  <Button
+                    onClick={handleReinstateGig}
+                    variant="ghost"
+                    className="w-full justify-start text-left text-green-600 hover:text-green-700 hover:bg-green-50"
+                    size="sm"
+                    disabled={reinstateGigMutation.isPending}
+                  >
+                    {reinstateGigMutation.isPending ? "Reinstating..." : "Reinstate Event"}
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       )}
 
-      <div className="flex-shrink-0 mr-4">
+      {/* Diagonal CANCELLED banner */}
+      {isCancelled && (
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute bg-red-600 text-white font-bold text-lg py-4 transform -rotate-45 shadow-lg flex items-center justify-center"
+            style={{
+              width: '150%',
+              height: '80px',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%) rotate(-45deg)'
+            }}
+          >
+            CANCELLED
+          </div>
+        </div>
+      )}
+
+      <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-4">
         {artistImage ? (
           <img
             src={artistImage}
@@ -94,7 +219,7 @@ function GigCard({ gig }: { gig: Gig }) {
           </div>
         )}
       </div>
-      <div className="flex-1">
+      <div className="flex-1 pr-12 md:pr-12">
         <div className="text-lg  text-gray-900 mb-1 ">
           <span onClick={() => {
             navigate(`/gig-guide/artists?name=${gig.artists.name}`)
@@ -118,11 +243,13 @@ function GigCard({ gig }: { gig: Gig }) {
 
 export default function Gigs() {
   const navigate = useNavigate()
+  const user = useUser()
+  const { isJod } = useSuperAdmin()
+
   const { data: gigs } = useQuery({
     queryKey: ["gigs"],
-    queryFn: GetGigs,
+    queryFn: isJod ? GetAllGigs : GetGigs,
   })
-  const user = useUser()
   const { data: userHasBusiness, isLoading: isBusinessLoading } = useQuery({
     queryKey: ["isBusiness"],
     queryFn: () => CheckBusinessStatus(user?.id!),

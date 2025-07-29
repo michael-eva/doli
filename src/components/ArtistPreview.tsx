@@ -81,7 +81,7 @@ export default function ArtistPreview({
     } else if (genre) {
       return genre.charAt(0).toUpperCase() + genre.slice(1)
     } else if (artistType) {
-      return artistType
+      return artistType.charAt(0).toUpperCase() + artistType.slice(1)
     }
     return "Live Music"
   }
@@ -104,9 +104,9 @@ export default function ArtistPreview({
   const isLoading = followMutation.isPending || unfollowMutation.isPending
 
   return (
-    <div className="flex pt-8">
-      <div className="w-80 bg-white rounded-2xl shadow-md px-2 py-4 flex flex-col items-center">
-        <div className="w-44 h-44 rounded-full overflow-hidden mb-4">
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-xs bg-white rounded-2xl border-2 border-gray-300 px-3 sm:px-4 py-4 sm:py-6 flex flex-col items-center md:min-h-[415px]">
+        <div className="w-48 h-48 rounded-full overflow-hidden mb-3 sm:mb-4 border-2 border-gray-300">
           <img
             src={artistImage}
             alt="Artist Preview"
@@ -117,34 +117,42 @@ export default function ArtistPreview({
             }}
           />
         </div>
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900 mb-1">
+        <div className="text-center space-y-2 w-full flex flex-col flex-1">
+          <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 px-2 truncate">
             {artistName}
           </div>
-          <div className="text-sm text-blue-600 mb-2">
+          <div className="text-xs sm:text-sm text-blue-600 font-medium">
             {getArtistSubtitle()}
           </div>
-          <div className="text-gray-700 text-sm">
+          <div className="text-gray-700 text-xs sm:text-sm leading-relaxed px-2 flex-1 overflow-hidden"
+            style={{
+              maxHeight: '3.5rem',
+              lineHeight: '1.2rem'
+            }}
+          >
             {about}
           </div>
           {showFollowButton && (
-            <Button
-              onClick={handleFollowClick}
-              disabled={isLoading}
-              className={`rounded-full !text-white hover:opacity-80 transition-all ${isFollowing
-                ? "!bg-[#ce3f42] hover:!bg-[#ce3f42]/80"
-                : "!bg-[#4e9da8] hover:!bg-[#4e9da8]/80"
-                }`}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {isFollowing ? "Unfollowing..." : "Following..."}
-                </span>
-              ) : (
-                isFollowing ? "Unfollow" : "Follow"
-              )}
-            </Button>
+            <div>
+              <Button
+                onClick={handleFollowClick}
+                disabled={isLoading}
+                className={`h-6 rounded-full !text-white hover:opacity-80 transition-all text-xs sm:text-sm px-4 sm:px-6 ${isFollowing
+                  ? "!bg-[#ce3f42] hover:!bg-[#ce3f42]/80"
+                  : "!bg-[#4e9da8] hover:!bg-[#4e9da8]/80"
+                  }`}
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-1 sm:gap-2">
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="hidden sm:inline">{isFollowing ? "Unfollowing..." : "Following..."}</span>
+                    <span className="sm:hidden">{isFollowing ? "..." : "..."}</span>
+                  </span>
+                ) : (
+                  isFollowing ? "Unfollow" : "Follow"
+                )}
+              </Button>
+            </div>
           )}
         </div>
       </div>

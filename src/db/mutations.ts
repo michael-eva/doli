@@ -10,27 +10,36 @@ export const createArtist = async (artist: Artist) => {
       is_verified: false,
       is_rejected: false,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .select();
   return { data, error };
 };
 
-const determineArtistVerificationStatus = (updatedArtist: Artist & { id: string }, currentArtist?: Artist) => {
+const determineArtistVerificationStatus = (
+  updatedArtist: Artist & { id: string },
+  currentArtist?: Artist
+) => {
   if (!currentArtist || currentArtist.is_verified === false) {
     return false;
   }
-  
+
   const isNameChanged = updatedArtist.name !== currentArtist.name;
   const isAboutChanged = updatedArtist.about !== currentArtist.about;
   const isImageChanged = updatedArtist.image_url !== currentArtist.image_url;
-  
+
   return isNameChanged || isAboutChanged || isImageChanged ? false : true;
 };
 
-export const updateArtist = async (artist: Artist & { id: string }, currentArtist?: Artist) => {
-  const shouldSetVerifiedTrue = determineArtistVerificationStatus(artist, currentArtist);
-  
+export const updateArtist = async (
+  artist: Artist & { id: string },
+  currentArtist?: Artist
+) => {
+  const shouldSetVerifiedTrue = determineArtistVerificationStatus(
+    artist,
+    currentArtist
+  );
+
   const { data, error } = await supabase
     .from("artists")
     .update({
@@ -71,6 +80,16 @@ export const unfollowArtist = async (userId: string, artistId: string) => {
     .delete()
     .eq("user_id", userId)
     .eq("artist_id", artistId)
+    .select();
+  return { data, error };
+};
+
+// Delete an artist
+export const deleteArtist = async (artistId: string) => {
+  const { data, error } = await supabase
+    .from("artists")
+    .delete()
+    .eq("id", artistId)
     .select();
   return { data, error };
 };
@@ -223,6 +242,46 @@ export const updateGig = async (gigData: {
 
   if (error) {
     console.error("Error updating gig:", error);
+    throw error;
+  }
+
+  return data;
+};
+
+// Cancel a gig
+export const cancelGig = async (gigId: string) => {
+  const { data, error } = await supabase
+    .from("gigs")
+    .update({
+      status: "cancelled",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", gigId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error cancelling gig:", error);
+    throw error;
+  }
+
+  return data;
+};
+
+// Reinstate a cancelled gig
+export const reinstateGig = async (gigId: string) => {
+  const { data, error } = await supabase
+    .from("gigs")
+    .update({
+      status: "active",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", gigId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error reinstating gig:", error);
     throw error;
   }
 

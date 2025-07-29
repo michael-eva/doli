@@ -19,7 +19,8 @@ export async function CheckBusinessStatus(userId: string) {
   const { data, error } = await supabase
     .from("posts")
     .select("*")
-    .eq("id", userId);
+    .eq("id", userId)
+    .eq("isVerified", true);
 
   if (error) {
     console.error("Error:", error);
@@ -132,7 +133,38 @@ export async function GetGigs() {
     return [];
   }
 
-  return data;
+  // Filter out cancelled gigs or include all based on requirements
+  return data?.filter(gig => gig.status !== 'cancelled') || [];
+}
+
+export async function GetAllGigs() {
+  const { data, error } = await supabase.from("gigs").select(`
+            *,
+      artists (
+        name,
+        music_type,
+        genre,
+        type,
+        image_url,
+        about
+      ),
+      posts (
+        name,
+        type,
+        locations (
+          suburb,
+          state,
+          postcode
+        )
+      )
+    `);
+
+  if (error) {
+    console.error("Error:", error);
+    return [];
+  }
+
+  return data || [];
 }
 
 // Get artists that a user follows

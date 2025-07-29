@@ -1,4 +1,4 @@
-import { GetArtists, GetGigs, GetUserBusiness } from "@/db/query"
+import { GetArtists, GetGigs, GetUserBusiness, CheckBusinessStatus } from "@/db/query"
 import { useUser } from "@supabase/auth-helpers-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -19,7 +19,7 @@ export const GigSchema = z.object({
   type: z.number(),
   artist: z.object({
     name: z.string().min(1),
-    image_url: z.url(),
+    image_url: z.string().url().optional().or(z.literal('')),
     type: z.string(),
     music_type: z.string(),
     genre: z.string(),
@@ -72,12 +72,26 @@ export default function AddGigs() {
     enabled: !!user?.id && !isEditing
   })
 
+  // Check if user has any verified businesses
+  const { data: hasVerifiedBusiness } = useQuery({
+    queryKey: ["hasVerifiedBusiness", user?.id],
+    queryFn: () => CheckBusinessStatus(user?.id!),
+    enabled: !!user?.id
+  })
+
   // Get gig data from state or fetched data
   const gigData = gigDataFromState || (editGigId && allGigs ? allGigs.find(gig => gig.id === editGigId) : null)
 
 
   const { mutate: createGig } = useMutation({
-    mutationFn: (data: z.infer<typeof GigSchema>) => CreateGig({ ...data, date: new Date(data.date) }, user!),
+    mutationFn: (data: z.infer<typeof GigSchema>) => CreateGig({
+      ...data,
+      date: new Date(data.date),
+      artist: {
+        ...data.artist,
+        image_url: data.artist.image_url || ''
+      }
+    }, user!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["gigs"] });
       toast.success("Gig created successfully");
@@ -192,6 +206,41 @@ export default function AddGigs() {
     return <div>Loading...</div>;
   }
 
+  // Show registration message if user doesn't have a verified business and is not editing
+  if (!isEditing && hasVerifiedBusiness === false) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Register Your Business First</h1>
+          <p className="text-lg text-gray-600 mb-8">
+            To add gigs and events, you need to have a verified business listing. 
+            Register your business and wait for approval before creating gigs.
+          </p>
+          <div className="space-y-4">
+            <Button 
+              onClick={() => navigate('/register/business')} 
+              className="bg-[#4e9da8] hover:bg-[#4e9da8]/80 text-white mr-4"
+            >
+              Register Business
+            </Button>
+            <Button 
+              onClick={() => navigate('/manage-listings')} 
+              variant="outline"
+              className="mr-4"
+            >
+              View My Listings
+            </Button>
+            <Button 
+              onClick={() => navigate('/gig-guide/gigs')} 
+              variant="outline"
+            >
+              Browse Gigs
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isEditing && !gigData) {
     return (
@@ -264,7 +313,15 @@ export default function AddGigs() {
     if (isEditing) {
       // Update existing gig
       if (data.id) {
-        updateGigMutation({ ...data, date: new Date(data.date) } as z.infer<typeof GigSchema> & { id: string; date: Date });
+        updateGigMutation({
+          ...data,
+          id: data.id,
+          date: new Date(data.date),
+          artist: {
+            ...data.artist,
+            image_url: data.artist.image_url || ''
+          }
+        });
       }
     } else {
       createGig(data);
@@ -521,7 +578,7 @@ export default function AddGigs() {
                   <Button
                     type="submit"
                     className="btn !bg-[#4e9da8] !text-white flex-1 group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
-                    disabled={!isValid || isUpdatingGig || (!isEditing && userBusinesses && userBusinesses.every(b => !b.isVerified))}
+                    disabled={!isValid || isUpdatingGig}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       {isUpdatingGig ? (
