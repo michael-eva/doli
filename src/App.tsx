@@ -7,15 +7,17 @@ import Login from "./pages/Login"
 import ManageListings from "./pages/ManageListings/ManageListings"
 import About from "./pages/About"
 import Specials from "./pages/Specials"
-import PostForm from "./components/PostForm/PostForm"
+// import PostForm from "./components/PostForm/PostForm"
 import AuthRequired from "./Auth/AuthRequired"
 import JodRequired from "./Jod/JodRequired"
 import NotFound from "./pages/NotFound"
 import EditPost from "./pages/EditPost/EditPost"
 import Wholesale from "./pages/Wholesale"
-import SeedForm from "./seed/SeedForm"
+// import SeedForm from "./seed/SeedForm"
 import ResetPassword from "./components/ResetPassword"
 import Validation from "./Jod/Validation"
+import ValidateBusinesses from "./Jod/ValidateBusinesses"
+import ValidateArtists from "./Jod/ValidateArtists"
 import { ClaimedOwnership } from "./Jod/ClaimedOwnership"
 import UpdateEmail from "./components/Modals/UpdateEmail"
 import Footer from "./components/Footer"
@@ -26,7 +28,12 @@ import { SuperAdminProvider } from "./context/use-super-admin"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
 import ContactUs from "./pages/ContactUs"
-import ImageUpload from "./components/ImageUpload"
+import RegisterBusiness from "./pages/Register/Business"
+import RegisterArtist from "./pages/Register/Artist"
+import EditArtist from "./pages/Register/EditArtist"
+import AddGigs from "./pages/AddGigs"
+import Artists from "./pages/GigGuide/Artists"
+import Gigs from "./pages/GigGuide/Gigs"
 type Question = {
   question: string;
   answers: string[];
@@ -61,19 +68,25 @@ function App() {
                 <Route path="/update-email" element={<UpdateEmail />} />
                 <Route element={<AuthRequired />}>
                   <Route path="contact-us" element={<ContactUs />} />
-                  <Route path="post-listing" element={<PostForm postData={undefined} name={""} description={""} />} />
+                  <Route path="register/business" element={<RegisterBusiness postData={undefined} name={""} description={""} />} />
+                  <Route path="register/artist" element={<RegisterArtist />} />
+                  <Route path="edit-artist" element={<EditArtist />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="update-details" element={<SignUp />} />
                   <Route path="manage-listings" element={<ManageListings />} />
                   <Route path="edit-post/:postId" element={<EditPost />} />
-                  {/* <Route path="image-upload" element={<ImageUpload />} /> */}
+                  <Route path="add-gigs" element={<AddGigs />} />
                   <Route element={<JodRequired />} >
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/validate" element={<Validation />} />
+                    <Route path="dashboard/validate-businesses" element={<ValidateBusinesses />} />
+                    <Route path="dashboard/validate-artists" element={<ValidateArtists />} />
                     <Route path="dashboard/unclaimed-posts" element={<ClaimedOwnership />} />
                   </Route>
-                  <Route path="seed" element={<SeedForm />} />
+                  {/* <Route path="seed" element={<SeedForm />} /> */}
                 </Route>
+                <Route path="gig-guide/artists" element={<Artists />} />
+                <Route path="gig-guide/gigs" element={<Gigs />} />
                 <Route path="survey" element={<Survey data={questions} />} />
                 <Route path="member-register" element={<SignUp />} />
                 <Route path="login" element={<Login />} />

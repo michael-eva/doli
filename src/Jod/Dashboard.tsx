@@ -8,7 +8,7 @@ import { getDashboardData } from "./utils/getDashboardData"
 
 
 export default function Dashboard() {
-    const { validationRequired, claimedPosts, posts, monthlyListings, monthlyMember, monthlyRating, unverifiedMembers } = getDashboardData()
+    const { validationRequired, businessValidationRequired, artistValidationRequired, claimedPosts, posts, monthlyListings, monthlyMember, monthlyRating, unverifiedMembers } = getDashboardData()
 
     return (
         <div className="flex flex-col min-h-screen w-full">
@@ -17,13 +17,25 @@ export default function Dashboard() {
                     <Card>
                         <CardHeader className="flex items-center gap-4">
                             <CheckCircleIcon className="w-8 h-8" />
-                            <CardTitle className="text-2xl font-bold">Validations</CardTitle>
-                            <Link className="ml-auto underline text-blue-500 dark:text-blue-400" to="validate">
+                            <CardTitle className="text-2xl font-bold">Business Validations</CardTitle>
+                            <Link className="ml-auto underline text-blue-500 dark:text-blue-400" to="validate-businesses">
                                 View
                             </Link>
                         </CardHeader>
                         <CardContent className="flex items-center justify-center py-8">
-                            <div className="text-4xl font-bold">{validationRequired}</div>
+                            <div className="text-4xl font-bold">{businessValidationRequired}</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex items-center gap-4">
+                            <UserPlusIcon className="w-8 h-8" />
+                            <CardTitle className="text-2xl font-bold">Artist Validations</CardTitle>
+                            <Link className="ml-auto underline text-blue-500 dark:text-blue-400" to="validate-artists">
+                                View
+                            </Link>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center py-8">
+                            <div className="text-4xl font-bold">{artistValidationRequired}</div>
                         </CardContent>
                     </Card>
                     <Card>

@@ -10,6 +10,8 @@ type SeededPostsType = {
 
 export function getDashboardData(){
     const [validationRequired, setValidationRequired] = useState<string | undefined>("")
+    const [businessValidationRequired, setBusinessValidationRequired] = useState<string>("0")
+    const [artistValidationRequired, setArtistValidationRequired] = useState<string>("0")
     const [monthlyListings, setMonthlyListingCounts] = useState("")
     const [monthlyRating, setMonthlyRatingCounts] = useState("")
     const [monthlyMember, setMonthlyMemberCounts] = useState("")
@@ -64,18 +66,29 @@ export function getDashboardData(){
         }
     }
     async function getUnverifiedPosts() {
-        const { data, error } = await supabase
+        const { data: postsData, error: postsError } = await supabase
             .from("posts")
             .select("*")
             .eq("isVerified", false)
             .eq("isRejected", false)
     
-        if (error) {
-            console.error(error);
+        const { data: artistsData, error: artistsError } = await supabase
+            .from("artists")
+            .select("*")
+            .eq("is_verified", false)
+            .eq("is_rejected", false)
+    
+        if (postsError) {
+            console.error("Posts error:", postsError);
         }
-        if (data) {
-    setValidationRequired(data.length.toString())
+        if (artistsError) {
+            console.error("Artists error:", artistsError);
         }
+        
+        const totalUnverified = (postsData?.length || 0) + (artistsData?.length || 0);
+        setValidationRequired(totalUnverified.toString())
+        setBusinessValidationRequired((postsData?.length || 0).toString())
+        setArtistValidationRequired((artistsData?.length || 0).toString())
     }
     async function getMonthlyListings() {
         const { data: postsData, error: postsError } = await supabase
@@ -140,6 +153,8 @@ export function getDashboardData(){
         monthlyRating: transformMonthlyCountsToArray(monthlyRating), 
         monthlyListings: transformMonthlyCountsToArray(monthlyListings), 
         validationRequired, 
+        businessValidationRequired,
+        artistValidationRequired,
         claimedPosts, 
         posts:seededPosts,
         unverifiedMembers

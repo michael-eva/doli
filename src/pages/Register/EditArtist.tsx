@@ -1,0 +1,514 @@
+import { z } from "zod"
+import { useUser } from "@supabase/auth-helpers-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
+import toast from "react-hot-toast";
+import { Music, Mic, Palette, Send } from "lucide-react";
+import ImageUpload from "../../components/ImageUpload";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateArtist } from "@/db/mutations";
+import { uploadArtistImage } from "@/utils/imageUpload";
+
+export const EditArtistSchema = z.discriminatedUnion("type", [
+  z.object({
+    id: z.string(),
+    name: z.string().min(1),
+    admin_one_email: z.email(),
+    admin_two_email: z.email().or(z.literal("")).optional(),
+    image_url: z.string().min(1, "Image is required"),
+    type: z.literal("music"),
+    music_type: z.enum(["cover", "original"]),
+    genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]),
+    about: z.string().min(1),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string().min(1),
+    admin_one_email: z.email(),
+    admin_two_email: z.email().or(z.literal("")).optional(),
+    image_url: z.string().min(1, "Image is required"),
+    type: z.enum(["comedy", "other"]),
+    music_type: z.enum(["cover", "original"]).optional(),
+    genre: z.enum(["alt", "classical", "country", "electronic", "folk", "heavy metal", "hip-hop", "jazz", "latin", "punk", "reggae", "r&b", "rock"]).optional(),
+    about: z.string().min(1),
+  })
+]);
+
+export default function EditArtist() {
+  const user = useUser();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Get artist data from navigation state
+  const artistData = location.state?.artistData;
+  const isEditing = location.state?.isEditing;
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+
+  if (!artistData || !isEditing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">No Artist Data</h1>
+          <p className="text-lg text-gray-600 mb-8">No artist data provided for editing.</p>
+          <Button onClick={() => navigate('/gig-guide/artists')} className="bg-blue-600 hover:bg-blue-700">
+            Back to Artists
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const [selectedFile, setSelectedFile] = useState<string>("");
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [imageForCropping, setImageForCropping] = useState<string>("");
+  const [selectedFileBlob, setSelectedFileBlob] = useState<Blob | null>(null);
+  const [imageChanged, setImageChanged] = useState(false);
+
+  const { mutate: updateArtistMutation, isPending: isUpdatingArtist } = useMutation({
+    mutationFn: ({ updatedArtist, currentArtist }: { updatedArtist: Artist & { id: string }, currentArtist: Artist }) => 
+      updateArtist(updatedArtist, currentArtist),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["artists"] });
+      const wasResubmittedForApproval = data?.data?.[0]?.is_verified === false;
+      if (wasResubmittedForApproval) {
+        toast.success("Artist updated and resubmitted for approval!");
+      } else {
+        toast.success("Artist updated successfully!");
+      }
+      setTimeout(() => {
+        navigate("/gig-guide/artists");
+      }, 1500);
+    },
+    onError: (error) => {
+      console.error("Error updating artist:", error);
+      toast.error("Failed to update artist. Please try again.");
+    }
+  });
+
+  const handleImageUpload = async (selectedFile: Blob) => {
+    const result = await uploadArtistImage(selectedFile, user.id);
+
+    if (!result.success) {
+      console.error('Error uploading image:', result.error);
+      throw new Error(result.error || 'Failed to upload image');
+    }
+
+    return result.url!;
+  };
+
+  const getDefaultValues = () => {
+    return {
+      id: artistData.id,
+      name: artistData.name || "",
+      admin_one_email: artistData.admin_one_email || user?.email,
+      admin_two_email: artistData.admin_two_email || "",
+      image_url: artistData.image_url || "",
+      type: artistData.type || undefined,
+      music_type: artistData.music_type || undefined,
+      genre: artistData.genre || undefined,
+      about: artistData.about || ""
+    }
+  }
+
+  const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm<z.infer<typeof EditArtistSchema>>({
+    resolver: zodResolver(EditArtistSchema),
+    defaultValues: getDefaultValues(),
+    mode: "onChange"
+  });
+
+  // Set the user email once it's available
+  useEffect(() => {
+    if (user?.email) {
+      setValue("admin_one_email", user.email);
+    }
+  }, [user?.email, setValue]);
+
+  const selectedType = watch("type");
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        // Store the file blob
+        setSelectedFileBlob(file);
+        setImageChanged(true);
+
+        // Convert the file to a data URL for cropping
+        const dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+
+        // Set the image URL in the form
+        setSelectedFile(dataUrl);
+        setValue("image_url", dataUrl);
+        setImageForCropping(dataUrl); // Store data URL for cropping
+        setCroppedImage(null);
+
+      } catch (error) {
+        console.error("Error uploading image:", error);
+
+        // Reset on error
+        setSelectedFile("");
+        setCroppedImage(null);
+        setImageForCropping("");
+        setSelectedFileBlob(null);
+        setValue("image_url", "");
+        setImageChanged(false);
+      }
+    } else {
+      // If no file selected, reset everything
+      setSelectedFile("");
+      setCroppedImage(null);
+      setImageForCropping("");
+      setSelectedFileBlob(null);
+      setValue("image_url", artistData.image_url || "");
+      setImageChanged(false);
+    }
+  };
+
+  const handleFormSubmit = async (data: z.infer<typeof EditArtistSchema>) => {
+    try {
+      let finalImageUrl = data.image_url;
+
+      // If we have a selected file blob and image was changed, upload it to Supabase
+      if (selectedFileBlob && imageChanged) {
+        // Use cropped image if available, otherwise use original file
+        let fileToUpload: Blob;
+
+        if (croppedImage) {
+          // Convert blob URL to Blob
+          const response = await fetch(croppedImage);
+          fileToUpload = await response.blob();
+        } else {
+          fileToUpload = selectedFileBlob;
+        }
+
+        // Upload the image to Supabase
+        finalImageUrl = await handleImageUpload(fileToUpload);
+      }
+
+      // Convert undefined to null for the database
+      const submissionData = {
+        ...data,
+        image_url: finalImageUrl,
+        admin_two_email: data.admin_two_email || null
+      };
+
+      updateArtistMutation({ 
+        updatedArtist: submissionData, 
+        currentArtist: artistData 
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.dismiss();
+      toast.error("Failed to upload image. Please try again.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Edit Artist Profile</h1>
+          <p className="text-lg text-gray-600">Update artist information</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="p-8 sm:p-10">
+            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+              {/* Image Upload */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  Artist Image
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Upload Artist Image *
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="w-full file-input file-input-bordered"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      Leave empty to keep the current image
+                    </p>
+                  </div>
+
+                  {imageForCropping && !croppedImage && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium text-gray-900">Crop Your Image</h3>
+                      <ImageUpload
+                        file={imageForCropping}
+                        setCroppedImage={setCroppedImage}
+                        circular={true}
+                      />
+                    </div>
+                  )}
+
+                  {/* Artist Post Preview */}
+                  <div className="flex pt-8">
+                    <div className="w-80 bg-white rounded-2xl shadow-md p-6 flex flex-col items-center">
+                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 mb-4">
+                        <img
+                          src={croppedImage || (imageChanged ? selectedFile : artistData.image_url) || '/images/placeholder.jpeg'}
+                          alt="Artist Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-gray-900 mb-1">
+                          {watch("name") || "Artist Name"}
+                        </div>
+                        <div className="text-sm text-blue-600 mb-2 cursor-pointer underline">
+                          {selectedType === "music"
+                            ? (watch("genre") && watch("music_type")
+                              ? `${watch("genre")!.charAt(0).toUpperCase() + watch("genre")!.slice(1)} ${watch("music_type") === "cover" ? "Covers" : "Originals"}`
+                              : "Alt / Indie Originals")
+                            : selectedType === "comedy"
+                              ? "Comedy"
+                              : selectedType === "other"
+                                ? "Other"
+                                : "Alt / Indie Originals"}
+                        </div>
+                        <div className="text-gray-700 text-sm mb-4 min-h-[48px]">
+                          {watch("about") || "Artist description goes here. Tell us about your artist/band, your style, experience, and what makes you unique..."}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {errors.image_url && (
+                    <p className="text-red-600 text-sm">{errors.image_url.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Basic Information */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  Basic Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Artist/Band Name *
+                    </label>
+                    <Input
+                      {...register("name")}
+                      placeholder="Enter artist or band name"
+                      className="w-full"
+                    />
+                    {errors.name && (
+                      <p className="text-red-600 text-sm">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Artist Type *
+                    </label>
+                    <Select onValueChange={(value) => setValue("type", value as any)} defaultValue={artistData.type}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select artist type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="music">
+                          <div className="flex items-center gap-2">
+                            <Music className="w-4 h-4" />
+                            Music
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="comedy">
+                          <div className="flex items-center gap-2">
+                            <Mic className="w-4 h-4" />
+                            Comedy
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="other">
+                          <div className="flex items-center gap-2">
+                            <Palette className="w-4 h-4" />
+                            Other
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.type && (
+                      <p className="text-red-600 text-sm">{errors.type.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Music-specific fields */}
+                {selectedType === "music" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Music Type *
+                      </label>
+                      <Select onValueChange={(value) => setValue("music_type", value as any)} defaultValue={artistData.music_type}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select music type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="cover">Cover Songs</SelectItem>
+                          <SelectItem value="original">Original Music</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.music_type && (
+                        <p className="text-red-600 text-sm">{errors.music_type.message}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Genre *
+                      </label>
+                      <Select onValueChange={(value) => setValue("genre", value as any)} defaultValue={artistData.genre}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select genre" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="alt">Alternative</SelectItem>
+                          <SelectItem value="classical">Classical</SelectItem>
+                          <SelectItem value="country">Country</SelectItem>
+                          <SelectItem value="electronic">Electronic</SelectItem>
+                          <SelectItem value="folk">Folk</SelectItem>
+                          <SelectItem value="heavy metal">Heavy Metal</SelectItem>
+                          <SelectItem value="hip-hop">Hip-Hop</SelectItem>
+                          <SelectItem value="jazz">Jazz</SelectItem>
+                          <SelectItem value="latin">Latin</SelectItem>
+                          <SelectItem value="punk">Punk</SelectItem>
+                          <SelectItem value="reggae">Reggae</SelectItem>
+                          <SelectItem value="r&b">R&B</SelectItem>
+                          <SelectItem value="rock">Rock</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.genre && (
+                        <p className="text-red-600 text-sm">{errors.genre.message}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact Information */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  Contact Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Primary Admin Email *
+                    </label>
+                    <Input
+                      {...register("admin_one_email")}
+                      type="email"
+                      placeholder="primary@example.com"
+                      className="w-full"
+                    />
+                    {errors.admin_one_email && (
+                      <p className="text-red-600 text-sm">{errors.admin_one_email.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Secondary Admin Email (Optional)
+                    </label>
+                    <Input
+                      {...register("admin_two_email")}
+                      type="email"
+                      placeholder="secondary@example.com"
+                      className="w-full"
+                    />
+                    {errors.admin_two_email && (
+                      <p className="text-red-600 text-sm">{errors.admin_two_email.message}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* About Section */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  About Your Artist
+                </h2>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Artist Description *
+                  </label>
+                  <textarea
+                    {...register("about")}
+                    rows={4}
+                    placeholder="Tell us about your artist/band, your style, experience, and what makes you unique..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4e9da8] focus:border-transparent resize-none"
+                  />
+                  {errors.about && (
+                    <p className="text-red-600 text-sm">{errors.about.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6 flex gap-4">
+                <Button
+                  type="button"
+                  onClick={() => navigate('/gig-guide/artists')}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 !bg-[#4e9da8] !hover:bg-[#3d8a94] text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isUpdatingArtist || !isValid}
+                >
+                  {isUpdatingArtist ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      Update Artist
+                      <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+} 
