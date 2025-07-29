@@ -1,4 +1,4 @@
-import { GetArtists, GetGigs } from "@/db/query"
+import { GetArtists, GetGigs, GetUserBusiness } from "@/db/query"
 import { useUser } from "@supabase/auth-helpers-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -65,10 +65,16 @@ export default function AddGigs() {
     enabled: !!editGigId
   })
 
+  // Fetch user's businesses for auto-population (only in create mode)
+  const { data: userBusinesses } = useQuery({
+    queryKey: ["userBusiness", user?.id],
+    queryFn: () => GetUserBusiness(user?.id!),
+    enabled: !!user?.id && !isEditing
+  })
+
   // Get gig data from state or fetched data
   const gigData = gigDataFromState || (editGigId && allGigs ? allGigs.find(gig => gig.id === editGigId) : null)
 
-  const post = gigData?.posts
 
   const { mutate: createGig } = useMutation({
     mutationFn: (data: z.infer<typeof GigSchema>) => CreateGig({ ...data, date: new Date(data.date) }, user!),
@@ -97,6 +103,9 @@ export default function AddGigs() {
 
   // Handle artist selection and prefill artist data
   const [selectedArtistId, setSelectedArtistId] = useState<string>("")
+
+  // Handle business selection for auto-population
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string>("")
 
   // Prefill form data for edit mode
   useEffect(() => {
@@ -139,33 +148,41 @@ export default function AddGigs() {
   }, [isEditing, gigData, setValue]);
 
 
-  // Prefill business information when userBusiness data is loaded (only for create mode)
+  // Auto-populate business information based on user's businesses (only for create mode)
   useEffect(() => {
-    if (!isEditing && post && post.length > 0) {
-      const business = post[0] // Get the first business record
+    if (!isEditing && userBusinesses && userBusinesses.length > 0) {
+      // Filter only approved businesses for auto-population
+      const approvedBusinesses = userBusinesses.filter(business => business.isVerified === true)
 
-      // Set business name
-      if (business.name) {
-        setValue("businessName", business.name)
-      }
+      // If user has only one approved business, auto-populate immediately
+      if (approvedBusinesses.length === 1) {
+        const business = approvedBusinesses[0]
+        setSelectedBusinessId(business.postId)
 
-      // Set suburb from location data
-      if (business.locations && business.locations.length > 0) {
-        const location = business.locations[0]
-        if (location.suburb) {
-          setValue("suburb", location.suburb)
+        // Set business name
+        if (business.name) {
+          setValue("businessName", business.name)
+        }
+
+        // Set suburb from location data
+        if (business.locations && business.locations.length > 0) {
+          const location = business.locations[0]
+          if (location.suburb) {
+            setValue("suburb", location.suburb)
+          }
+        }
+
+        // Set business type
+        if (business.type) {
+          const typeIndex = businessType.findIndex(type => type === business.type)
+          if (typeIndex !== -1) {
+            setValue("type", typeIndex)
+          }
         }
       }
-
-      // Set business type
-      if (business.type) {
-        const typeIndex = businessType.findIndex(type => type === business.type)
-        if (typeIndex !== -1) {
-          setValue("type", typeIndex)
-        }
-      }
+      // If user has multiple approved businesses, don't auto-populate - wait for user selection
     }
-  }, [post, setValue, isEditing])
+  }, [userBusinesses, setValue, isEditing])
 
 
 
@@ -200,6 +217,39 @@ export default function AddGigs() {
       setValue("artist.music_type", selectedArtist.music_type || "")
       setValue("artist.genre", selectedArtist.genre || "")
       setValue("artist.about", selectedArtist.about)
+    }
+  }
+
+  const handleBusinessSelection = (businessId: string) => {
+    const selectedBusiness = userBusinesses?.find(business => business.postId === businessId)
+    if (selectedBusiness) {
+      // Only allow selection of approved businesses
+      if (!selectedBusiness.isVerified) {
+        return; // Don't proceed if business is not approved
+      }
+
+      setSelectedBusinessId(businessId)
+
+      // Set business name
+      if (selectedBusiness.name) {
+        setValue("businessName", selectedBusiness.name)
+      }
+
+      // Set suburb from location data
+      if (selectedBusiness.locations && selectedBusiness.locations.length > 0) {
+        const location = selectedBusiness.locations[0]
+        if (location.suburb) {
+          setValue("suburb", location.suburb)
+        }
+      }
+
+      // Set business type
+      if (selectedBusiness.type) {
+        const typeIndex = businessType.findIndex(type => type === selectedBusiness.type)
+        if (typeIndex !== -1) {
+          setValue("type", typeIndex)
+        }
+      }
     }
   }
 
@@ -241,6 +291,59 @@ export default function AddGigs() {
                 <h2 className="text-2xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
                   Business Information
                 </h2>
+
+                {/* Business Selection Dropdown - Show if user has multiple businesses OR has unapproved businesses */}
+                {!isEditing && userBusinesses && (userBusinesses.length > 1 || userBusinesses.some(b => !b.isVerified)) && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Select Your Business *
+                    </label>
+                    <select
+                      value={selectedBusinessId}
+                      onChange={(e) => handleBusinessSelection(e.target.value)}
+                      className="select select-bordered w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                    >
+                      <option value="">Choose a business to auto-populate details</option>
+                      {userBusinesses.map((business) => {
+                        const isApproved = business.isVerified === true
+                        const isRejected = business.isRejected === true
+                        const isPending = !isApproved && !isRejected
+
+                        let statusText = ""
+                        if (isRejected) {
+                          statusText = " (Rejected)"
+                        } else if (isPending) {
+                          statusText = " (Pending Approval)"
+                        }
+
+                        return (
+                          <option
+                            key={business.postId}
+                            value={business.postId}
+                            disabled={!isApproved}
+                            style={!isApproved ? { color: '#9CA3AF', fontStyle: 'italic' } : {}}
+                          >
+                            {business.name} {business.locations?.[0]?.suburb && `- ${business.locations[0].suburb}`}{statusText}
+                          </option>
+                        )
+                      })}
+                    </select>
+                    {/* Show helpful text about approval status */}
+                    {userBusinesses.some(b => !b.isVerified) && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        <span className="text-yellow-600">⚠️</span> Businesses pending approval or rejected cannot be selected for gigs
+                      </p>
+                    )}
+                    {/* Show warning if no approved businesses */}
+                    {userBusinesses.every(b => !b.isVerified) && (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                        <p className="text-sm text-yellow-800">
+                          <span className="font-medium">No approved businesses:</span> You need at least one approved business listing to create gigs. Please wait for approval or contact support.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -418,7 +521,7 @@ export default function AddGigs() {
                   <Button
                     type="submit"
                     className="btn !bg-[#4e9da8] !text-white flex-1 group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
-                    disabled={!isValid || isUpdatingGig}
+                    disabled={!isValid || isUpdatingGig || (!isEditing && userBusinesses && userBusinesses.every(b => !b.isVerified))}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       {isUpdatingGig ? (
